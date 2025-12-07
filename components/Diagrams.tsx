@@ -220,29 +220,34 @@ export const PropertyShowcase = ({ lang, onBook }: { lang: Lang; onBook: () => v
         },
         {
             id: 4,
-            title: lang === 'en' ? "Regina Tower" : "Regina Tower",
-            location: "Jumeirah Village Circle",
+            title: lang === 'en' ? "west Wood" : "west Wood",
+            location: "Al Furjan",
             images: [
-                "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1536376072261-38c75010e6c9?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=800&q=80"
-            ],
-            price: "AED 350 / night",
-            specs: "Studio • 450 sqft"
+              "https://i.postimg.cc/5y0jxTps/252582.jpg",
+              "https://i.postimg.cc/NFMLgSbC/3.jpg",
+              "https://i.postimg.cc/tJMJ7km8/6652574.jpg",
+              "https://i.postimg.cc/2yKy3GXt/665654.jpg",
+              "https://i.postimg.cc/Kjz4ZwQq/68686.jpg",
+              "https://i.postimg.cc/SRvRjdtw/799757771_1066x800.webp",
+              "https://i.postimg.cc/rsPszjP6/799757772_1066x800.webp",
+              "https://i.postimg.cc/WzHzt8fG/image.webp",
+              "https://i.postimg.cc/WzHzt8Hc/unnamed.jpg"
+            ], 
+            price: "AED 500 / night",
+            specs: "Studio • 460 sqft"
         },
         {
             id: 5,
-            title: lang === 'en' ? "West Wood" : "West Wood",
-            location: "Al Furjan",
+            title: lang === 'en' ? "Regina Tower" : "Regina Tower",
+            location: "Jumeirah Village Circle"
             images: [
                 "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
                 "https://images.unsplash.com/photo-1505693314120-0d443867891c?auto=format&fit=crop&w=800&q=80",
                 "https://images.unsplash.com/photo-1484101403633-562f891dc89a?auto=format&fit=crop&w=800&q=80",
                 "https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=800&q=80"
             ],
-            price: "AED 300 / night",
-            specs: "Studio • 450 sqft"
+            price: "AED 500 / night",
+            specs: "Studio • 460 sqft"
         }
     ];
 
