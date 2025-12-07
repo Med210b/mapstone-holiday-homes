@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <base href="./" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MAPSTONE Holiday Homes | Dubai</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'mapstone-blue': '#1B365D',
+              'mapstone-dark': '#0f1e33',
+              'nobel-gold': '#C5A059',
+              'nobel-cream': '#F5F5F0',
+            },
+            fontFamily: {
+              serif: ['Playfair Display', 'serif'],
+              sans: ['Lato', 'sans-serif'],
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.8s ease-out forwards',
+              'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+              'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'marquee': 'marquee 30s linear infinite',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              marquee: {
+                '0%': { transform: 'translateX(0%)' },
+                '100%': { transform: 'translateX(-50%)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: #F5F5F0; }
+      ::-webkit-scrollbar-thumb { background: #C5A059; border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: #1B365D; }
+      html { scroll-behavior: smooth; height: 100%; }
+      body { margin: 0; padding: 0; background: #ffffff; color: #111; font-family: 'Lato', sans-serif; height: 100%; }
+    </style>
+
+    <link rel="stylesheet" href="./index.css">
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@18.2.0",
+        "react/": "https://esm.sh/react@18.2.0/",
+        "react-dom": "https://esm.sh/react-dom@18.2.0",
+        "react-dom/": "https://esm.sh/react-dom@18.2.0/",
+        "lucide-react": "https://esm.sh/lucide-react@0.263.1?external=react",
+        "framer-motion": "https://esm.sh/framer-motion@10.12.16?external=react,react-dom",
+        "react-imask": "https://esm.sh/react-imask@7.1.3?external=react,react-dom",
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/examples/jsm/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+        "cannon-es": "https://unpkg.com/cannon-es@0.20.0/dist/cannon-es.js"
+      }
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-CbOMnCk8.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
