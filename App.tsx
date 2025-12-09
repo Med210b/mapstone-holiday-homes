@@ -3,7 +3,7 @@ import { GeometricLuxuryScene, WhiteLuxuryScene } from './components/QuantumScen
 import { PropertyShowcase, AmenityGrid, BookingBenefits } from './components/Diagrams';
 import { WhatsAppIcon, LogoBayut, LogoDubizzle, LogoPropertyFinder, LogoBooking, LogoAirbnb } from './components/Icons';
 import { PrivacyPolicy, TermsConditions, FAQs } from './components/LegalPages';
-import { ArrowDown, Menu, X, Calendar, Globe, Star, Phone, Mail, ChevronDown, Search, Check, CircleHelp, MapPin, Facebook, Instagram, Smartphone, TrendingUp, Shield, BarChart3, Users, Loader2, AlertCircle, CheckCircle2, Crown } from 'lucide-react';
+import { ArrowDown, Menu, X, Calendar, Globe, Star, Phone, Mail, ChevronDown, Search, Check, HelpCircle, MapPin, Facebook, Instagram, Smartphone, TrendingUp, Shield, BarChart3, Users, Loader2, AlertCircle, CheckCircle2, Crown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IMaskInput } from 'react-imask';
 import { Lang, View } from './types';
@@ -11,6 +11,7 @@ import { Lang, View } from './types';
 // Constants for Translations and Data
 const translations = {
   en: {
+    name: "English",
     nav: { home: "Home", about: "About", properties: "Properties", landlords: "Landlords", contact: "Contact Us", book: "Book Now", services: "Amenities" },
     hero: {
       location: "DUBAI • UNITED ARAB EMIRATES",
@@ -25,11 +26,7 @@ const translations = {
       p1: "MAPSTONE Holiday Homes offers a curated selection of furnished apartments in Dubai's prime districts. From the vibrant Downtown to the serene Palm Jumeirah, we provide a seamless hospitality experience.",
       p2: "Whether you are visiting for business or leisure, our properties blend hotel-grade amenities with the comfort and privacy of a home."
     },
-    properties: {
-      label: "Locations",
-      title: "Curated Residences",
-      desc: "Discover our portfolio of exclusive apartments in Dubai's most sought-after neighborhoods."
-    },
+    properties: { label: "Locations", title: "Curated Residences", desc: "Discover our portfolio of exclusive apartments in Dubai's most sought-after neighborhoods." },
     landlords: {
       label: "Property Management",
       title: "For Homeowners",
@@ -38,149 +35,88 @@ const translations = {
       vipDesc: "Stay connected to your investment. Our exclusive Owner App gives you real-time access to your property's performance.",
       list: ["Live Revenue Dashboard", "Real-Time Booking Calendar", "Monthly Performance Reports", "Transparent Expense Tracking"]
     },
-    partners: {
-      title: "Our Partners"
-    },
-    amenities: {
-      title: "Premium Amenities",
-      desc: "Every stay includes access to world-class facilities designed for your comfort."
-    },
-    reviews: {
-      label: "Testimonials",
-      title: "Guest Experiences"
-    },
-    footer: {
-      desc: "Premium short-term rental management company in Dubai.",
-      rights: "All rights reserved.",
-      privacy: "Privacy Policy",
-      terms: "Terms and Conditions",
-      faqs: "FAQS"
-    },
-    booking: {
-        title: "Request a Consultation",
-        subtitle: "Leave your details and our team will contact you shortly.",
-        name: "Full Name",
-        email: "Email Address",
-        phone: "Phone Number",
-        time: "Best Time to Call",
-        submit: "SUBMIT",
-        successTitle: "Welcome to the Inner Circle,",
-        successBody: "Your journey with MAPSTONE starts now. Keep an eye on your inbox."
-    },
-    contactPage: {
-        title: "Get in Touch",
-        subtitle: "We are here to assist you with your booking or property management inquiries.",
-        phoneLabel: "Call Us",
-        emailLabel: "Email Us",
-        locationLabel: "Visit Us",
-        socialLabel: "Follow Us"
-    },
-    servicesPage: {
-        title: "Our Services",
-        subtitle: "Solutions complètes de gestion immobilière conçues pour les propriétaires de luxe.",
-        items: [
-            { title: "Optimisation des Annonces", desc: "Photographie professionnelle et descriptions optimisées SEO pour un meilleur classement sur Airbnb, Booking.com, etc." },
-            { title: "Tarification Dynamique", desc: "Stratégies de prix basées sur l'IA qui s'ajustent quotidiennement selon la demande et les événements locaux." },
-            { title: "Sélection des Invités", desc: "Processus de sélection rigoureux pour garantir des invités respectueux et protéger vos actifs immobiliers." },
-            { title: "Maintenance et Entretien", desc: "Inspections régulières, nettoyage professionnel et support maintenance 24/7 pour garder votre propriété impeccable." }
-        ],
-        app: {
-            title: "Portail Propriétaire VIP",
-            desc: "La transparence est clé. Nous vous offrons un accès VIP à notre application exclusive Propriétaire.",
-            features: [
-                "Calendrier de Réservation en Temps Réel",
-                "Suivi des Revenus en Direct",
-                "Rapports d'Occupation",
-                "Communication Directe"
-            ]
-        }
-    }
+    partners: { title: "Our Partners" },
+    amenities: { title: "Premium Amenities", desc: "Every stay includes access to world-class facilities designed for your comfort." },
+    reviews: { label: "Testimonials", title: "Guest Experiences" },
+    footer: { desc: "Premium short-term rental management company in Dubai.", rights: "All rights reserved.", privacy: "Privacy Policy", terms: "Terms & Conditions", faqs: "FAQS" },
+    booking: { title: "Request a Consultation", subtitle: "Leave your details and our team will contact you shortly.", name: "Full Name", email: "Email Address", phone: "Phone Number", time: "Best Time to Call", submit: "SUBMIT", successTitle: "Welcome to the Inner Circle,", successBody: "Your journey with MAPSTONE starts now. Keep an eye on your inbox." },
+    contactPage: { title: "Get in Touch", subtitle: "We are here to assist you with your booking or property management inquiries.", phoneLabel: "Call Us", emailLabel: "Email Us", locationLabel: "Visit Us", socialLabel: "Follow Us" },
+    servicesPage: { title: "Our Services", subtitle: "Solutions complètes de gestion immobilière conçues pour les propriétaires de luxe.", items: [{title: "Optimisation des Annonces", desc: "Photographie professionnelle et descriptions optimisées SEO pour un meilleur classement sur Airbnb, Booking.com, etc."}, {title: "Tarification Dynamique", desc: "Stratégies de prix basées sur l'IA qui s'ajustent quotidiennement selon la demande et les événements locaux."}, {title: "Sélection des Invités", desc: "Processus de sélection rigoureux pour garantir des invités respectueux et protéger vos actifs immobiliers."}, {title: "Maintenance et Entretien", desc: "Inspections régulières, nettoyage professionnel et support maintenance 24/7 pour garder votre propriété impeccable."}], app: { title: "Portail Propriétaire VIP", desc: "La transparence est clé. Nous vous offrons un accès VIP à notre application exclusive Propriétaire.", features: ["Calendrier de Réservation en Temps Réel", "Suivi des Revenus en Direct", "Rapports d'Occupation", "Communication Directe"] } }
   },
   fr: {
+    name: "Français",
     nav: { home: "Accueil", about: "À propos", properties: "Propriétés", landlords: "Propriétaires", contact: "Nous Contacter", book: "Réserver", services: "Équipements" },
-    hero: {
-      location: "DUBAÏ • ÉMIRATS ARABES UNIS",
-      title: "MAPSTONE",
-      subtitle: "Holiday Homes",
-      desc: "Découvrez le summum du luxe à Dubaï. Locations à court terme haut de gamme dans les quartiers les plus prestigieux.",
-      cta: "Trouver Votre Séjour"
-    },
-    about: {
-      label: "Notre Philosophie",
-      title: "Le Luxe Redéfini",
-      p1: "MAPSTONE Holiday Homes propose une sélection soignée d'appartements meublés dans les meilleurs quartiers de Dubaï. Du dynamique Downtown au serein Palm Jumeirah, nous offrons une expérience d'hospitalité sans faille.",
-      p2: "Que vous visitiez pour affaires ou pour le plaisir, nos propriétés allient des équipements de qualité hôtelière au confort et à l'intimité d'un foyer."
-    },
-    properties: {
-      label: "Emplacements",
-      title: "Résidences Curatées",
-      desc: "Découvrez notre portefeuille d'appartements exclusifs dans les quartiers les plus prisés de Dubaï."
-    },
-    landlords: {
-      label: "Gestion Immobilière",
-      title: "Pour les Propriétaires",
-      desc: "Maximisez le potentiel de votre propriété avec nos services de gestion complets. Nous gérons le marketing, la sélection des invités et la maintenance.",
-      vipTitle: "Accès App VIP",
-      vipDesc: "Restez connecté à votre investissement. Notre application propriétaire exclusive vous donne un accès en temps réel aux performances de votre propriété.",
-      list: ["Tableau de bord des revenus en direct", "Calendrier de réservation en temps réel", "Rapports de performance mensuels", "Suivi transparent des dépenses"]
-    },
-    partners: {
-      title: "Nos Partenaires"
-    },
-    amenities: {
-      title: "Équipements Premium",
-      desc: "Chaque séjour comprend l'accès à des installations de classe mondiale conçues pour votre confort."
-    },
-    reviews: {
-      label: "Témoignages",
-      title: "Expériences Clients"
-    },
-    footer: {
-      desc: "Société de gestion de location à court terme premium à Dubaï.",
-      rights: "Tous droits réservés.",
-      privacy: "Politique de Confidentialité",
-      terms: "Termes et Conditions",
-      faqs: "FAQ"
-    },
-    booking: {
-        title: "Demander une Consultation",
-        subtitle: "Laissez vos coordonnées et notre équipe vous contactera sous peu.",
-        name: "Nom Complet",
-        email: "Adresse Email",
-        phone: "Numéro de Téléphone",
-        time: "Meilleur moment pour appeler",
-        submit: "SOUMETTRE",
-        successTitle: "Bienvenue dans le Cercle Intérieur,",
-        successBody: "Votre voyage avec MAPSTONE commence maintenant. Surveillez votre boîte de réception."
-    },
-    contactPage: {
-        title: "Contactez-nous",
-        subtitle: "Nous sommes là pour vous aider avec vos demandes de réservation ou de gestion immobilière.",
-        phoneLabel: "Appelez-nous",
-        emailLabel: "Envoyez-nous un email",
-        locationLabel: "Visitez-nous",
-        socialLabel: "Suivez-nous"
-    },
-    servicesPage: {
-        title: "Nos Services",
-        subtitle: "Solutions complètes de gestion immobilière conçues pour les propriétaires de luxe.",
-        items: [
-            { title: "Optimisation des Annonces", desc: "Photographie professionnelle et descriptions optimisées SEO pour un meilleur classement sur Airbnb, Booking.com, etc." },
-            { title: "Tarification Dynamique", desc: "Stratégies de prix basées sur l'IA qui s'ajustent quotidiennement selon la demande et les événements locaux." },
-            { title: "Sélection des Invités", desc: "Processus de sélection rigoureux pour garantir des invités respectueux et protéger vos actifs immobiliers." },
-            { title: "Maintenance et Entretien", desc: "Inspections régulières, nettoyage professionnel et support maintenance 24/7 pour garder votre propriété impeccable." }
-        ],
-        app: {
-            title: "Portail Propriétaire VIP",
-            desc: "La transparence est clé. Nous vous offrons un accès VIP à notre application exclusive Propriétaire.",
-            features: [
-                "Calendrier de Réservation en Temps Réel",
-                "Suivi des Revenus en Direct",
-                "Rapports d'Occupation",
-                "Communication Directe"
-            ]
-        }
-    }
+    hero: { location: "DUBAÏ • ÉMIRATS ARABES UNIS", title: "MAPSTONE", subtitle: "Maisons de Vacances", desc: "Découvrez le summum du luxe à Dubaï. Locations à court terme haut de gamme dans les quartiers les plus prestigieux.", cta: "Trouver Votre Séjour" },
+    about: { label: "Notre Philosophie", title: "Le Luxe Redéfini", p1: "MAPSTONE Holiday Homes propose une sélection soignée d'appartements meublés dans les meilleurs quartiers de Dubaï. Du dynamique Downtown au serein Palm Jumeirah, nous offrons une expérience d'hospitalité sans faille.", p2: "Que vous visitiez pour affaires ou pour le plaisir, nos propriétés allient des équipements de qualité hôtelière au confort et à l'intimité d'un foyer." },
+    properties: { label: "Emplacements", title: "Résidences Curatées", desc: "Découvrez notre portefeuille d'appartements exclusifs dans les quartiers les plus prisés de Dubaï." },
+    landlords: { label: "Gestion Immobilière", title: "Pour les Propriétaires", desc: "Maximisez le potentiel de votre propriété avec nos services de gestion complets. Nous gérons le marketing, la sélection des invités et la maintenance.", vipTitle: "Accès App VIP", vipDesc: "Restez connecté à votre investissement. Notre application propriétaire exclusive vous donne un accès en temps réel aux performances de votre propriété.", list: ["Tableau de bord des revenus en direct", "Calendrier de réservation en temps réel", "Rapports de performance mensuels", "Suivi transparent des dépenses"] },
+    partners: { title: "Nos Partenaires" },
+    amenities: { title: "Équipements Premium", desc: "Chaque séjour comprend l'accès à des installations de classe mondiale conçues pour votre confort." },
+    reviews: { label: "Témoignages", title: "Expériences Clients" },
+    footer: { desc: "Société de gestion de location à court terme premium à Dubaï.", rights: "Tous droits réservés.", privacy: "Politique de Confidentialité", terms: "Termes et Conditions", faqs: "FAQ" },
+    booking: { title: "Demander une Consultation", subtitle: "Laissez vos coordonnées et notre équipe vous contactera sous peu.", name: "Nom Complet", email: "Adresse Email", phone: "Numéro de Téléphone", time: "Meilleur moment pour appeler", submit: "SOUMETTRE", successTitle: "Bienvenue dans le Cercle Intérieur,", successBody: "Votre voyage avec MAPSTONE commence maintenant. Surveillez votre boîte de réception." },
+    contactPage: { title: "Contactez-nous", subtitle: "Nous sommes là pour vous aider avec vos demandes de réservation ou de gestion immobilière.", phoneLabel: "Appelez-nous", emailLabel: "Envoyez-nous un email", locationLabel: "Visitez-nous", socialLabel: "Suivez-nous" },
+    servicesPage: { title: "Nos Services", subtitle: "Solutions complètes.", items: [{title: "Optimisation", desc: "Photos pro & SEO."}, {title: "Prix Dynamiques", desc: "Stratégies IA."}, {title: "Sélection Invités", desc: "Processus rigoureux."}, {title: "Maintenance", desc: "Support 24/7."}], app: { title: "Portail Propriétaire", desc: "La transparence est clé.", features: ["Calendrier", "Revenus en direct", "Rapports", "Chat"] } }
+  },
+  es: {
+    name: "Español",
+    nav: { home: "Inicio", about: "Nosotros", properties: "Propiedades", landlords: "Propietarios", contact: "Contacto", book: "Reservar", services: "Servicios" },
+    hero: { location: "DUBÁI • EMIRATOS ÁRABES UNIDOS", title: "MAPSTONE", subtitle: "Casas Vacacionales", desc: "Experimente el pináculo de la vida de lujo en Dubái. Alquileres premium a corto plazo.", cta: "Buscar Estancia" },
+    about: { label: "Nuestra Filosofía", title: "Lujo Redefinido", p1: "MAPSTONE ofrece una selección curada de apartamentos amueblados en los mejores distritos de Dubái.", p2: "Nuestras propiedades combinan servicios de calidad hotelera con la comodidad de un hogar." },
+    properties: { label: "Ubicaciones", title: "Residencias Curadas", desc: "Descubra nuestra cartera de apartamentos exclusivos." },
+    landlords: { label: "Gestión de Propiedades", title: "Para Propietarios", desc: "Maximice el potencial de su propiedad con nuestros servicios integrales.", vipTitle: "Acceso App VIP", vipDesc: "Manténgase conectado con su inversión.", list: ["Panel de ingresos en vivo", "Calendario en tiempo real", "Informes mensuales", "Rastreo de gastos"] },
+    partners: { title: "Nuestros Socios" },
+    amenities: { title: "Comodidades Premium", desc: "Cada estancia incluye acceso a instalaciones de clase mundial." },
+    reviews: { label: "Testimonios", title: "Experiencias de Huéspedes" },
+    footer: { desc: "Empresa de gestión de alquileres premium en Dubái.", rights: "Todos los derechos reservados.", privacy: "Privacidad", terms: "Términos y Condiciones", faqs: "Preguntas" },
+    booking: { title: "Solicitar Consulta", subtitle: "Deje sus datos y nuestro equipo le contactará.", name: "Nombre Completo", email: "Correo", phone: "Teléfono", time: "Mejor hora para llamar", submit: "ENVIAR", successTitle: "Bienvenido,", successBody: "Su viaje con MAPSTONE comienza ahora." },
+    contactPage: { title: "Contáctenos", subtitle: "Estamos aquí para ayudarle.", phoneLabel: "Llámenos", emailLabel: "Envíenos un email", locationLabel: "Visítenos", socialLabel: "Síganos" },
+    servicesPage: { title: "Nuestros Servicios", subtitle: "Soluciones completas.", items: [{title: "Optimización", desc: "Fotografía pro & SEO."}, {title: "Precios Dinámicos", desc: "Estrategias IA."}, {title: "Selección de Huéspedes", desc: "Proceso riguroso."}, {title: "Mantenimiento", desc: "Soporte 24/7."}], app: { title: "Portal de Propietarios", desc: "La transparencia es clave.", features: ["Calendario", "Ingresos en vivo", "Informes", "Chat"] } }
+  },
+  de: {
+    name: "Deutsch",
+    nav: { home: "Startseite", about: "Über uns", properties: "Immobilien", landlords: "Eigentümer", contact: "Kontakt", book: "Buchen", services: "Ausstattung" },
+    hero: { location: "DUBAI • VEREINIGTE ARABISCHE EMIRATE", title: "MAPSTONE", subtitle: "Ferienwohnungen", desc: "Erleben Sie den Höhepunkt des luxuriösen Wohnens in Dubai. Premium-Kurzzeitvermietungen.", cta: "Aufenthalt Finden" },
+    about: { label: "Unsere Philosophie", title: "Luxus Neu Definiert", p1: "MAPSTONE bietet eine kuratierte Auswahl an möblierten Apartments in den besten Vierteln Dubais.", p2: "Unsere Immobilien verbinden hotelähnliche Annehmlichkeiten mit dem Komfort eines Zuhauses." },
+    properties: { label: "Standorte", title: "Kuratierte Residenzen", desc: "Entdecken Sie unser Portfolio an exklusiven Apartments." },
+    landlords: { label: "Immobilienverwaltung", title: "Für Eigentümer", desc: "Maximieren Sie das Potenzial Ihrer Immobilie mit unseren umfassenden Dienstleistungen.", vipTitle: "VIP App Zugang", vipDesc: "Bleiben Sie mit Ihrer Investition verbunden.", list: ["Live-Umsatz-Dashboard", "Echtzeit-Buchungskalender", "Monatliche Berichte", "Ausgabenverfolgung"] },
+    partners: { title: "Unsere Partner" },
+    amenities: { title: "Premium Ausstattung", desc: "Jeder Aufenthalt beinhaltet Zugang zu erstklassigen Einrichtungen." },
+    reviews: { label: "Bewertungen", title: "Gästeerlebnisse" },
+    footer: { desc: "Premium-Kurzzeitvermietungsmanagement in Dubai.", rights: "Alle Rechte vorbehalten.", privacy: "Datenschutz", terms: "AGB", faqs: "FAQ" },
+    booking: { title: "Beratung Anfordern", subtitle: "Hinterlassen Sie Ihre Daten, unser Team kontaktiert Sie.", name: "Vollständiger Name", email: "E-Mail", phone: "Telefon", time: "Beste Anrufzeit", submit: "ABSENDEN", successTitle: "Willkommen,", successBody: "Ihre Reise mit MAPSTONE beginnt jetzt." },
+    contactPage: { title: "Kontaktieren Sie uns", subtitle: "Wir sind hier, um zu helfen.", phoneLabel: "Anrufen", emailLabel: "E-Mail senden", locationLabel: "Besuchen Sie uns", socialLabel: "Folgen Sie uns" },
+    servicesPage: { title: "Unsere Dienstleistungen", subtitle: "Komplette Lösungen.", items: [{title: "Optimierung", desc: "Profi-Fotos & SEO."}, {title: "Dynamische Preise", desc: "KI-Strategien."}, {title: "Gästeprüfung", desc: "Strenger Prozess."}, {title: "Wartung", desc: "24/7 Support."}], app: { title: "Eigentümerportal", desc: "Transparenz ist der Schlüssel.", features: ["Kalender", "Live-Umsatz", "Berichte", "Chat"] } }
+  },
+  ar: {
+    name: "العربية",
+    nav: { home: "الرئيسية", about: "من نحن", properties: "عقاراتنا", landlords: "الملاك", contact: "تواصل معنا", book: "احجز الآن", services: "المميزات" },
+    hero: { location: "دبي • الإمارات العربية المتحدة", title: "مابستون", subtitle: "بيوت العطلات", desc: "استمتع بقمة الرفاهية في دبي. إيجارات قصيرة الأجل فاخرة في أرقى المواقع.", cta: "ابحث عن إقامتك" },
+    about: { label: "فلسفتنا", title: "مفهوم جديد للرفاهية", p1: "تقدم مابستون مجموعة مختارة من الشقق المفروشة في أرقى أحياء دبي. من وسط المدينة النابض بالحياة إلى نخلة جميرا الهادئة.", p2: "تجمع عقاراتنا بين وسائل الراحة الفندقية وخصوصية المنزل." },
+    properties: { label: "المواقع", title: "إقامات مميزة", desc: "اكتشف محفظتنا من الشقق الحصرية في أكثر الأحياء طلباً في دبي." },
+    landlords: { label: "إدارة العقارات", title: "لأصحاب المنازل", desc: "ضاعف إمكانات عقارك مع خدمات الإدارة الشاملة لدينا.", vipTitle: "تطبيق كبار الشخصيات", vipDesc: "ابق على اتصال باستثمارك من خلال تطبيق الملاك الحصري.", list: ["لوحة متابعة الإيرادات", "تقويم الحجوزات المباشر", "تقارير الأداء الشهرية", "تتبع المصاريف بشفافية"] },
+    partners: { title: "شركاؤنا" },
+    amenities: { title: "وسائل الراحة", desc: "تشمل كل إقامة الوصول إلى مرافق عالمية المستوى مصممة لراحتك." },
+    reviews: { label: "آراء الضيوف", title: "تجارب الضيوف" },
+    footer: { desc: "شركة إدارة تأجير قصير الأجل متميزة في دبي.", rights: "جميع الحقوق محفوظة.", privacy: "سياسة الخصوصية", terms: "الشروط والأحكام", faqs: "الأسئلة الشائعة" },
+    booking: { title: "طلب استشارة", subtitle: "اترك بياناتك وسيقوم فريقنا بالاتصال بك قريباً.", name: "الاسم الكامل", email: "البريد الإلكتروني", phone: "رقم الهاتف", time: "أفضل وقت للاتصال", submit: "إرسال", successTitle: "مرحباً بك في الدائرة المقربة،", successBody: "رحلتك مع مابستون تبدأ الآن." },
+    contactPage: { title: "تواصل معنا", subtitle: "نحن هنا لمساعدتك في استفساراتك.", phoneLabel: "اتصل بنا", emailLabel: "راسلنا", locationLabel: "زورونا", socialLabel: "تابعونا" },
+    servicesPage: { title: "خدماتنا", subtitle: "حلول إدارة عقارات متكاملة.", items: [{title: "تحسين القوائم", desc: "تصوير احترافي و SEO."}, {title: "تسعير ديناميكي", desc: "استراتيجيات تسعير بالذكاء الاصطناعي."}, {title: "فحص الضيوف", desc: "عملية فحص دقيقة."}, {title: "الصيانة", desc: "دعم وتنظيف 24/7."}], app: { title: "بوابة الملاك", desc: "الشفافية هي المفتاح.", features: ["تقويم فوري", "إيرادات مباشرة", "تقارير الإشغال", "تواصل مباشر"] } }
+  },
+  ru: {
+    name: "Русский",
+    nav: { home: "Главная", about: "О нас", properties: "Объекты", landlords: "Собственникам", contact: "Контакты", book: "Забронировать", services: "Удобства" },
+    hero: { location: "ДУБАЙ • ОБЪЕДИНЕННЫЕ АРАБСКИЕ ЭМИРАТЫ", title: "MAPSTONE", subtitle: "Дома для отдыха", desc: "Испытайте вершину роскошной жизни в Дубае. Премиальная краткосрочная аренда в самых престижных районах города.", cta: "Найти жилье" },
+    about: { label: "Наша философия", title: "Новое определение роскоши", p1: "MAPSTONE предлагает избранную коллекцию меблированных апартаментов в лучших районах Дубая. От оживленного центра до безмятежной Пальмы Джумейра.", p2: "Наши объекты сочетают в себе удобства гостиничного класса с комфортом и уединением дома." },
+    properties: { label: "Районы", title: "Избранные резиденции", desc: "Откройте для себя наше портфолио эксклюзивных апартаментов в самых востребованных районах Дубая." },
+    landlords: { label: "Управление недвижимостью", title: "Для владельцев", desc: "Максимизируйте потенциал вашей недвижимости с нашими комплексными услугами управления.", vipTitle: "VIP-доступ к приложению", vipDesc: "Оставайтесь на связи с вашими инвестициями через наше эксклюзивное приложение для владельцев.", list: ["Панель доходов в реальном времени", "Календарь бронирований онлайн", "Ежемесячные отчеты об эффективности", "Прозрачное отслеживание расходов"] },
+    partners: { title: "Наши партнеры" },
+    amenities: { title: "Премиальные удобства", desc: "Каждое проживание включает доступ к удобствам мирового класса, созданным для вашего комфорта." },
+    reviews: { label: "Отзывы", title: "Впечатления гостей" },
+    footer: { desc: "Премиальная управляющая компания по краткосрочной аренде в Дубае.", rights: "Все права защищены.", privacy: "Политика конфиденциальности", terms: "Условия использования", faqs: "FAQ" },
+    booking: { title: "Запросить консультацию", subtitle: "Оставьте свои данные, и наша команда свяжется с вами в ближайшее время.", name: "ФИО", email: "Email", phone: "Номер телефона", time: "Лучшее время для звонка", submit: "ОТПРАВИТЬ", successTitle: "Добро пожаловать,", successBody: "Ваше путешествие с MAPSTONE начинается сейчас." },
+    contactPage: { title: "Свяжитесь с нами", subtitle: "Мы здесь, чтобы помочь вам с бронированием или вопросами управления.", phoneLabel: "Позвонить", emailLabel: "Написать Email", locationLabel: "Наш офис", socialLabel: "Подписаться" },
+    servicesPage: { title: "Наши услуги", subtitle: "Комплексные решения для управления.", items: [{title: "Оптимизация объявлений", desc: "Профессиональные фото и SEO."}, {title: "Динамическое ценообразование", desc: "Стратегии на основе ИИ."}, {title: "Проверка гостей", desc: "Строгий процесс отбора."}, {title: "Техническое обслуживание", desc: "Поддержка 24/7."}], app: { title: "Портал владельца", desc: "Прозрачность — это ключ.", features: ["Календарь", "Доходы онлайн", "Отчеты", "Чат"] } }
   }
 };
 
@@ -429,68 +365,30 @@ const COUNTRY_CODES = [
 ].sort((a, b) => a.country.localeCompare(b.country));
 
 const VideoPreloader: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
-    const iframeRef = useRef<HTMLIFrameElement>(null);
-
-    useEffect(() => {
-        // Function to inject Vimeo script and initialize player
-        const initVimeo = () => {
-            if ((window as any).Vimeo && iframeRef.current) {
-                const player = new (window as any).Vimeo.Player(iframeRef.current);
-                
-                // Force HD quality using embed params (in src) and method
-                // player.setQuality('1080p').catch((error: any) => {
-                //    // Ignore quality setting error, src param handles it mostly
-                // });
-
-                player.setVolume(0); // Ensure muted
-                player.setLoop(false).catch(() => {});
-                
-                // When video ends, fade out
-                player.on('ended', () => {
-                   // Trigger exit immediately to prevent static frame "blurring" effect
-                   onComplete();
-                });
-
-                player.play().catch(() => {
-                    // Autoplay catch
-                });
-            }
-        };
-
-        if (!(window as any).Vimeo) {
-            const script = document.createElement('script');
-            script.src = "https://player.vimeo.com/api/player.js";
-            script.async = true;
-            script.onload = initVimeo;
-            document.body.appendChild(script);
-            
-            return () => {
-                // Cleanup script if component unmounts before load
-                if (document.body.contains(script)) {
-                    document.body.removeChild(script);
-                }
-            };
-        } else {
-            initVimeo();
-        }
-    }, [onComplete]);
-
     return (
         <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 1.5, ease: "easeOut" }} // Match the 1.5s ease requested
+            transition={{ duration: 1.5, ease: "easeOut" }}
             className="fixed inset-0 z-[9999] flex items-center justify-center bg-black"
         >
-            <iframe
-                ref={iframeRef}
-                src="https://player.vimeo.com/video/1143941535?background=1&autoplay=1&loop=0&byline=0&title=0"
-                style={{ width: '100%', height: '100%' }}
-                frameBorder="0"
-                allow="autoplay; fullscreen; picture-in-picture"
-                allowFullScreen
-                title="Mapstone Intro"
-            ></iframe>
+            <video
+                /* Pointing to the local file in the public folder */
+                src="/loader.mp4"
+                
+                /* Highest quality playback settings */
+                autoPlay
+                muted
+                playsInline
+                preload="auto"
+                
+                /* Event listener to fade out when video ends */
+                onEnded={onComplete}
+                
+                /* CSS to ensure it covers the screen without stretching/distorting */
+                className="w-full h-full object-cover"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
         </motion.div>
     );
 };
@@ -901,6 +799,7 @@ const App = () => {
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [bookingOpen, setBookingOpen] = useState(false);
+    const [langDropdownOpen, setLangDropdownOpen] = useState(false); // New state for desktop dropdown
     const t = translations[lang];
 
     useEffect(() => {
@@ -955,8 +854,31 @@ const App = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const closeDropdown = (e: MouseEvent) => {
+            if (langDropdownOpen && !(e.target as Element).closest('.lang-dropdown')) {
+                setLangDropdownOpen(false);
+            }
+        };
+        document.addEventListener('click', closeDropdown);
+        return () => document.removeEventListener('click', closeDropdown);
+    }, [langDropdownOpen]);
+
+    const languageOptions: { code: Lang; label: string; flag: string }[] = [
+        { code: 'en', label: 'English', flag: '🇺🇸' },
+        { code: 'fr', label: 'Français', flag: '🇫🇷' },
+        { code: 'es', label: 'Español', flag: '🇪🇸' },
+        { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
+        { code: 'ar', label: 'العربية', flag: '🇦🇪' },
+        { code: 'ru', label: 'Русский', flag: '🇷🇺' }
+    ];
+
     return (
-        <div className="font-sans text-stone-800 antialiased selection:bg-nobel-gold selection:text-white overflow-x-hidden">
+        <div 
+            className={`font-sans text-stone-800 antialiased selection:bg-nobel-gold selection:text-white overflow-x-hidden ${lang === 'ar' ? 'font-arabic' : ''}`}
+            dir={lang === 'ar' ? 'rtl' : 'ltr'}
+        >
             <AnimatePresence>
                 {loading && <VideoPreloader onComplete={() => setLoading(false)} />}
             </AnimatePresence>
@@ -987,13 +909,42 @@ const App = () => {
                     </div>
 
                     <div className="hidden lg:flex items-center gap-4">
-                        <button 
-                            onClick={() => setLang(lang === 'en' ? 'fr' : 'en')}
-                            className={`flex items-center gap-1 text-xs font-bold uppercase tracking-widest hover:text-nobel-gold transition-colors ${scrolled || currentView !== 'home' ? 'text-mapstone-blue' : 'text-white'}`}
-                        >
-                            <Globe size={16} />
-                            {lang}
-                        </button>
+                        {/* Desktop Language Dropdown */}
+                        <div className="relative lang-dropdown">
+                            <button 
+                                onClick={(e) => { e.stopPropagation(); setLangDropdownOpen(!langDropdownOpen); }}
+                                className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:text-nobel-gold transition-colors ${scrolled || currentView !== 'home' ? 'text-mapstone-blue' : 'text-white'}`}
+                            >
+                                <Globe size={16} />
+                                {lang === 'ar' ? 'AR' : lang.toUpperCase()}
+                                <ChevronDown size={12} className={`transition-transform ${langDropdownOpen ? 'rotate-180' : ''}`} />
+                            </button>
+                            
+                            <AnimatePresence>
+                                {langDropdownOpen && (
+                                    <motion.div 
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: 10 }}
+                                        className={`absolute top-full mt-4 w-40 bg-white shadow-xl border border-stone-100 rounded-sm overflow-hidden ${lang === 'ar' ? 'left-0' : 'right-0'}`}
+                                    >
+                                        {languageOptions.map((opt) => (
+                                            <button
+                                                key={opt.code}
+                                                onClick={() => { setLang(opt.code); setLangDropdownOpen(false); }}
+                                                className={`w-full text-left px-4 py-3 text-sm hover:bg-stone-50 flex items-center gap-3 transition-colors ${lang === opt.code ? 'bg-stone-50 text-nobel-gold font-bold' : 'text-stone-600'}`}
+                                                dir="ltr" 
+                                            >
+                                                <span className="text-lg">{opt.flag}</span>
+                                                <span>{opt.label}</span>
+                                                {lang === opt.code && <Check size={14} className="ml-auto" />}
+                                            </button>
+                                        ))}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+
                         <button 
                             onClick={() => setBookingOpen(true)}
                             className="bg-nobel-gold text-white px-6 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-mapstone-blue transition-colors shadow-lg"
@@ -1016,13 +967,13 @@ const App = () => {
             <AnimatePresence>
                 {menuOpen && (
                     <motion.div 
-                        initial={{ opacity: 0, x: '100%' }}
+                        initial={{ opacity: 0, x: lang === 'ar' ? '-100%' : '100%' }} 
                         animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: '100%' }}
+                        exit={{ opacity: 0, x: lang === 'ar' ? '-100%' : '100%' }}
                         transition={{ type: "tween", duration: 0.3 }}
-                        className="fixed inset-0 z-30 bg-white flex flex-col justify-center items-center lg:hidden"
+                        className="fixed inset-0 z-30 bg-white flex flex-col justify-center items-center lg:hidden overflow-y-auto"
                     >
-                         <div className="flex flex-col gap-6 text-center">
+                         <div className="flex flex-col gap-6 text-center w-full max-w-xs py-10">
                             {navLinks.map(link => (
                                 <button 
                                     key={link.id}
@@ -1033,12 +984,23 @@ const App = () => {
                                 </button>
                             ))}
                             <div className="w-12 h-px bg-stone-200 mx-auto my-4"></div>
-                             <button 
-                                onClick={() => { setLang(lang === 'en' ? 'fr' : 'en'); setMenuOpen(false); }}
-                                className="text-lg font-medium uppercase tracking-widest text-stone-500"
-                            >
-                                {lang === 'en' ? 'Français' : 'English'}
-                            </button>
+                            
+                            {/* Mobile Language List */}
+                            <div className="grid grid-cols-1 gap-2">
+                                <p className="text-xs uppercase tracking-widest text-stone-400 mb-2 font-bold">Select Language</p>
+                                {languageOptions.map((opt) => (
+                                    <button
+                                        key={opt.code}
+                                        onClick={() => { setLang(opt.code); setMenuOpen(false); }}
+                                        className={`py-2 px-4 rounded-sm transition-colors flex items-center justify-center gap-2 ${lang === opt.code ? 'bg-nobel-gold text-white shadow-md' : 'text-stone-600 hover:bg-stone-50'}`}
+                                        dir="ltr"
+                                    >
+                                        <span>{opt.flag}</span>
+                                        <span className="font-medium">{opt.label}</span>
+                                    </button>
+                                ))}
+                            </div>
+
                             <button 
                                 onClick={() => { setBookingOpen(true); setMenuOpen(false); }}
                                 className="mt-4 bg-nobel-gold text-white px-8 py-3 rounded-sm text-sm font-bold uppercase tracking-widest"
@@ -1132,7 +1094,7 @@ const App = () => {
                                     
                                     {/* Secondary Detail Image - Floating */}
                                     <motion.div 
-                                        className="absolute -bottom-10 -right-10 w-56 h-56 border-8 border-white shadow-2xl z-20 hidden md:block"
+                                        className={`absolute -bottom-10 w-56 h-56 border-8 border-white shadow-2xl z-20 hidden md:block ${lang === 'ar' ? '-left-10' : '-right-10'}`}
                                         initial={{ y: 20, opacity: 0 }}
                                         whileInView={{ y: 0, opacity: 1 }}
                                         transition={{ delay: 0.3, duration: 0.8 }}

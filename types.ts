@@ -1,5 +1,6 @@
-export type Lang = 'en' | 'fr';
-export type View = 'home' | 'privacy' | 'terms' | 'faq' | 'contact' | 'services';
+export type Lang = 'en' | 'fr' | 'es' | 'de' | 'ar' | 'ru';
+
+export type View = 'home' | 'about' | 'properties' | 'services' | 'landlords' | 'contact' | 'privacy' | 'terms' | 'faq';
 
 export interface TranslationStructure {
   nav: { [key: string]: string };
@@ -10,6 +11,8 @@ export interface TranslationStructure {
     label: string;
     title: string;
     desc: string;
+    vipTitle: string;
+    vipDesc: string;
     list: string[];
   };
   partners: { title: string };

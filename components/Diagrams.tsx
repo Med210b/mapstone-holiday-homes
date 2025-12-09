@@ -184,10 +184,12 @@ export const PropertyShowcase = ({ lang, onBook }: { lang: Lang; onBook: () => v
             title: lang === 'en' ? "The Address Downtown" : "The Address Centre-ville",
             location: "Downtown Dubai",
             images: [
-                "https://images.unsplash.com/photo-1582672060674-bc2bd808a8b5?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1512453979798-5ea904ac66de?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=800&q=80"
+                "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1555636222-cae831e670b3?auto=format&fit=crop&w=800&q=80", // Fixed Image 3 (Luxury Hotel Room)
+                "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80"  // Fixed Image 6 (Modern Interior)
             ],
             price: "AED 1,200 / night",
             specs: "2 Beds • 1,400 sqft"
@@ -198,22 +200,32 @@ export const PropertyShowcase = ({ lang, onBook }: { lang: Lang; onBook: () => v
             location: "Palm Jumeirah",
             images: [
                 "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1512918760532-3edbed72481b?auto=format&fit=crop&w=800&q=80", // Fixed Image 3 (Beach View)
+                "https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=800&q=80", // Fixed Image 3 (Beach View)
+                "https://images.unsplash.com/photo-1615880484746-a134be9a6ecf?auto=format&fit=crop&w=800&q=80",
                 "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1512918760532-3edbed72481b?auto=format&fit=crop&w=800&q=80"
+                "https://images.unsplash.com/photo-1575517111478-7f60e9715b50?auto=format&fit=crop&w=800&q=80" // Fixed Image 6 (Modern Interior)
             ],
             price: "AED 3,500 / night",
             specs: "5 Beds • Beach Access"
         },
         {
             id: 3,
-            title: lang === 'en' ? "Marina Gate Penthouse" : "Penthouse Marina Gate",
+            title: lang === 'en' ? "Marina Gate Penthouse" : "Marina Gate Penthouse",
             location: "Dubai Marina",
             images: [
-                "https://images.unsplash.com/photo-1512632501-a63625052918?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1484154218962-a1c00207099b?auto=format&fit=crop&w=800&q=80"
+                "https://i.postimg.cc/nchK2cxx/1_Untitled_design.png",
+                "https://i.postimg.cc/BQn5pQ3G/2_Untitled_design.png",
+                "https://i.postimg.cc/GhmPKhR3/3_Untitled_design.png",
+                "https://i.postimg.cc/4NxvPNGf/4_Untitled_design.png",
+                "https://i.postimg.cc/xTpv4Djs/5_Untitled_design.png",
+                "https://i.postimg.cc/MK37F2Zr/6_Untitled_design.png",
+                "https://i.postimg.cc/SxX60TjG/7_Untitled_design.png",
+                "https://i.postimg.cc/sgBYF61q/8_Untitled_design.png",
+                "https://i.postimg.cc/8CMLc7R6/9_Untitled_design.png",
+                "https://i.postimg.cc/Xvd9qrfQ/10_Untitled_design.png",
+                "https://i.postimg.cc/5tL8yXBL/11_Untitled_design.png",
+                "https://i.postimg.cc/nLBqrX43/12_Untitled_design.png"
             ],
             price: "AED 2,100 / night",
             specs: "3 Beds • Marina View"
@@ -232,19 +244,21 @@ export const PropertyShowcase = ({ lang, onBook }: { lang: Lang; onBook: () => v
               "https://i.postimg.cc/rsPszjP6/799757772_1066x800.webp",
               "https://i.postimg.cc/WzHzt8fG/image.webp",
               "https://i.postimg.cc/WzHzt8Hc/unnamed.jpg"
-            ], 
+            ],
             price: "AED 500 / night",
             specs: "Studio • 460 sqft"
         },
         {
             id: 5,
             title: lang === 'en' ? "Regina Tower" : "Regina Tower",
-            location: "Jumeirah Village Circle"
+            location: "Jumeirah Village Circle",
             images: [
                 "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
                 "https://images.unsplash.com/photo-1505693314120-0d443867891c?auto=format&fit=crop&w=800&q=80",
                 "https://images.unsplash.com/photo-1484101403633-562f891dc89a?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=800&q=80"
+                "https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=800&q=80"
             ],
             price: "AED 500 / night",
             specs: "Studio • 460 sqft"
