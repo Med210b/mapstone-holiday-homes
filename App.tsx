@@ -1188,23 +1188,23 @@ const App = () => {
                                      <p className="text-stone-300 leading-relaxed mb-8 text-lg">{t.landlords.desc}</p>
                                      
                                      <div className="bg-white/10 p-6 rounded-lg backdrop-blur-sm border border-white/10 mb-8">
-                                        <h3 className="font-serif text-xl mb-2 text-nobel-gold">{t.landlords.vipTitle}</h3>
-                                        <p className="text-sm text-stone-300 mb-4">{t.landlords.vipDesc}</p>
-                                        <ul className="grid grid-cols-1 gap-3">
-                                            {t.landlords.list.map((item, idx) => (
-                                                <li key={idx} className="flex items-center gap-3 text-sm font-medium">
-                                                    <div className="w-1.5 h-1.5 rounded-full bg-nobel-gold"></div>
-                                                    {item}
-                                                </li>
-                                            ))}
-                                        </ul>
+                                         <h3 className="font-serif text-xl mb-2 text-nobel-gold">{t.landlords.vipTitle}</h3>
+                                         <p className="text-sm text-stone-300 mb-4">{t.landlords.vipDesc}</p>
+                                         <ul className="grid grid-cols-1 gap-3">
+                                             {t.landlords.list.map((item, idx) => (
+                                                 <li key={idx} className="flex items-center gap-3 text-sm font-medium">
+                                                     <div className="w-1.5 h-1.5 rounded-full bg-nobel-gold"></div>
+                                                     {item}
+                                                 </li>
+                                             ))}
+                                         </ul>
                                      </div>
 
                                      <button 
                                         onClick={() => setBookingOpen(true)}
                                         className="bg-white text-mapstone-blue px-8 py-4 rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-nobel-gold hover:text-white transition-colors"
                                      >
-                                        {lang === 'en' ? 'List Your Property' : 'Listez Votre Propriété'}
+                                         {lang === 'en' ? 'List Your Property' : 'Listez Votre Propriété'}
                                      </button>
                                 </div>
                             </div>
@@ -1212,9 +1212,9 @@ const App = () => {
                     </section>
 
                      {/* Partners */}
-                    <section className="py-16 bg-[#204c77] border-b border-nobel-gold/20 overflow-hidden">
+                    <section className="py-16 bg-white border-b border-nobel-gold/20 overflow-hidden">
                         <div className="container mx-auto px-6 mb-20 text-center">
-                            <p className="text-3xl md:text-4xl font-serif text-white">{t.partners.title}</p>
+                            <p className="text-3xl md:text-4xl font-serif text-mapstone-blue">{t.partners.title}</p>
                         </div>
                         <div className="flex overflow-hidden w-full relative">
                              <div className="flex animate-marquee whitespace-nowrap">
