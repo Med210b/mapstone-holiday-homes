@@ -8,30 +8,27 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { IMaskInput } from 'react-imask';
 import { Lang, View } from './types';
 
-// --- SPLINE BACKGROUND COMPONENT (FIXED: Correct Size & Link) ---
+// --- SPLINE BACKGROUND COMPONENT (FIXED: Small on Mobile / Normal on Desktop) ---
 const SplineAmenitiesBackground = () => {
   return (
     <div className="absolute inset-0 z-0 w-full h-full overflow-hidden bg-stone-50">
       <iframe 
-        // 1. The Correct "Greeting Robot" Link from your screenshot
         src='https://my.spline.design/genkubgreetingrobot-ohHkBUHk7ttnPrIWsoGnYPQq/' 
         frameBorder='0' 
         width='100%' 
         height='100%' 
-        // 2. FIXED CLASSES: 
-        // - 'pointer-events-none': Fixes mobile scrolling.
-        // - Removed 'scale-150': This fixes the "Too Big" issue.
-        // - 'md:scale-110': Slight zoom only on desktop to fill nicely.
-        className="w-full h-full border-none pointer-events-none md:scale-110 origin-center"
+        // CRITICAL FIXES FOR SIZE:
+        // 1. scale-[0.6]: Shrinks robot to 60% size on mobile (Zooms out so you see the full robot).
+        // 2. md:scale-100: Resets to 100% size on Desktop/Laptop.
+        // 3. pointer-events-none: Ensures you can scroll without getting stuck.
+        className="w-full h-full border-none pointer-events-none scale-[0.6] md:scale-100 origin-center"
         title="Spline 3D Robot"
       ></iframe>
       
-      {/* 3. FIXED OVERLAY:
-          Changed to 'bg-white/10' so the robot is NOT hidden.
-      */}
+      {/* Light Overlay to keep text readable */}
       <div className="absolute inset-0 bg-white/10 pointer-events-none"></div>
       
-      {/* 4. Bottom Fade for smooth transition */}
+      {/* Bottom Gradient Fade */}
       <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-stone-50 to-transparent pointer-events-none"></div>
     </div>
   );
