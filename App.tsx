@@ -8,20 +8,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { IMaskInput } from 'react-imask';
 import { Lang, View } from './types';
 
-// --- SPLINE BACKGROUND COMPONENT (FIXED: Small on Mobile / Normal on Desktop) ---
+// --- SPLINE BACKGROUND COMPONENT (FIXED: 75% Size on Mobile) ---
 const SplineAmenitiesBackground = () => {
   return (
     <div className="absolute inset-0 z-0 w-full h-full overflow-hidden bg-stone-50">
       <iframe 
+        // The New Greeting Robot Link
         src='https://my.spline.design/genkubgreetingrobot-ohHkBUHk7ttnPrIWsoGnYPQq/' 
         frameBorder='0' 
         width='100%' 
         height='100%' 
-        // CRITICAL FIXES FOR SIZE:
-        // 1. scale-[0.6]: Shrinks robot to 60% size on mobile (Zooms out so you see the full robot).
-        // 2. md:scale-100: Resets to 100% size on Desktop/Laptop.
-        // 3. pointer-events-none: Ensures you can scroll without getting stuck.
-        className="w-full h-full border-none pointer-events-none scale-[0.6] md:scale-100 origin-center"
+        // CRITICAL FIX FOR MOBILE SIZE:
+        // 1. scale-75: Shrinks the robot to 75% size on phones (Zooms out so you see the whole body).
+        // 2. md:scale-100: Keeps it at 100% size on Laptops/Desktops.
+        // 3. origin-center: Ensures it shrinks towards the middle.
+        className="w-full h-full border-none pointer-events-none scale-75 md:scale-100 origin-center"
         title="Spline 3D Robot"
       ></iframe>
       
