@@ -8,6 +8,30 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { IMaskInput } from 'react-imask';
 import { Lang, View } from './types';
 
+// --- SPLINE BACKGROUND COMPONENT (Updated with your specific Robot Link) ---
+const SplineAmenitiesBackground = () => {
+  return (
+    <div className="absolute inset-0 z-0 w-full h-full overflow-hidden">
+      {/* The Specific Spline Robot Iframe you requested */}
+      <iframe 
+        src='https://my.spline.design/r4xbot-7ole0T7KIVCaBVgephuOxbTW/' 
+        frameBorder='0' 
+        width='100%' 
+        height='100%' 
+        className="w-full h-full border-none"
+        title="Spline 3D Robot"
+      ></iframe>
+      
+      {/* White Overlay (Opacity 85%) 
+         This makes the robot look like a subtle background element
+         so the black text on top is easy to read.
+         Change 'bg-white/85' to 'bg-white/50' if you want the robot clearer.
+      */}
+      <div className="absolute inset-0 bg-white/85 pointer-events-none"></div>
+    </div>
+  );
+};
+
 // Constants for Translations and Data
 const translations = {
   en: {
@@ -1146,9 +1170,13 @@ const App = () => {
                         </div>
                     </section>
 
-                     {/* Amenities Section */}
-                    <section id="services" className="py-24 bg-[#dbc0a1]/10 border-b border-nobel-gold/20">
-                        <div className="container mx-auto px-6">
+                     {/* Amenities Section WITH SPLINE ANIMATION */}
+                    <section id="services" className="relative py-24 border-b border-nobel-gold/20 overflow-hidden">
+                        {/* 1. The Spline Animation Background */}
+                        <SplineAmenitiesBackground />
+                        
+                        {/* 2. Content (z-index 10 to sit on top) */}
+                        <div className="container mx-auto px-6 relative z-10">
                             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
                                 <div className="max-w-xl">
                                     <span className="text-nobel-gold font-bold tracking-widest text-xs uppercase mb-2 block">{lang === 'en' ? 'Services' : 'Services'}</span>
