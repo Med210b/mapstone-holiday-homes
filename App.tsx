@@ -8,27 +8,29 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { IMaskInput } from 'react-imask';
 import { Lang, View } from './types';
 
-// --- SPLINE BACKGROUND COMPONENT (FIXED: Dark Robot + Mobile Scroll) ---
+// --- SPLINE BACKGROUND COMPONENT (Updated: Greeting Robot) ---
 const SplineAmenitiesBackground = () => {
   return (
     <div className="absolute inset-0 z-0 w-full h-full overflow-hidden bg-stone-50">
       <iframe 
-        src='https://my.spline.design/r4xbot-7ole0T7KIVCaBVgephuOxbTW/' 
+        // YOUR NEW ANIMATION LINK HERE:
+        src='https://my.spline.design/genkubgreetingrobot-ohHkBUHk7ttnPrIWsoGnYPQq/' 
         frameBorder='0' 
         width='100%' 
         height='100%' 
-        // CRITICAL FIXES:
-        // 1. pointer-events-none: Fixes the scroll issue on mobile phones
-        // 2. filter: invert(0.9): Turns the WHITE robot into a DARK GREY robot so you can see it
+        // pointer-events-none is ESSENTIAL for mobile. 
+        // It stops the user from getting stuck inside the 3D scene when scrolling.
         className="w-full h-full border-none pointer-events-none"
-        style={{ filter: 'invert(0.9) hue-rotate(180deg)' }}
         title="Spline 3D Robot"
       ></iframe>
       
-      {/* Light overlay to blend it softly */}
+      {/* Light White Overlay 
+          This makes sure the black text (Amenities/Services) is readable 
+          if the robot moves behind it. 
+      */}
       <div className="absolute inset-0 bg-white/10 pointer-events-none"></div>
       
-      {/* Gradient at the bottom to fade into the next section */}
+      {/* Soft gradient at the bottom to blend with the footer */}
       <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-stone-50 to-transparent pointer-events-none"></div>
     </div>
   );
