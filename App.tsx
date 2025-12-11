@@ -8,33 +8,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { IMaskInput } from 'react-imask';
 import { Lang, View } from './types';
 
-// --- SPLINE BACKGROUND COMPONENT (FIXED: 75% Size on Mobile) ---
-const SplineAmenitiesBackground = () => {
-  return (
-    <div className="absolute inset-0 z-0 w-full h-full overflow-hidden bg-stone-50">
-      <iframe 
-        // The New Greeting Robot Link
-        src='https://my.spline.design/genkubgreetingrobot-ohHkBUHk7ttnPrIWsoGnYPQq/' 
-        frameBorder='0' 
-        width='100%' 
-        height='100%' 
-        // CRITICAL FIX FOR MOBILE SIZE:
-        // 1. scale-75: Shrinks the robot to 75% size on phones (Zooms out so you see the whole body).
-        // 2. md:scale-100: Keeps it at 100% size on Laptops/Desktops.
-        // 3. origin-center: Ensures it shrinks towards the middle.
-        className="w-full h-full border-none pointer-events-none scale-75 md:scale-100 origin-center"
-        title="Spline 3D Robot"
-      ></iframe>
-      
-      {/* Light Overlay to keep text readable */}
-      <div className="absolute inset-0 bg-white/10 pointer-events-none"></div>
-      
-      {/* Bottom Gradient Fade */}
-      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-stone-50 to-transparent pointer-events-none"></div>
-    </div>
-  );
-};
-
 // Constants for Translations and Data
 const translations = {
   en: {
@@ -1174,10 +1147,7 @@ const App = () => {
                     </section>
 
                      {/* Amenities Section WITH SPLINE ANIMATION */}
-                    <section id="services" className="relative py-24 border-b border-nobel-gold/20 overflow-hidden">
-                        {/* 1. The Spline Animation Background */}
-                        <SplineAmenitiesBackground />
-                        
+                    <section id="services" className="py-24 bg-[#dbc0a1]/10 border-b border-nobel-gold/20">
                         {/* 2. Content (z-index 10 to sit on top) */}
                         <div className="container mx-auto px-6 relative z-10">
                             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
