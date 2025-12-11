@@ -1071,10 +1071,10 @@ const App = () => {
                         <div className="container mx-auto px-6 relative z-10">
                             <div className="grid md:grid-cols-2 gap-16 items-center">
                                 <div className="relative group">
-                                    {/* Main Luxury Image */}
+                                    {/* Main Luxury Image - UPDATED */}
                                     <div className="aspect-[3/4] rounded-sm overflow-hidden shadow-2xl relative z-10 transform transition-transform duration-700 hover:scale-[1.01]">
                                         <img 
-                                            src="https://i.postimg.cc/JztLgbH6/55.jpg" 
+                                            src="https://i.postimg.cc/fRh9wRZ8/5.jpg" 
                                             alt="Luxury Living Room" 
                                             className="w-full h-full object-cover" 
                                         />
@@ -1082,7 +1082,7 @@ const App = () => {
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-60"></div>
                                     </div>
                                     
-                                    {/* Secondary Detail Image - Floating */}
+                                    {/* Secondary Detail Image - Floating - UPDATED */}
                                     <motion.div 
                                         className={`absolute -bottom-10 w-56 h-56 border-8 border-white shadow-2xl z-20 hidden md:block ${lang === 'ar' ? '-left-10' : '-right-10'}`}
                                         initial={{ y: 20, opacity: 0 }}
@@ -1090,7 +1090,7 @@ const App = () => {
                                         transition={{ delay: 0.3, duration: 0.8 }}
                                     >
                                         <img 
-                                            src="https://i.postimg.cc/JztLgbH6/55.jpg" 
+                                            src="https://i.postimg.cc/fRh9wRZ8/5.jpg" 
                                             alt="Detail" 
                                             className="w-full h-full object-cover" 
                                         />
@@ -1218,7 +1218,8 @@ const App = () => {
                     </section>
 
                     {/* NEW GUEST EXPERIENCES / TESTIMONIALS SECTION */}
-                    <GuestExperiences />
+                    {/* Fixed: Added the lang prop so translations work correctly */}
+                    <GuestExperiences lang={lang} />
 
                 </>
             )}
