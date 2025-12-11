@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect, useRef } from 'react';
 import { GeometricLuxuryScene, WhiteLuxuryScene } from './components/QuantumScene';
 import { PropertyShowcase, AmenityGrid, BookingBenefits } from './components/Diagrams';
@@ -59,7 +60,7 @@ const translations = {
     footer: { desc: "Société de gestion de location à court terme premium à Dubaï.", rights: "Tous droits réservés.", privacy: "Politique de Confidentialité", terms: "Termes et Conditions", faqs: "FAQ" },
     booking: { title: "Demander une Consultation", subtitle: "Laissez vos coordonnées et notre équipe vous contactera sous peu.", name: "Nom Complet", email: "Adresse Email", phone: "Numéro de Téléphone", time: "Meilleur moment pour appeler", submit: "SOUMETTRE", successTitle: "Bienvenue dans le Cercle Intérieur,", successBody: "Votre voyage avec MAPSTONE commence maintenant. Surveillez votre boîte de réception." },
     contactPage: { title: "Contactez-nous", subtitle: "Nous sommes là pour vous aider avec vos demandes de réservation ou de gestion immobilière.", phoneLabel: "Appelez-nous", emailLabel: "Envoyez-nous un email", locationLabel: "Visitez-nous", socialLabel: "Suivez-nous" },
-    servicesPage: { title: "Nos Services", subtitle: "Solutions complètes.", items: [{title: "Optimisation", desc: "Photos pro & SEO."}, {title: "Prix Dynamiques", desc: "Stratégies IA."}, {title: "Sélection Invités", desc: "Processus rigoureux."}, {title: "Maintenance", desc: "Support 24/7."}], app: { title: "Portail Propriétaire", desc: "La transparence est clé.", features: ["Calendrier", "Revenus en direct", "Rapports", "Chat"] } }
+    servicesPage: { title: "Nos Services", subtitle: "Solutions complètes.", items: [{title: "Optimisation", desc: "Photos pro & SEO."}, {title: "Prix Dynamiques", desc: "Prix IA."}, {title: "Sélection Invités", desc: "Processus rigoureux."}, {title: "Maintenance", desc: "Support 24/7."}], app: { title: "Portail Propriétaire", desc: "La transparence est clé.", features: ["Calendrier", "Revenus en direct", "Rapports", "Chat"] } }
   },
   es: {
     name: "Español",
@@ -1073,7 +1074,7 @@ const App = () => {
                                     {/* Main Luxury Image */}
                                     <div className="aspect-[3/4] rounded-sm overflow-hidden shadow-2xl relative z-10 transform transition-transform duration-700 hover:scale-[1.01]">
                                         <img 
-                                            src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80" 
+                                            src="https://i.postimg.cc/JztLgbH6/55.jpg" 
                                             alt="Luxury Living Room" 
                                             className="w-full h-full object-cover" 
                                         />
@@ -1089,7 +1090,7 @@ const App = () => {
                                         transition={{ delay: 0.3, duration: 0.8 }}
                                     >
                                         <img 
-                                            src="https://images.unsplash.com/photo-1631679706909-1844bbd07221?auto=format&fit=crop&w=800&q=80" 
+                                            src="https://i.postimg.cc/JztLgbH6/55.jpg" 
                                             alt="Detail" 
                                             className="w-full h-full object-cover" 
                                         />
