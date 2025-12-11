@@ -1,14 +1,13 @@
 "use client"
 
-import type React from "react"
-import { useEffect, useRef, useState, useCallback, useMemo } from "react"
+import React, { useEffect, useRef, useState, useCallback, useMemo } from "react"
 import { Star } from 'lucide-react'
 import { AnimatePresence, motion } from "framer-motion"
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import * as THREE from "three"
 import { ShaderMaterial as ThreeShaderMaterial } from "three"
 
-// --- UTILITY FUNCTION (Replaces the external import) ---
+// --- UTILITY FUNCTION ---
 function cn(...classes: (string | undefined | null | false)[]) {
   return classes.filter(Boolean).join(' ');
 }
@@ -67,24 +66,11 @@ const BackgroundGradientAnimation = ({
     document.body.style.setProperty("--pointer-color", pointerColor)
     document.body.style.setProperty("--size", size)
     document.body.style.setProperty("--blending-value", blendingValue)
-  }, [
-    gradientBackgroundStart,
-    gradientBackgroundEnd,
-    firstColor,
-    secondColor,
-    thirdColor,
-    fourthColor,
-    fifthColor,
-    pointerColor,
-    size,
-    blendingValue,
-  ])
+  }, [gradientBackgroundStart, gradientBackgroundEnd, firstColor, secondColor, thirdColor, fourthColor, fifthColor, pointerColor, size, blendingValue])
 
   useEffect(() => {
     if (!interactive) return
-
     let animationFrameId: number
-
     function move() {
       if (!interactiveRef.current) {
         animationFrameId = requestAnimationFrame(move)
@@ -95,12 +81,8 @@ const BackgroundGradientAnimation = ({
       interactiveRef.current.style.transform = `translate(${Math.round(curX.current)}px, ${Math.round(curY.current)}px)`
       animationFrameId = requestAnimationFrame(move)
     }
-
     animationFrameId = requestAnimationFrame(move)
-
-    return () => {
-      cancelAnimationFrame(animationFrameId)
-    }
+    return () => cancelAnimationFrame(animationFrameId)
   }, [interactive])
 
   const handleMouseMove = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
@@ -141,61 +123,13 @@ const BackgroundGradientAnimation = ({
           isSafari ? "blur-2xl" : "[filter:url(#blurMe)_blur(40px)]",
         )}
       >
-        <div
-          className={cn(
-            `absolute [background:radial-gradient(circle_at_center,_rgba(var(--first-color),1)_0,_rgba(var(--first-color),0)_50%)_no-repeat]`,
-            `[mix-blend-mode:var(--blending-value)] w-[var(--size)] h-[var(--size)] top-[calc(50%-var(--size)/2)] left-[calc(50%-var(--size)/2)]`,
-            `[transform-origin:center_center]`,
-            `animate-first`,
-            `opacity-100`,
-          )}
-        ></div>
-        <div
-          className={cn(
-            `absolute [background:radial-gradient(circle_at_center,_rgba(var(--second-color),_0.8)_0,_rgba(var(--second-color),_0)_50%)_no-repeat]`,
-            `[mix-blend-mode:var(--blending-value)] w-[var(--size)] h-[var(--size)] top-[calc(50%-var(--size)/2)] left-[calc(50%-var(--size)/2)]`,
-            `[transform-origin:calc(50%-400px)]`,
-            `animate-second`,
-            `opacity-100`,
-          )}
-        ></div>
-        <div
-          className={cn(
-            `absolute [background:radial-gradient(circle_at_center,_rgba(var(--third-color),_0.8)_0,_rgba(var(--third-color),_0)_50%)_no-repeat]`,
-            `[mix-blend-mode:var(--blending-value)] w-[var(--size)] h-[var(--size)] top-[calc(50%-var(--size)/2)] left-[calc(50%-var(--size)/2)]`,
-            `[transform-origin:calc(50%+400px)]`,
-            `animate-third`,
-            `opacity-100`,
-          )}
-        ></div>
-        <div
-          className={cn(
-            `absolute [background:radial-gradient(circle_at_center,_rgba(var(--fourth-color),_0.8)_0,_rgba(var(--fourth-color),_0)_50%)_no-repeat]`,
-            `[mix-blend-mode:var(--blending-value)] w-[var(--size)] h-[var(--size)] top-[calc(50%-var(--size)/2)] left-[calc(50%-var(--size)/2)]`,
-            `[transform-origin:calc(50%-200px)]`,
-            `animate-fourth`,
-            `opacity-70`,
-          )}
-        ></div>
-        <div
-          className={cn(
-            `absolute [background:radial-gradient(circle_at_center,_rgba(var(--fifth-color),_0.8)_0,_rgba(var(--fifth-color),_0)_50%)_no-repeat]`,
-            `[mix-blend-mode:var(--blending-value)] w-[var(--size)] h-[var(--size)] top-[calc(50%-var(--size)/2)] left-[calc(50%-var(--size)/2)]`,
-            `[transform-origin:calc(50%-800px)_calc(50%+800px)]`,
-            `animate-fifth`,
-            `opacity-100`,
-          )}
-        ></div>
-
+        <div className={cn(`absolute [background:radial-gradient(circle_at_center,_rgba(var(--first-color),1)_0,_rgba(var(--first-color),0)_50%)_no-repeat]`, `[mix-blend-mode:var(--blending-value)] w-[var(--size)] h-[var(--size)] top-[calc(50%-var(--size)/2)] left-[calc(50%-var(--size)/2)]`, `[transform-origin:center_center]`, `animate-first`, `opacity-100`)}></div>
+        <div className={cn(`absolute [background:radial-gradient(circle_at_center,_rgba(var(--second-color),_0.8)_0,_rgba(var(--second-color),_0)_50%)_no-repeat]`, `[mix-blend-mode:var(--blending-value)] w-[var(--size)] h-[var(--size)] top-[calc(50%-var(--size)/2)] left-[calc(50%-var(--size)/2)]`, `[transform-origin:calc(50%-400px)]`, `animate-second`, `opacity-100`)}></div>
+        <div className={cn(`absolute [background:radial-gradient(circle_at_center,_rgba(var(--third-color),_0.8)_0,_rgba(var(--third-color),_0)_50%)_no-repeat]`, `[mix-blend-mode:var(--blending-value)] w-[var(--size)] h-[var(--size)] top-[calc(50%-var(--size)/2)] left-[calc(50%-var(--size)/2)]`, `[transform-origin:calc(50%+400px)]`, `animate-third`, `opacity-100`)}></div>
+        <div className={cn(`absolute [background:radial-gradient(circle_at_center,_rgba(var(--fourth-color),_0.8)_0,_rgba(var(--fourth-color),_0)_50%)_no-repeat]`, `[mix-blend-mode:var(--blending-value)] w-[var(--size)] h-[var(--size)] top-[calc(50%-var(--size)/2)] left-[calc(50%-var(--size)/2)]`, `[transform-origin:calc(50%-200px)]`, `animate-fourth`, `opacity-70`)}></div>
+        <div className={cn(`absolute [background:radial-gradient(circle_at_center,_rgba(var(--fifth-color),_0.8)_0,_rgba(var(--fifth-color),_0)_50%)_no-repeat]`, `[mix-blend-mode:var(--blending-value)] w-[var(--size)] h-[var(--size)] top-[calc(50%-var(--size)/2)] left-[calc(50%-var(--size)/2)]`, `[transform-origin:calc(50%-800px)_calc(50%+800px)]`, `animate-fifth`, `opacity-100`)}></div>
         {interactive && (
-          <div
-            ref={interactiveRef}
-            className={cn(
-              `absolute [background:radial-gradient(circle_at_center,_rgba(var(--pointer-color),_0.8)_0,_rgba(var(--pointer-color),_0)_50%)_no-repeat]`,
-              `[mix-blend-mode:var(--blending-value)] w-full h-full -top-1/2 -left-1/2`,
-              `opacity-70`,
-            )}
-          ></div>
+          <div ref={interactiveRef} className={cn(`absolute [background:radial-gradient(circle_at_center,_rgba(var(--pointer-color),_0.8)_0,_rgba(var(--pointer-color),_0)_50%)_no-repeat]`, `[mix-blend-mode:var(--blending-value)] w-full h-full -top-1/2 -left-1/2`, `opacity-70`)}></div>
         )}
       </div>
     </div>
@@ -206,22 +140,9 @@ const BackgroundGradientAnimation = ({
 // CANVAS REVEAL EFFECT COMPONENT
 // ============================================
 
-type Uniforms = {
-  [key: string]: {
-    value: number[] | number[][] | number
-    type: string
-  }
-}
+type Uniforms = { [key: string]: { value: number[] | number[][] | number; type: string } }
 
-const ShaderMaterial = ({
-  source,
-  uniforms,
-  maxFps = 60,
-}: {
-  source: string
-  maxFps?: number
-  uniforms: Uniforms
-}) => {
+const ShaderMaterial = ({ source, uniforms, maxFps = 60 }: { source: string; maxFps?: number; uniforms: Uniforms }) => {
   const { size } = useThree()
   const ref = useRef<THREE.Mesh>(null)
   const lastFrameTime = useRef(0)
@@ -229,65 +150,34 @@ const ShaderMaterial = ({
   useFrame(({ clock }) => {
     if (!ref.current) return
     const timestamp = clock.getElapsedTime()
-    if (timestamp - lastFrameTime.current < 1 / maxFps) {
-      return
-    }
+    if (timestamp - lastFrameTime.current < 1 / maxFps) return
     lastFrameTime.current = timestamp
-
     const material = ref.current.material as ThreeShaderMaterial
-    if (material.uniforms.u_time) {
-      material.uniforms.u_time.value = timestamp
-    }
+    if (material.uniforms.u_time) material.uniforms.u_time.value = timestamp
   })
 
   const getUniforms = useCallback(() => {
     const preparedUniforms: Record<string, { value: unknown; type?: string }> = {}
-
     for (const uniformName in uniforms) {
       const uniform = uniforms[uniformName]
-
       switch (uniform.type) {
-        case "uniform1f":
-          preparedUniforms[uniformName] = { value: uniform.value, type: "1f" }
-          break
-        case "uniform3f":
-          preparedUniforms[uniformName] = {
-            value: new THREE.Vector3().fromArray(uniform.value as number[]),
-            type: "3f",
-          }
-          break
-        case "uniform1fv":
-          preparedUniforms[uniformName] = { value: uniform.value, type: "1fv" }
-          break
-        case "uniform3fv":
-          preparedUniforms[uniformName] = {
-            value: (uniform.value as number[][]).map((v: number[]) => new THREE.Vector3().fromArray(v)),
-            type: "3fv",
-          }
-          break
-        case "uniform2f":
-          preparedUniforms[uniformName] = {
-            value: new THREE.Vector2().fromArray(uniform.value as number[]),
-            type: "2f",
-          }
-          break
-        default:
-          console.error(`Invalid uniform type for '${uniformName}'.`)
-          break
+        case "uniform1f": preparedUniforms[uniformName] = { value: uniform.value, type: "1f" }; break
+        case "uniform3f": preparedUniforms[uniformName] = { value: new THREE.Vector3().fromArray(uniform.value as number[]), type: "3f" }; break
+        case "uniform1fv": preparedUniforms[uniformName] = { value: uniform.value, type: "1fv" }; break
+        case "uniform3fv": preparedUniforms[uniformName] = { value: (uniform.value as number[][]).map((v: number[]) => new THREE.Vector3().fromArray(v)), type: "3fv" }; break
+        case "uniform2f": preparedUniforms[uniformName] = { value: new THREE.Vector2().fromArray(uniform.value as number[]), type: "2f" }; break
+        default: console.error(`Invalid uniform type for '${uniformName}'.`); break
       }
     }
-
     preparedUniforms["u_time"] = { value: 0, type: "1f" }
-    preparedUniforms["u_resolution"] = {
-      value: new THREE.Vector2(size.width * 2, size.height * 2),
-    }
+    preparedUniforms["u_resolution"] = { value: new THREE.Vector2(size.width * 2, size.height * 2) }
     return preparedUniforms
   }, [uniforms, size.width, size.height])
 
   return (
     <mesh ref={ref}>
       <planeGeometry args={[2, 2]} />
-      <primitive object={new ThreeShaderMaterial({ fragmentShader: source })} attach="material" />
+      <primitive object={new ThreeShaderMaterial({ fragmentShader: source, uniforms: getUniforms() })} attach="material" />
     </mesh>
   )
 }
@@ -300,46 +190,17 @@ const Shader = ({ source, uniforms, maxFps = 60 }: { source: string; uniforms: U
   )
 }
 
-const DotMatrix = ({
-  colors = [[0, 0, 0]],
-  opacities = [0.04, 0.04, 0.04, 0.04, 0.04, 0.08, 0.08, 0.08, 0.08, 0.14],
-  totalSize = 4,
-  dotSize = 2,
-  shader = "",
-  center = ["x", "y"],
-}: {
-  colors?: number[][]
-  opacities?: number[]
-  totalSize?: number
-  dotSize?: number
-  shader?: string
-  center?: ("x" | "y")[]
-}) => {
+const DotMatrix = ({ colors = [[0, 0, 0]], opacities = [0.04, 0.04, 0.04, 0.04, 0.04, 0.08, 0.08, 0.08, 0.08, 0.14], totalSize = 4, dotSize = 2, shader = "", center = ["x", "y"] }: { colors?: number[][]; opacities?: number[]; totalSize?: number; dotSize?: number; shader?: string; center?: ("x" | "y")[] }) => {
   const uniforms = useMemo(() => {
     let colorsArray = [colors[0], colors[0], colors[0], colors[0], colors[0], colors[0]]
-    if (colors.length === 2) {
-      colorsArray = [colors[0], colors[0], colors[0], colors[1], colors[1], colors[1]]
-    } else if (colors.length === 3) {
-      colorsArray = [colors[0], colors[0], colors[1], colors[1], colors[2], colors[2]]
-    }
+    if (colors.length === 2) colorsArray = [colors[0], colors[0], colors[0], colors[1], colors[1], colors[1]]
+    else if (colors.length === 3) colorsArray = [colors[0], colors[0], colors[1], colors[1], colors[2], colors[2]]
 
     return {
-      u_colors: {
-        value: colorsArray.map((color) => [color[0] / 255, color[1] / 255, color[2] / 255]),
-        type: "uniform3fv",
-      },
-      u_opacities: {
-        value: opacities,
-        type: "uniform1fv",
-      },
-      u_total_size: {
-        value: totalSize,
-        type: "uniform1f",
-      },
-      u_dot_size: {
-        value: dotSize,
-        type: "uniform1f",
-      },
+      u_colors: { value: colorsArray.map((color) => [color[0] / 255, color[1] / 255, color[2] / 255]), type: "uniform3fv" },
+      u_opacities: { value: opacities, type: "uniform1fv" },
+      u_total_size: { value: totalSize, type: "uniform1f" },
+      u_dot_size: { value: dotSize, type: "uniform1f" },
     }
   }, [colors, opacities, totalSize, dotSize])
 
@@ -348,7 +209,6 @@ const DotMatrix = ({
       source={`
         precision mediump float;
         in vec2 fragCoord;
-
         uniform float u_time;
         uniform float u_opacities[10];
         uniform vec3 u_colors[6];
@@ -357,34 +217,24 @@ const DotMatrix = ({
         uniform vec2 u_resolution;
         out vec4 fragColor;
         float PHI = 1.61803398874989484820459;
-        float random(vec2 xy) {
-            return fract(tan(distance(xy * PHI, xy) * 0.5) * xy.x);
-        }
-        float map(float value, float min1, float max1, float min2, float max2) {
-            return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
-        }
+        float random(vec2 xy) { return fract(tan(distance(xy * PHI, xy) * 0.5) * xy.x); }
         void main() {
             vec2 st = fragCoord.xy;
             ${center.includes("x") ? "st.x -= abs(floor((mod(u_resolution.x, u_total_size) - u_dot_size) * 0.5));" : ""}
             ${center.includes("y") ? "st.y -= abs(floor((mod(u_resolution.y, u_total_size) - u_dot_size) * 0.5));" : ""}
-      float opacity = step(0.0, st.x);
-      opacity *= step(0.0, st.y);
-
-      vec2 st2 = vec2(int(st.x / u_total_size), int(st.y / u_total_size));
-
-      float frequency = 5.0;
-      float show_offset = random(st2);
-      float rand = random(st2 * floor((u_time / frequency) + show_offset + frequency) + 1.0);
-      opacity *= u_opacities[int(rand * 10.0)];
-      opacity *= 1.0 - step(u_dot_size / u_total_size, fract(st.x / u_total_size));
-      opacity *= 1.0 - step(u_dot_size / u_total_size, fract(st.y / u_total_size));
-
-      vec3 color = u_colors[int(show_offset * 6.0)];
-
-      ${shader}
-
-      fragColor = vec4(color, opacity);
-      fragColor.rgb *= fragColor.a;
+            float opacity = step(0.0, st.x);
+            opacity *= step(0.0, st.y);
+            vec2 st2 = vec2(int(st.x / u_total_size), int(st.y / u_total_size));
+            float frequency = 5.0;
+            float show_offset = random(st2);
+            float rand = random(st2 * floor((u_time / frequency) + show_offset + frequency) + 1.0);
+            opacity *= u_opacities[int(rand * 10.0)];
+            opacity *= 1.0 - step(u_dot_size / u_total_size, fract(st.x / u_total_size));
+            opacity *= 1.0 - step(u_dot_size / u_total_size, fract(st.y / u_total_size));
+            vec3 color = u_colors[int(show_offset * 6.0)];
+            ${shader}
+            fragColor = vec4(color, opacity);
+            fragColor.rgb *= fragColor.a;
         }`}
       uniforms={uniforms}
       maxFps={60}
@@ -392,21 +242,7 @@ const DotMatrix = ({
   )
 }
 
-const CanvasRevealEffect = ({
-  animationSpeed = 0.4,
-  opacities = [0.3, 0.3, 0.3, 0.5, 0.5, 0.5, 0.8, 0.8, 0.8, 1],
-  colors = [[0, 255, 255]],
-  containerClassName,
-  dotSize,
-  showGradient = true,
-}: {
-  animationSpeed?: number
-  opacities?: number[]
-  colors?: number[][]
-  containerClassName?: string
-  dotSize?: number
-  showGradient?: boolean
-}) => {
+const CanvasRevealEffect = ({ animationSpeed = 0.4, opacities = [0.3, 0.3, 0.3, 0.5, 0.5, 0.5, 0.8, 0.8, 0.8, 1], colors = [[0, 255, 255]], containerClassName, dotSize, showGradient = true }: { animationSpeed?: number; opacities?: number[]; colors?: number[][]; containerClassName?: string; dotSize?: number; showGradient?: boolean }) => {
   return (
     <div className={cn("h-full relative bg-white w-full", containerClassName)}>
       <div className="h-full w-full">
@@ -444,16 +280,13 @@ interface Testimonial {
 
 const testimonials: Testimonial[] = [
   {
-    quote:
-      "Absolutely stunning apartment. The view of the Burj Khalifa was breathtaking and the service was impeccable.",
+    quote: "Absolutely stunning apartment. The view of the Burj Khalifa was breathtaking and the service was impeccable.",
     name: "Sarah Jenkins",
     location: "United Kingdom",
     rating: 5,
-    backgroundImage: "/placeholder.svg?height=600&width=400",
-    canvasColors: [
-      [201, 169, 98],
-      [26, 58, 92],
-    ],
+    // Updated Image 1
+    backgroundImage: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80",
+    canvasColors: [[201, 169, 98], [26, 58, 92]],
     canvasBgColor: "bg-[#1a3a5c]",
   },
   {
@@ -461,7 +294,8 @@ const testimonials: Testimonial[] = [
     name: "Mohammed Al-Fayed",
     location: "Saudi Arabia",
     rating: 5,
-    backgroundImage: "/placeholder.svg?height=600&width=400",
+    // Updated Image 2
+    backgroundImage: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80",
     canvasColors: [[201, 169, 98]],
     canvasBgColor: "bg-black",
   },
@@ -470,11 +304,9 @@ const testimonials: Testimonial[] = [
     name: "Elena Volkov",
     location: "Russia",
     rating: 5,
-    backgroundImage: "/placeholder.svg?height=600&width=400",
-    canvasColors: [
-      [201, 169, 98],
-      [249, 247, 244],
-    ],
+    // Updated Image 3
+    backgroundImage: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80",
+    canvasColors: [[201, 169, 98], [249, 247, 244]],
     canvasBgColor: "bg-[#1a3a5c]",
   },
 ]
@@ -498,40 +330,19 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
       onMouseLeave={() => setHovered(false)}
       className="relative rounded-lg overflow-hidden h-[420px] w-full group/card cursor-pointer"
     >
-      <div
-        className="absolute inset-0 bg-cover bg-center z-0"
-        style={{ backgroundImage: `url(${testimonial.backgroundImage})` }}
-      />
+      <div className="absolute inset-0 bg-cover bg-center z-0" style={{ backgroundImage: `url(${testimonial.backgroundImage})` }} />
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20 z-10" />
-
       <AnimatePresence>
         {hovered && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="h-full w-full absolute inset-0 z-20"
-          >
-            <CanvasRevealEffect
-              animationSpeed={3}
-              containerClassName={testimonial.canvasBgColor}
-              colors={testimonial.canvasColors}
-              dotSize={2}
-            />
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full w-full absolute inset-0 z-20">
+            <CanvasRevealEffect animationSpeed={3} containerClassName={testimonial.canvasBgColor} colors={testimonial.canvasColors} dotSize={2} />
             <div className="absolute inset-0 [mask-image:radial-gradient(400px_at_center,white,transparent)] bg-black/50" />
           </motion.div>
         )}
       </AnimatePresence>
-
       <div className="relative z-30 h-full flex flex-col justify-end p-6">
-        <div className="transform transition-transform duration-300 group-hover/card:-translate-y-2">
-          <StarRating rating={testimonial.rating} />
-        </div>
-
-        <div className="mt-4 mb-4 transform transition-transform duration-300 group-hover/card:-translate-y-2">
-          <p className="font-serif italic text-white leading-relaxed text-lg">"{testimonial.quote}"</p>
-        </div>
-
+        <div className="transform transition-transform duration-300 group-hover/card:-translate-y-2"><StarRating rating={testimonial.rating} /></div>
+        <div className="mt-4 mb-4 transform transition-transform duration-300 group-hover/card:-translate-y-2"><p className="font-serif italic text-white leading-relaxed text-lg">"{testimonial.quote}"</p></div>
         <div className="transform transition-transform duration-300 group-hover/card:-translate-y-2">
           <div className="border-t border-[#c9a962] w-8 mb-3" />
           <p className="text-white font-semibold tracking-wide uppercase text-sm">{testimonial.name}</p>
@@ -565,7 +376,6 @@ export default function GuestExperiences() {
             <p className="text-[#cf9f43] text-sm tracking-widest uppercase mb-3">Testimonials</p>
             <h2 className="font-serif text-white text-4xl md:text-5xl italic">Guest Experiences</h2>
           </div>
-
           <div className="grid md:grid-cols-3 gap-6">
             {testimonials.map((testimonial, index) => (
               <TestimonialCard key={index} testimonial={testimonial} />
