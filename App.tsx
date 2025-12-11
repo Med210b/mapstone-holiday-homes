@@ -8,6 +8,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { IMaskInput } from 'react-imask';
 import { Lang, View } from './types';
 
+// IMPORT YOUR NEW PAGE HERE
+import GuestExperiences from './GuestExperiences';
+
 // Constants for Translations and Data
 const translations = {
   en: {
@@ -408,20 +411,6 @@ const WhatsAppButton = () => (
     </a>
 );
 
-const ReviewCard = ({ name, location, text, delay }: { name: string, location: string, text: string, delay: string }) => {
-  return (
-    <div className="flex flex-col group animate-fade-in-up items-start p-8 bg-white rounded-none border border-stone-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 w-full max-w-sm" style={{ animationDelay: delay }}>
-      <div className="flex gap-1 mb-4 text-nobel-gold">
-        {[...Array(5)].map((_, i) => <Star key={i} size={16} fill="currentColor" />)}
-      </div>
-      <p className="text-mapstone-blue font-serif italic mb-6 leading-relaxed">"{text}"</p>
-      <div className="w-8 h-0.5 bg-nobel-gold mb-3 opacity-60"></div>
-      <h3 className="font-sans text-sm font-bold text-mapstone-blue uppercase tracking-wider">{name}</h3>
-      <p className="text-xs text-stone-400 mt-1 uppercase">{location}</p>
-    </div>
-  );
-};
-
 const SuccessAnimation = () => {
   return (
     <div className="relative w-24 h-24 mb-8">
@@ -599,10 +588,10 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, lang }) =>
     );
 
     const handleCountrySelect = (country: typeof COUNTRY_CODES[0]) => {
-         setSelectedCountry(country);
-         setFormData({...formData, countryCode: country.code, phone: ''});
-         setDropdownOpen(false);
-         setFilterText('');
+          setSelectedCountry(country);
+          setFormData({...formData, countryCode: country.code, phone: ''});
+          setDropdownOpen(false);
+          setFilterText('');
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -1192,12 +1181,12 @@ const App = () => {
                                          <h3 className="font-serif text-xl mb-2 text-nobel-gold">{t.landlords.vipTitle}</h3>
                                          <p className="text-sm text-stone-300 mb-4">{t.landlords.vipDesc}</p>
                                          <ul className="grid grid-cols-1 gap-3">
-                                             {t.landlords.list.map((item, idx) => (
-                                                 <li key={idx} className="flex items-center gap-3 text-sm font-medium">
-                                                     <div className="w-1.5 h-1.5 rounded-full bg-nobel-gold"></div>
-                                                     {item}
-                                                 </li>
-                                             ))}
+                                              {t.landlords.list.map((item, idx) => (
+                                                  <li key={idx} className="flex items-center gap-3 text-sm font-medium">
+                                                      <div className="w-1.5 h-1.5 rounded-full bg-nobel-gold"></div>
+                                                      {item}
+                                                  </li>
+                                              ))}
                                          </ul>
                                      </div>
 
@@ -1227,35 +1216,9 @@ const App = () => {
                         </div>
                     </section>
 
-                    {/* Reviews */}
-                    <section className="py-24 bg-stone-50 overflow-hidden border-b border-nobel-gold/20">
-                        <div className="container mx-auto px-6">
-                            <div className="text-center mb-16">
-                                 <span className="text-nobel-gold font-bold tracking-widest text-xs uppercase mb-2 block">{t.reviews.label}</span>
-                                 <h2 className="text-4xl font-serif text-mapstone-blue">{t.reviews.title}</h2>
-                            </div>
-                            <div className="grid md:grid-cols-3 gap-8">
-                                <ReviewCard 
-                                    name="Sarah Jenkins" 
-                                    location="United Kingdom" 
-                                    text="Absolutely stunning apartment. The view of the Burj Khalifa was breathtaking and the service was impeccable."
-                                    delay="0s"
-                                />
-                                 <ReviewCard 
-                                    name="Mohammed Al-Fayed" 
-                                    location="Saudi Arabia" 
-                                    text="Mapstone managed my stay perfectly. Privacy, luxury and comfort. Highly recommended for families."
-                                    delay="0.2s"
-                                />
-                                 <ReviewCard 
-                                    name="Elena Volkov" 
-                                    location="Russia" 
-                                    text="The best holiday home experience in Dubai. The interior design was beautiful and the location was central."
-                                    delay="0.4s"
-                                />
-                            </div>
-                        </div>
-                    </section>
+                    {/* NEW GUEST EXPERIENCES / TESTIMONIALS SECTION */}
+                    <GuestExperiences />
+
                 </>
             )}
 
