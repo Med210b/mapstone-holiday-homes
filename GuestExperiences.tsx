@@ -27,6 +27,18 @@ const InteractiveRef = React.forwardRef(({ interactive }: any, ref: any) => {
     const tgY = useRef(0)
 
     useEffect(() => {
+        const handleMouseMove = (event: MouseEvent) => {
+            if (ref.current) {
+                const rect = ref.current.getBoundingClientRect()
+                tgX.current = event.clientX - rect.left
+                tgY.current = event.clientY - rect.top
+            }
+        }
+        window.addEventListener('mousemove', handleMouseMove)
+        return () => window.removeEventListener('mousemove', handleMouseMove)
+    }, [ref])
+
+    useEffect(() => {
         if (!interactive) return
         let animationFrameId: number
         function move() {
@@ -42,18 +54,6 @@ const InteractiveRef = React.forwardRef(({ interactive }: any, ref: any) => {
         animationFrameId = requestAnimationFrame(move)
         return () => cancelAnimationFrame(animationFrameId)
     }, [interactive, ref])
-
-    useEffect(() => {
-        const handleMouseMove = (event: MouseEvent) => {
-            if (ref.current) {
-                const rect = ref.current.getBoundingClientRect()
-                tgX.current = event.clientX - rect.left
-                tgY.current = event.clientY - rect.top
-            }
-        }
-        window.addEventListener('mousemove', handleMouseMove)
-        return () => window.removeEventListener('mousemove', handleMouseMove)
-    }, [ref])
 
     if (!interactive) return null;
 
