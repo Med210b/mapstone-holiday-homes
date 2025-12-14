@@ -312,7 +312,7 @@ const TestimonialCard = ({ testimonial }: any) => {
       onMouseLeave={() => setHovered(false)}
       className="relative rounded-lg overflow-hidden h-[420px] w-full group/card cursor-pointer"
     >
-      <div className="absolute inset-0 bg-cover bg-center z-0" style={{ backgroundImage: `url(${testimonial.backgroundImage})` }} />
+      <div className="absolute inset-0 bg-cover bg-center z-0 transition-transform duration-700 group-hover/card:scale-110" style={{ backgroundImage: `url(${testimonial.backgroundImage})` }} />
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20 z-10" />
       <AnimatePresence>
         {hovered && (
@@ -347,9 +347,10 @@ export default function GuestExperiences({ lang }: any) {
         fourthColor="207, 159, 67"
         fifthColor="34, 76, 120"
         pointerColor="207, 159, 67"
-        containerClassName="py-20 px-4 min-h-screen"
+        // UPDATED: Added centering classes here
+        containerClassName="py-20 px-4 min-h-screen flex flex-col items-center justify-center"
       >
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-6xl mx-auto w-full">
           <div className="text-center mb-14">
             <p className="text-[#cf9f43] text-sm tracking-widest uppercase mb-3">Testimonials</p>
             <h2 className="font-serif text-white text-4xl md:text-5xl italic">Guest Experiences</h2>
