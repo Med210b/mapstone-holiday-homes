@@ -377,12 +377,19 @@ const VideoPreloader: React.FC<{ onComplete: () => void }> = ({ onComplete }) =>
             className="fixed inset-0 z-[9999] flex items-center justify-center bg-black"
         >
             <video
+                /* Pointing to the local file in the public folder */
                 src="/loader.mp4"
+                
+                /* Highest quality playback settings */
                 autoPlay
                 muted
                 playsInline
                 preload="auto"
+                
+                /* Event listener to fade out when video ends */
                 onEnded={onComplete}
+                
+                /* CSS to ensure it covers the screen without stretching/distorting */
                 className="w-full h-full object-cover"
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
@@ -455,6 +462,7 @@ const OwnerAppMockup = () => (
             <div className="h-4 w-28 bg-black rounded-b-xl"></div>
         </div>
         <div className="bg-stone-50 flex-1 overflow-hidden font-sans pt-8 px-4 relative">
+             {/* Header */}
              <div className="flex items-center justify-between mb-6">
                 <div>
                     <p className="text-[10px] text-stone-400 font-bold uppercase tracking-wider">Welcome Back</p>
@@ -468,6 +476,8 @@ const OwnerAppMockup = () => (
                     <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?fit=crop&w=100&h=100" alt="David" />
                 </div>
              </div>
+
+             {/* Income Card */}
              <div className="bg-mapstone-blue text-white p-4 rounded-2xl shadow-lg mb-4 relative overflow-hidden">
                 <div className="relative z-10">
                     <p className="text-[10px] text-white/60 uppercase tracking-wider mb-1">Total Revenue (Nov)</p>
@@ -480,6 +490,8 @@ const OwnerAppMockup = () => (
                 </div>
                  <div className="absolute -right-4 -top-4 w-20 h-20 bg-nobel-gold/20 rounded-full blur-xl"></div>
              </div>
+
+             {/* Calendar Widget */}
              <div className="bg-white p-4 rounded-2xl shadow-sm border border-stone-100 mb-4">
                  <div className="flex justify-between items-center mb-3">
                      <span className="font-bold text-mapstone-blue text-xs">December 2024</span>
@@ -500,6 +512,8 @@ const OwnerAppMockup = () => (
                      })}
                  </div>
              </div>
+
+             {/* Recent Activity / Status */}
               <div className="bg-white p-3 rounded-2xl shadow-sm border border-stone-100 flex items-center gap-3">
                  <div className="h-8 w-8 rounded-full bg-green-50 flex items-center justify-center text-green-600">
                      <CheckCircle2 size={16} />
@@ -510,6 +524,7 @@ const OwnerAppMockup = () => (
                  </div>
               </div>
         </div>
+        {/* Navigation Bar */}
         <div className="bg-white h-12 flex justify-around items-center px-4 border-t border-stone-100">
             <div className="text-mapstone-blue"><BarChart3 size={18} /></div>
             <div className="text-stone-300"><Calendar size={18} /></div>
@@ -541,6 +556,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, lang }) =>
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     
+    // Initialize selectedCountry for proper flag display (handles duplicates like +1 for US/Canada)
     const [selectedCountry, setSelectedCountry] = useState(
         COUNTRY_CODES.find(c => c.country === "United Arab Emirates") || COUNTRY_CODES[0]
     );
@@ -584,6 +600,8 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, lang }) =>
         setIsSubmitting(true);
         setErrorMessage('');
         
+        // Using FormSubmit.co standard endpoint which is more reliable for direct email notifications
+        // The /ajax/ endpoint can sometimes be strict with CORS or return different structures
         const endpoint = "https://formsubmit.co/contact@mapstonegroup.com";
         
         try {
@@ -601,11 +619,13 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, lang }) =>
                     email: formData.email,
                     phone: `${formData.countryCode} ${formData.phone}`,
                     preferred_time: formData.time,
+                    // Hidden honeypot field to prevent spam
                     _honey: ""
                 })
             });
 
             if (!response.ok) {
+                // Try to parse error message if available
                 let errorData;
                 try {
                     errorData = await response.json();
@@ -985,7 +1005,7 @@ const App = () => {
             {/* Main Content Area with Page Transition */}
             <AnimatePresence mode="wait">
                 {currentView === 'home' && (
-                    <PageTransition key="home" className="w-full">
+                    <PageTransition key="home">
                         {/* Hero Section */}
                         <header id="home" className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden bg-mapstone-dark border-b border-nobel-gold/20">
                             <div className="absolute inset-0 w-full h-full z-0">
@@ -1199,73 +1219,3 @@ const App = () => {
 };
 
 export default App;
-
-// @ts-nocheck
-import React from 'react';
-import { motion } from 'framer-motion';
-
-// Colors matching the video vibe (Red, Dark Blue, Gold, Orange)
-const transitionColors = [
-  'bg-[#e63946]', 
-  'bg-[#1a3a5c]', 
-  'bg-[#cf9f43]', 
-  'bg-[#ff5a1f]', 
-];
-
-const columnVariants = {
-  // State 1: Start fully covering the screen
-  initial: {
-    y: "0%", 
-  },
-  // State 2: Slide UP (-100%) to reveal the content
-  enter: (i: number) => ({
-    y: "-100%", 
-    transition: {
-      duration: 0.8,
-      ease: [0.76, 0, 0.24, 1], // Custom "luxury" easing curve
-      delay: i * 0.05, // Stagger effect (columns move one by one)
-    },
-  }),
-  // State 3: Slide DOWN (0%) to cover the screen again before leaving
-  exit: (i: number) => ({
-    y: "0%", 
-    transition: {
-      duration: 0.8,
-      ease: [0.76, 0, 0.24, 1],
-      delay: i * 0.05,
-    },
-  }),
-};
-
-export default function PageTransition({ children, className }: { children: React.ReactNode, className?: string }) {
-  return (
-    <div className={`relative ${className} min-h-screen`}>
-      {/* OVERLAY COLUMNS */}
-      {/* z-[9999] ensures this sits on top of EVERYTHING, including the navbar */}
-      <div className="fixed inset-0 z-[9999] pointer-events-none flex flex-row h-screen w-full">
-        {[...Array(4)].map((_, i) => (
-          <motion.div
-            key={i}
-            custom={i}
-            variants={columnVariants}
-            initial="initial"
-            animate="enter"
-            exit="exit"
-            className={`relative h-full w-1/4 ${transitionColors[i]}`}
-          />
-        ))}
-      </div>
-
-      {/* PAGE CONTENT */}
-      {/* Content fades in slightly after columns start moving for a smoother look */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-      >
-        {children}
-      </motion.div>
-    </div>
-  );
-}

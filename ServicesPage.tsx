@@ -34,10 +34,10 @@ const columnVariants = {
 
 export default function PageTransition({ children }) {
   return (
-    // We hardcode the centering and width here so we don't need to pass 'className' as a prop
+    // Centering logic is hardcoded here (flex-col items-center justify-center)
     <div className="relative w-full min-h-screen flex flex-col items-center justify-center">
       
-      {/* OVERLAY COLUMNS */}
+      {/* OVERLAY COLUMNS (The sliding animation) */}
       <div className="fixed inset-0 z-[9999] pointer-events-none flex flex-row h-screen w-full top-0 left-0">
         {[...Array(4)].map((_, i) => (
           <motion.div
