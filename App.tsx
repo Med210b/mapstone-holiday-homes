@@ -4,7 +4,11 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import { GeometricLuxuryScene, WhiteLuxuryScene } from './components/QuantumScene';
 
-import { PropertyShowcase, AmenityGrid, BookingBenefits } from './components/Diagrams';
+// REPLACED AmenityGrid with just the remaining diagrams you might need
+import { PropertyShowcase, BookingBenefits } from './components/Diagrams';
+
+// NEW IMPORT FOR AMENITIES PAGE
+import PremiumAmenities from './components/PremiumAmenities';
 
 import { WhatsAppIcon, LogoBayut, LogoDubizzle, LogoPropertyFinder, LogoBooking, LogoAirbnb } from './components/Icons';
 
@@ -2274,45 +2278,9 @@ const App = () => {
 
 
 
-                     {/* Amenities Section WITH SPLINE ANIMATION */}
+                     {/* NEW PREMIUM AMENITIES SECTION - REPLACED */}
 
-                    <section id="services" className="py-24 bg-[#dbc0a1]/10 border-b border-nobel-gold/20">
-
-                        {/* 2. Content (z-index 10 to sit on top) */}
-
-                        <div className="container mx-auto px-6 relative z-10">
-
-                            <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-
-                                <div className="max-w-xl">
-
-                                    <span className="text-nobel-gold font-bold tracking-widest text-xs uppercase mb-2 block">{lang === 'en' ? 'Services' : 'Services'}</span>
-
-                                    <h2 className="text-4xl font-serif text-mapstone-blue mb-4">{t.amenities.title}</h2>
-
-                                    <p className="text-stone-500">{t.amenities.desc}</p>
-
-                                </div>
-
-                                <button 
-
-                                    onClick={() => setBookingOpen(true)}
-
-                                    className="text-mapstone-blue font-bold uppercase tracking-widest text-xs border-b border-mapstone-blue pb-1 hover:text-nobel-gold hover:border-nobel-gold transition-colors"
-
-                                >
-
-                                    {lang === 'en' ? 'Know more' : 'En savoir plus'}
-
-                                </button>
-
-                            </div>
-
-                            <AmenityGrid lang={lang} />
-
-                        </div>
-
-                    </section>
+                    <PremiumAmenities lang={lang} onBook={() => setBookingOpen(true)} />
 
 
 
@@ -2366,19 +2334,19 @@ const App = () => {
 
                                          <ul className="grid grid-cols-1 gap-3">
 
-                                              {t.landlords.list.map((item, idx) => (
+                                               {t.landlords.list.map((item, idx) => (
 
-                                                  <li key={idx} className="flex items-center gap-3 text-sm font-medium">
+                                                   <li key={idx} className="flex items-center gap-3 text-sm font-medium">
 
-                                                      <div className="w-1.5 h-1.5 rounded-full bg-nobel-gold"></div>
+                                                       <div className="w-1.5 h-1.5 rounded-full bg-nobel-gold"></div>
 
-                                                      {item}
+                                                       {item}
 
-                                                  </li>
+                                                   </li>
 
-                                              ))}
+                                               ))}
 
-                                         </ul>
+                                          </ul>
 
                                      </div>
 
@@ -2436,9 +2404,7 @@ const App = () => {
 
 
 
-                    {/* NEW GUEST EXPERIENCES / TESTIMONIALS SECTION */}
-
-                    {/* Fixed: Added the lang prop so translations work correctly */}
+                    {/* GUEST EXPERIENCES / TESTIMONIALS SECTION */}
 
                     <GuestExperiences lang={lang} />
 
