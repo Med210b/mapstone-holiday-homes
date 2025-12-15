@@ -1,9 +1,9 @@
 "use client"
 import React, { useEffect, useRef, useState } from "react"
-// FIX 1: Using the correct library you have installed
+// FIX 1: We use "framer-motion" (Correct library)
 import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from "framer-motion"
 
-// FIX 2: This magic line shuts up the Red Errors
+// FIX 2: This line disables the strict red errors for the animation box
 const MotionDiv = motion.div as any;
 
 function cn(...classes: (string | undefined | null | false)[]) {
