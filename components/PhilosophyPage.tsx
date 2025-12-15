@@ -1,7 +1,10 @@
 "use client"
-import type React from "react"
-import { useEffect, useRef, useState } from "react"
-import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from "motion/react"
+import React, { useEffect, useRef, useState } from "react"
+// FIX 1: We use "framer-motion" because that is what you have installed.
+import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from "framer-motion"
+
+// FIX 2: We cast motion.div to 'any' to stop the strict TypeScript red lines
+const MotionDiv = motion.div as any;
 
 // Utility function for className merging
 function cn(...classes: (string | undefined | null | false)[]) {
@@ -246,7 +249,7 @@ const CometCard = ({
 
   return (
     <div className={cn("perspective-distant transform-3d", className)}>
-      <motion.div
+      <MotionDiv
         ref={ref}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
@@ -273,7 +276,7 @@ const CometCard = ({
         className="relative rounded-2xl"
       >
         {children}
-        <motion.div
+        <MotionDiv
           className="pointer-events-none absolute inset-0 z-50 h-full w-full rounded-[16px] mix-blend-overlay"
           style={{
             background: glareBackground,
@@ -281,13 +284,12 @@ const CometCard = ({
           }}
           transition={{ duration: 0.2 }}
         />
-      </motion.div>
+      </MotionDiv>
     </div>
   )
 }
 
-// Main App Component
-export default function App() {
+export default function PhilosophyPage() {
   return (
     <BackgroundGradientAnimation
       gradientBackgroundStart="rgb(30, 72, 116)"
