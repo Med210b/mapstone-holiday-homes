@@ -6,7 +6,6 @@ import PremiumAmenities from './components/PremiumAmenities';
 import PageTransition from './components/PageTransition'; 
 import { WhatsAppIcon, LogoBayut, LogoDubizzle, LogoPropertyFinder, LogoBooking, LogoAirbnb } from './components/Icons';
 import { PrivacyPolicy, TermsConditions, FAQs } from './components/LegalPages';
-// IMPORT THE NEW PAGE HERE
 import PhilosophyPage from './components/PhilosophyPage'; 
 import { ArrowDown, Menu, X, Calendar, Globe, Star, Phone, Mail, ChevronDown, Search, Check, HelpCircle, MapPin, Facebook, Instagram, Smartphone, TrendingUp, Shield, BarChart3, Users, Loader2, AlertCircle, CheckCircle2, Crown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -818,6 +817,13 @@ const App = () => {
             return;
         }
 
+        // Handle "Properties" specially (Turn Page Effect)
+        if (id === 'properties') {
+            setCurrentView('properties');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+
         // Handle "Home" specially
         if (id === 'home') {
              setCurrentView('home');
@@ -825,7 +831,7 @@ const App = () => {
              return;
         }
 
-        // Logic for anchors (Properties, Services, etc.)
+        // Logic for anchors (Services, etc.)
         if (currentView !== 'home') {
             setCurrentView('home');
             setTimeout(() => {
@@ -1044,18 +1050,7 @@ const App = () => {
                             <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-white/70 z-20"><ArrowDown size={24} /></div>
                         </header>
 
-                        {/* OLD ABOUT SECTION REMOVED TO AVOID DUPLICATION */}
-
-                        <section id="properties" className="py-24 bg-[#204c77]/10 border-b border-nobel-gold/20">
-                            <div className="container mx-auto px-6">
-                                <div className="text-center max-w-2xl mx-auto mb-16">
-                                    <span className="text-nobel-gold font-bold tracking-widest text-xs uppercase mb-2 block">{t.properties.label}</span>
-                                    <h2 className="text-4xl font-serif text-mapstone-blue mb-4">{t.properties.title}</h2>
-                                    <p className="text-stone-500">{t.properties.desc}</p>
-                                </div>
-                                <PropertyShowcase lang={lang} onBook={() => setBookingOpen(true)} />
-                            </div>
-                        </section>
+                        {/* OLD PROPERTIES SECTION REMOVED TO AVOID DUPLICATION */}
 
                         <PremiumAmenities lang={lang} onBook={() => setBookingOpen(true)} />
 
@@ -1103,8 +1098,6 @@ const App = () => {
                                 <div className="flex animate-marquee whitespace-nowrap"><PartnerLogos /><PartnerLogos /><PartnerLogos /><PartnerLogos /></div>
                             </div>
                         </section>
-
-                        {/* GUEST EXPERIENCES REMOVED */}
                     </PageTransition>
                 )}
 
@@ -1114,6 +1107,14 @@ const App = () => {
                         <PhilosophyPage />
                     </PageTransition>
                 )}
+
+                {/* --- ADD THIS NEW BLOCK FOR PROPERTIES --- */}
+                {currentView === 'properties' && (
+                    <PageTransition key="properties">
+                        <PropertyShowcase lang={lang} onBook={() => setBookingOpen(true)} />
+                    </PageTransition>
+                )}
+                {/* ----------------------------------------- */}
 
                 {currentView === 'privacy' && (
                     <PageTransition key="privacy">
