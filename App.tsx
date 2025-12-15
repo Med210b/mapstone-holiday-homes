@@ -897,7 +897,7 @@ const App = () => {
             </AnimatePresence>
 
             {/* Navbar */}
-            <nav className={`fixed w-full z-40 transition-all duration-300 ${scrolled || currentView !== 'home' ? 'bg-white/95 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'}`}>
+            <nav className={`fixed w-full z-[100] transition-all duration-300 ${scrolled || currentView !== 'home' ? 'bg-white/95 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'}`}>
                 <div className="container mx-auto px-6 flex justify-between items-center">
                     <div className="flex items-center gap-2 z-50 cursor-pointer" onClick={() => scrollTo('home')}>
                         {/* Logo Image */}
@@ -968,7 +968,7 @@ const App = () => {
 
                     {/* Mobile Menu Toggle */}
                     <button 
-                        className={`lg:hidden z-50 ${scrolled || menuOpen || currentView !== 'home' ? 'text-mapstone-blue' : 'text-white'}`}
+                        className={`lg:hidden z-[101] ${scrolled || menuOpen || currentView !== 'home' ? 'text-mapstone-blue' : 'text-white'}`}
                         onClick={() => setMenuOpen(!menuOpen)}
                     >
                         {menuOpen ? <X size={28} /> : <Menu size={28} />}
