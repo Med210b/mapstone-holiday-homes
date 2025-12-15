@@ -6,11 +6,12 @@ import PremiumAmenities from './components/PremiumAmenities';
 import PageTransition from './components/PageTransition'; 
 import { WhatsAppIcon, LogoBayut, LogoDubizzle, LogoPropertyFinder, LogoBooking, LogoAirbnb } from './components/Icons';
 import { PrivacyPolicy, TermsConditions, FAQs } from './components/LegalPages';
+// IMPORT THE NEW PAGE HERE
+import PhilosophyPage from './components/PhilosophyPage'; 
 import { ArrowDown, Menu, X, Calendar, Globe, Star, Phone, Mail, ChevronDown, Search, Check, HelpCircle, MapPin, Facebook, Instagram, Smartphone, TrendingUp, Shield, BarChart3, Users, Loader2, AlertCircle, CheckCircle2, Crown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IMaskInput } from 'react-imask';
 import { Lang, View } from './types';
-import GuestExperiences from './GuestExperiences';
 
 // Constants for Translations and Data
 const translations = {
@@ -514,7 +515,7 @@ const OwnerAppMockup = () => (
              </div>
 
              {/* Recent Activity / Status */}
-              <div className="bg-white p-3 rounded-2xl shadow-sm border border-stone-100 flex items-center gap-3">
+             <div className="bg-white p-3 rounded-2xl shadow-sm border border-stone-100 flex items-center gap-3">
                  <div className="h-8 w-8 rounded-full bg-green-50 flex items-center justify-center text-green-600">
                      <CheckCircle2 size={16} />
                  </div>
@@ -809,6 +810,22 @@ const App = () => {
 
     const scrollTo = (id: string) => {
         setMenuOpen(false);
+        
+        // Handle "About" specially - switch to new page instead of scrolling
+        if (id === 'about') {
+            setCurrentView('about');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+
+        // Handle "Home" specially
+        if (id === 'home') {
+             setCurrentView('home');
+             window.scrollTo({ top: 0, behavior: 'smooth' });
+             return;
+        }
+
+        // Logic for anchors (Properties, Services, etc.)
         if (currentView !== 'home') {
             setCurrentView('home');
             setTimeout(() => {
@@ -1027,34 +1044,7 @@ const App = () => {
                             <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-white/70 z-20"><ArrowDown size={24} /></div>
                         </header>
 
-                        {/* About Section */}
-                        <section id="about" className="relative py-32 overflow-hidden bg-stone-50 border-b border-nobel-gold/20">
-                             <div className="absolute inset-0 z-0 opacity-40 pointer-events-none"><WhiteLuxuryScene /></div>
-                             <div className="container mx-auto px-6 relative z-10">
-                                <div className="grid md:grid-cols-2 gap-16 items-center">
-                                    <div className="relative group">
-                                        <div className="aspect-[3/4] rounded-sm overflow-hidden shadow-2xl relative z-10 transform transition-transform duration-700 hover:scale-[1.01]">
-                                            <img src="https://i.postimg.cc/fRh9wRZ8/5.jpg" alt="Luxury Living Room" className="w-full h-full object-cover" />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-60"></div>
-                                        </div>
-                                        <motion.div className={`absolute -bottom-10 w-56 h-56 border-8 border-white shadow-2xl z-20 hidden md:block ${lang === 'ar' ? '-left-10' : '-right-10'}`} initial={{ y: 20, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} transition={{ delay: 0.3, duration: 0.8 }}>
-                                            <img src="https://i.postimg.cc/fRh9wRZ8/5.jpg" alt="Detail" className="w-full h-full object-cover" />
-                                        </motion.div>
-                                        <div className="absolute top-[-20px] left-[-20px] w-full h-full border border-nobel-gold/30 z-0 hidden md:block"></div>
-                                    </div>
-                                    <div className="bg-white/80 backdrop-blur-md p-8 md:p-12 shadow-sm border border-white rounded-sm">
-                                        <span className="text-nobel-gold font-bold tracking-widest text-xs uppercase mb-3 block flex items-center gap-2"><span className="w-8 h-px bg-nobel-gold"></span>{t.about.label}</span>
-                                        <h2 className="text-4xl md:text-5xl font-serif text-mapstone-blue mb-8 leading-tight">{t.about.title}</h2>
-                                        <p className="text-stone-600 leading-relaxed mb-6 font-light text-lg">{t.about.p1}</p>
-                                        <p className="text-stone-600 leading-relaxed mb-10 font-light text-lg">{t.about.p2}</p>
-                                        <div className="grid grid-cols-2 gap-8 border-t border-stone-200 pt-8">
-                                            <div className="flex flex-col"><span className="text-4xl font-serif text-nobel-gold">50+</span><span className="text-xs uppercase tracking-widest text-mapstone-blue mt-2 font-bold">Premium Units</span></div>
-                                            <div className="flex flex-col"><span className="text-4xl font-serif text-nobel-gold">4.9</span><span className="text-xs uppercase tracking-widest text-mapstone-blue mt-2 font-bold">Guest Rating</span></div>
-                                        </div>
-                                    </div>
-                                </div>
-                             </div>
-                        </section>
+                        {/* OLD ABOUT SECTION REMOVED TO AVOID DUPLICATION */}
 
                         <section id="properties" className="py-24 bg-[#204c77]/10 border-b border-nobel-gold/20">
                             <div className="container mx-auto px-6">
@@ -1114,7 +1104,14 @@ const App = () => {
                             </div>
                         </section>
 
-                        <GuestExperiences lang={lang} />
+                        {/* GUEST EXPERIENCES REMOVED */}
+                    </PageTransition>
+                )}
+
+                {/* --- NEW PHILOSOPHY PAGE (ABOUT) --- */}
+                {currentView === 'about' && (
+                    <PageTransition key="about">
+                        <PhilosophyPage />
                     </PageTransition>
                 )}
 
