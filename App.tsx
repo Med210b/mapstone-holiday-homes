@@ -7,6 +7,7 @@ import PageTransition from './components/PageTransition';
 import { WhatsAppIcon, LogoBayut, LogoDubizzle, LogoPropertyFinder, LogoBooking, LogoAirbnb } from './components/Icons';
 import { PrivacyPolicy, TermsConditions, FAQs } from './components/LegalPages';
 import PhilosophyPage from './components/PhilosophyPage'; 
+import CinematicPage from './components/CinematicPage'; // IMPORT NEW PAGE
 import { ArrowDown, Menu, X, Calendar, Globe, Star, Phone, Mail, ChevronDown, Search, Check, HelpCircle, MapPin, Facebook, Instagram, Smartphone, TrendingUp, Shield, BarChart3, Users, Loader2, AlertCircle, CheckCircle2, Crown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IMaskInput } from 'react-imask';
@@ -16,7 +17,7 @@ import { Lang, View } from './types';
 const translations = {
   en: {
     name: "English",
-    nav: { home: "Home", about: "About", properties: "Properties", landlords: "Landlords", contact: "Contact Us", book: "Book Now", services: "Amenities" },
+    nav: { home: "Home", video: "Experience", about: "About", properties: "Properties", landlords: "Landlords", contact: "Contact Us", book: "Book Now", services: "Amenities" },
     hero: {
       location: "DUBAI • UNITED ARAB EMIRATES",
       title: "MAPSTONE",
@@ -49,7 +50,7 @@ const translations = {
   },
   fr: {
     name: "Français",
-    nav: { home: "Accueil", about: "À propos", properties: "Propriétés", landlords: "Propriétaires", contact: "Nous Contacter", book: "Réserver", services: "Équipements" },
+    nav: { home: "Accueil", video: "Expérience", about: "À propos", properties: "Propriétés", landlords: "Propriétaires", contact: "Nous Contacter", book: "Réserver", services: "Équipements" },
     hero: { location: "DUBAÏ • ÉMIRATS ARABES UNIS", title: "MAPSTONE", subtitle: "Maisons de Vacances", desc: "Découvrez le summum du luxe à Dubaï. Locations à court terme haut de gamme dans les quartiers les plus prestigieux.", cta: "Trouver Votre Séjour" },
     about: { label: "Notre Philosophie", title: "Le Luxe Redéfini", p1: "MAPSTONE Holiday Homes propose une sélection soignée d'appartements meublés dans les meilleurs quartiers de Dubaï. Du dynamique Downtown au serein Palm Jumeirah, nous offrons une expérience d'hospitalité sans faille.", p2: "Que vous visitiez pour affaires ou pour le plaisir, nos propriétés allient des équipements de qualité hôtelière au confort et à l'intimité d'un foyer." },
     properties: { label: "Emplacements", title: "Résidences Curatées", desc: "Découvrez notre portefeuille d'appartements exclusifs dans les quartiers les plus prisés de Dubaï." },
@@ -64,7 +65,7 @@ const translations = {
   },
   es: {
     name: "Español",
-    nav: { home: "Inicio", about: "Nosotros", properties: "Propiedades", landlords: "Propietarios", contact: "Contacto", book: "Reservar", services: "Servicios" },
+    nav: { home: "Inicio", video: "Experiencia", about: "Nosotros", properties: "Propiedades", landlords: "Propietarios", contact: "Contacto", book: "Reservar", services: "Servicios" },
     hero: { location: "DUBÁI • EMIRATOS ÁRABES UNIDOS", title: "MAPSTONE", subtitle: "Casas Vacacionales", desc: "Experimente el pináculo de la vida de lujo en Dubái. Alquileres premium a corto plazo.", cta: "Buscar Estancia" },
     about: { label: "Nuestra Filosofía", title: "Lujo Redefinido", p1: "MAPSTONE ofrece una selección curada de apartamentos amueblados en los mejores distritos de Dubái.", p2: "Nuestras propiedades combinan servicios de calidad hotelera con la comodidad de un hogar." },
     properties: { label: "Ubicaciones", title: "Residencias Curadas", desc: "Descubra nuestra cartera de apartamentos exclusivos." },
@@ -79,7 +80,7 @@ const translations = {
   },
   de: {
     name: "Deutsch",
-    nav: { home: "Startseite", about: "Über uns", properties: "Immobilien", landlords: "Eigentümer", contact: "Kontakt", book: "Buchen", services: "Ausstattung" },
+    nav: { home: "Startseite", video: "Erlebnis", about: "Über uns", properties: "Immobilien", landlords: "Eigentümer", contact: "Kontakt", book: "Buchen", services: "Ausstattung" },
     hero: { location: "DUBAI • VEREINIGTE ARABISCHE EMIRATE", title: "MAPSTONE", subtitle: "Ferienwohnungen", desc: "Erleben Sie den Höhepunkt des luxuriösen Wohnens in Dubai. Premium-Kurzzeitvermietungen.", cta: "Aufenthalt Finden" },
     about: { label: "Unsere Philosophie", title: "Luxus Neu Definiert", p1: "MAPSTONE bietet eine kuratierte Auswahl an möblierten Apartments in den besten Vierteln Dubais.", p2: "Unsere Immobilien verbinden hotelähnliche Annehmlichkeiten mit dem Komfort eines Zuhauses." },
     properties: { label: "Standorte", title: "Kuratierte Residenzen", desc: "Entdecken Sie unser Portfolio an exklusiven Apartments." },
@@ -94,7 +95,7 @@ const translations = {
   },
   ar: {
     name: "العربية",
-    nav: { home: "الرئيسية", about: "من نحن", properties: "عقاراتنا", landlords: "الملاك", contact: "تواصل معنا", book: "احجز الآن", services: "المميزات" },
+    nav: { home: "الرئيسية", video: "تجربة", about: "من نحن", properties: "عقاراتنا", landlords: "الملاك", contact: "تواصل معنا", book: "احجز الآن", services: "المميزات" },
     hero: { location: "دبي • الإمارات العربية المتحدة", title: "مابستون", subtitle: "بيوت العطلات", desc: "استمتع بقمة الرفاهية في دبي. إيجارات قصيرة الأجل فاخرة في أرقى المواقع.", cta: "ابحث عن إقامتك" },
     about: { label: "فلسفتنا", title: "مفهوم جديد للرفاهية", p1: "تقدم مابستون مجموعة مختارة من الشقق المفروشة في أرقى أحياء دبي. من وسط المدينة النابض بالحياة إلى نخلة جميرا الهادئة.", p2: "تجمع عقاراتنا بين وسائل الراحة الفندقية وخصوصية المنزل." },
     properties: { label: "المواقع", title: "إقامات مميزة", desc: "اكتشف محفظتنا من الشقق الحصرية في أكثر الأحياء طلباً في دبي." },
@@ -109,7 +110,7 @@ const translations = {
   },
   ru: {
     name: "Русский",
-    nav: { home: "Главная", about: "О нас", properties: "Объекты", landlords: "Собственникам", contact: "Контакты", book: "Забронировать", services: "Удобства" },
+    nav: { home: "Главная", video: "Опыт", about: "О нас", properties: "Объекты", landlords: "Собственникам", contact: "Контакты", book: "Забронировать", services: "Удобства" },
     hero: { location: "ДУБАЙ • ОБЪЕДИНЕННЫЕ АРАБСКИЕ ЭМИРАТЫ", title: "MAPSTONE", subtitle: "Дома для отдыха", desc: "Испытайте вершину роскошной жизни в Дубае. Премиальная краткосрочная аренда в самых престижных районах города.", cta: "Найти жилье" },
     about: { label: "Наша философия", title: "Новое определение роскоши", p1: "MAPSTONE предлагает избранную коллекцию меблированных апартаментов в лучших районах Дубая. От оживленного центра до безмятежной Пальмы Джумейра.", p2: "Наши объекты сочетают в себе удобства гостиничного класса с комфортом и уединением дома." },
     properties: { label: "Районы", title: "Избранные резиденции", desc: "Откройте для себя наше портфолио эксклюзивных апартаментов в самых востребованных районах Дубая." },
@@ -800,6 +801,7 @@ const App = () => {
 
     const navLinks = [
         { id: 'home', label: t.nav.home },
+        { id: 'video', label: t.nav.video },
         { id: 'about', label: t.nav.about },
         { id: 'properties', label: t.nav.properties },
         { id: 'services', label: t.nav.services },
@@ -813,6 +815,13 @@ const App = () => {
         // Handle "About" specially - switch to new page instead of scrolling
         if (id === 'about') {
             setCurrentView('about');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+
+        // Handle "Video" specially
+        if (id === 'video') {
+            setCurrentView('video');
             window.scrollTo({ top: 0, behavior: 'smooth' });
             return;
         }
@@ -1108,12 +1117,20 @@ const App = () => {
                     </PageTransition>
                 )}
 
-                {/* --- ADD THIS NEW BLOCK FOR PROPERTIES --- */}
+                {/* --- NEW CINEMATIC PAGE (VIDEO) --- */}
+                {currentView === 'video' && (
+                    <PageTransition key="video">
+                        <CinematicPage />
+                    </PageTransition>
+                )}
+
+                {/* --- NEW PROPERTIES PAGE --- */}
                 {currentView === 'properties' && (
                     <PageTransition key="properties">
                         <PropertyShowcase lang={lang} onBook={() => setBookingOpen(true)} />
                     </PageTransition>
                 )}
+                
                 {/* ----------------------------------------- */}
 
                 {currentView === 'privacy' && (
