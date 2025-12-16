@@ -7,7 +7,6 @@ import PageTransition from './components/PageTransition';
 import { WhatsAppIcon, LogoBayut, LogoDubizzle, LogoPropertyFinder, LogoBooking, LogoAirbnb } from './components/Icons';
 import { PrivacyPolicy, TermsConditions, FAQs } from './components/LegalPages';
 import PhilosophyPage from './components/PhilosophyPage'; 
-import CinematicPage from './components/CinematicPage'; // Keeping the import
 import { ArrowDown, Menu, X, Calendar, Globe, Star, Phone, Mail, ChevronDown, Search, Check, HelpCircle, MapPin, Facebook, Instagram, Smartphone, TrendingUp, Shield, BarChart3, Users, Loader2, AlertCircle, CheckCircle2, Crown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IMaskInput } from 'react-imask';
@@ -17,7 +16,6 @@ import { Lang, View } from './types';
 const translations = {
   en: {
     name: "English",
-    // REMOVED "VIDEO" FROM NAV
     nav: { home: "Home", about: "About", properties: "Properties", landlords: "Landlords", contact: "Contact Us", book: "Book Now", services: "Amenities" },
     hero: {
       location: "DUBAI • UNITED ARAB EMIRATES",
@@ -1051,10 +1049,6 @@ const App = () => {
                             </div>
                             <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-white/70 z-20"><ArrowDown size={24} /></div>
                         </header>
-
-                        {/* --- CINEMATIC VIDEO SECTION --- */}
-                        <CinematicPage />
-                        {/* ------------------------------- */}
 
                         {/* OLD PROPERTIES SECTION REMOVED TO AVOID DUPLICATION */}
 
