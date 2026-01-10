@@ -1,9 +1,144 @@
-// src/components/Diagrams.tsx
 "use client"
 import React, { useState, useEffect, useRef } from 'react';
-import { Wifi, Utensils, Waves, Car, Tv, Wind, MapPin, ArrowRight, CheckCircle2, BadgeCheck, Zap, ChevronLeft, ChevronRight, X, CalendarCheck } from 'lucide-react';
+import { Wifi, Utensils, Waves, Car, Tv, Wind, MapPin, CheckCircle2, BadgeCheck, Zap, ChevronLeft, ChevronRight, X, CalendarCheck } from 'lucide-react';
 import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate, AnimatePresence } from 'framer-motion';
 import { Lang } from '../types';
+
+// --- TYPES ---
+export interface PropertyData {
+    id: number;
+    title: string;
+    location: string;
+    images: string[];
+    price: string;
+    specs: string;
+}
+
+// --- DATA: EXPORTED SO PARENT CAN USE IT ---
+export const getProperties = (lang: Lang): PropertyData[] => [
+    {
+        id: 1,
+        title: lang === 'en' ? "The Address Downtown" : "The Address Centre-ville",
+        location: "Downtown Dubai",
+        images: [
+            "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1555636222-cae831e670b3?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80"
+        ],
+        price: "AED 1,200 / night",
+        specs: "2 Beds • 1,400 sqft"
+    },
+    {
+        id: 2,
+        title: lang === 'en' ? "Palm Jumeirah Villa" : "Villa Palm Jumeirah",
+        location: "Palm Jumeirah",
+        images: [
+            "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1512918760532-3edbed72481b?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1615880484746-a134be9a6ecf?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1575517111478-7f60e9715b50?auto=format&fit=crop&w=800&q=80"
+        ],
+        price: "AED 3,500 / night",
+        specs: "5 Beds • Beach Access"
+    },
+    {
+        id: 3,
+        title: lang === 'en' ? "Marina Gate Penthouse" : "Marina Gate Penthouse",
+        location: "Dubai Marina",
+        images: [
+            "https://i.postimg.cc/nchK2cxx/1_Untitled_design.png",
+            "https://i.postimg.cc/BQn5pQ3G/2_Untitled_design.png",
+            "https://i.postimg.cc/GhmPKhR3/3_Untitled_design.png",
+            "https://i.postimg.cc/4NxvPNGf/4_Untitled_design.png",
+            "https://i.postimg.cc/xTpv4Djs/5_Untitled_design.png",
+            "https://i.postimg.cc/MK37F2Zr/6_Untitled_design.png",
+            "https://i.postimg.cc/SxX60TjG/7_Untitled_design.png",
+            "https://i.postimg.cc/sgBYF61q/8_Untitled_design.png",
+            "https://i.postimg.cc/8CMLc7R6/9_Untitled_design.png",
+            "https://i.postimg.cc/Xvd9qrfQ/10_Untitled_design.png",
+            "https://i.postimg.cc/5tL8yXBL/11_Untitled_design.png",
+            "https://i.postimg.cc/nLBqrX43/12_Untitled_design.png"
+        ],
+        price: "AED 2,100 / night",
+        specs: "3 Beds • Marina View"
+    },
+    {
+        id: 4,
+        title: lang === 'en' ? "Brand New Luxury Studio" : "Studio",
+        location: "Al Furjan",
+        images: [
+            "https://i.postimg.cc/5NG59J8F/w14.png",
+            "https://i.postimg.cc/tCfdRbFW/w15.png",
+            "https://i.postimg.cc/tCfdRbF3/w16.png",
+            "https://i.postimg.cc/dtXRQFGR/w17.png",
+            "https://i.postimg.cc/NfV8GtRx/w18.png",
+            "https://i.postimg.cc/xT7GjQLg/w19.png",
+            "https://i.postimg.cc/GhNP3Rv7/w2.png",
+            "https://i.postimg.cc/yY5h6K0r/w20.png",
+            "https://i.postimg.cc/28JdjYnJ/w200.png",
+            "https://i.postimg.cc/dtXRQFGz/w21.png",
+            "https://i.postimg.cc/y8ZmkGTv/w22.png",
+            "https://i.postimg.cc/13qGfdKd/w23.png",
+            "https://i.postimg.cc/3xvXdqZs/w24.png",
+            "https://i.postimg.cc/sghYvLcR/w3.png",
+            "https://i.postimg.cc/HkywVN2d/w300.png",
+            "https://i.postimg.cc/K8MPRWNz/w4.png",
+            "https://i.postimg.cc/BvfxDCYs/w400.png",
+            "https://i.postimg.cc/cJGQYc9L/w5.png",
+            "https://i.postimg.cc/6QxdRhj3/w500.png",
+            "https://i.postimg.cc/k5Px8y1x/w6.png",
+            "https://i.postimg.cc/nLKq1Qg7/w600.png",
+            "https://i.postimg.cc/ZqP6Ly2H/w7.png",
+            "https://i.postimg.cc/TPjncWFc/w8.png,",
+            "https://i.postimg.cc/LskjVZwy/w9.png"
+        ],
+        price: "AED 399 / night",
+        specs: "Studio • 460 sqft"
+    },
+    {
+        id: 5,
+        title: lang === 'en' ? "Spacious Executive 1BR" : "1BHK",
+        location: "Jumeirah Village Triangle(JVT)",
+        images: [
+            "https://i.postimg.cc/zBC9J39c/1-cloud.png",
+            "https://i.postimg.cc/d1PbPGS3/CLOUD-10.jpg",
+            "https://i.postimg.cc/85Q2QLnF/cloud-11.jpg",
+            "https://i.postimg.cc/QtG2GcnF/cloud-12.jpg",
+            "https://i.postimg.cc/nzbybqwK/cloud-13.png",
+            "https://i.postimg.cc/V6QxQXH7/cloud-14.png",
+            "https://i.postimg.cc/LXKcKj0Q/cloud-15.png",
+            "https://i.postimg.cc/ZR81T011/cloud-18.png",
+            "https://i.postimg.cc/Ss6wyjw1/cloud-19.jpg",
+            "https://i.postimg.cc/HnTFjdmD/cloud-2.png",
+            "https://i.postimg.cc/4d6rJnDG/cloud-21.jpg",
+            "https://i.postimg.cc/mDY0bhvT/cloud-23.jpg",
+            "https://i.postimg.cc/0QYL8rT8/cloud-25.jpg",
+            "https://i.postimg.cc/vTGCDbyG/cloud-26.jpg",
+            "https://i.postimg.cc/HnTFjdm5/cloud-27.png",
+            "https://i.postimg.cc/zvq438NG/cloud-29.jpg",
+            "https://i.postimg.cc/vTXkVk86/cloud-3.png",
+            "https://i.postimg.cc/Kc5dwk7v/cloud-30.png",
+            "https://i.postimg.cc/GtzVyV3K/cloud-4.png",
+            "https://i.postimg.cc/XNgTmGKB/cloud-6.png",
+            "https://i.postimg.cc/3rZPV4jD/cloud-7.png",
+            "https://i.postimg.cc/bYRKWD0d/CLOUD-8.jpg",
+            "https://i.postimg.cc/7PNpdG1N/cloud17.png",
+            "https://i.postimg.cc/ry9v30GS/cloud20.jpg",
+            "https://i.postimg.cc/Kc5dwk7P/cloud22.jpg",
+            "https://i.postimg.cc/05CLFMGn/cloud23.jpg",
+            "https://i.postimg.cc/zXX9rzp7/cloud28.png",
+            "https://i.postimg.cc/Kvvd2GQ7/cloud31.jpg",
+            "https://i.postimg.cc/zXX9rzpF/CLOUD9.jpg"
+        ],
+        price: "AED 499 / night",
+        specs: "1BHK • 549 sqft"
+    }
+];
 
 // Fix for TypeScript red lines
 const MotionDiv = motion.div as any;
@@ -13,11 +148,8 @@ function cn(...classes: (string | undefined | null | false)[]) {
   return classes.filter(Boolean).join(" ")
 }
 
-// ... [BackgroundGradientAnimation and CometCard code remains exactly the same as you sent] ...
-// (I am skipping repeating the animation code to save space, keep your existing BackgroundGradientAnimation and CometCard)
-
+// ... [BackgroundGradientAnimation and CometCard code remains exactly the same] ...
 const BackgroundGradientAnimation = ({ gradientBackgroundStart = "rgb(30, 72, 116)", gradientBackgroundEnd = "rgb(15, 36, 58)", firstColor = "204, 157, 66", secondColor = "30, 72, 116", thirdColor = "204, 157, 66", fourthColor = "30, 72, 116", fifthColor = "255, 255, 255", pointerColor = "204, 157, 66", size = "80%", blendingValue = "hard-light", children, className, interactive = true, containerClassName }: any) => {
-  // ... Keep your existing implementation ...
   const interactiveRef = useRef<HTMLDivElement>(null);
   const [curX, setCurX] = useState(0);
   const [curY, setCurY] = useState(0);
@@ -87,7 +219,6 @@ const BackgroundGradientAnimation = ({ gradientBackgroundStart = "rgb(30, 72, 11
 };
 
 const CometCard = ({ rotateDepth = 17.5, translateDepth = 20, className, children }: { rotateDepth?: number; translateDepth?: number; className?: string; children: React.ReactNode }) => {
-  // ... Keep your existing implementation ...
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -153,12 +284,12 @@ const CometCard = ({ rotateDepth = 17.5, translateDepth = 20, className, childre
 };
 
 
-// --- UPDATED PROPERTY COMPONENTS ---
+// --- PROPERTY COMPONENTS ---
 
 interface PropertyCardProps {
-    prop: any;
+    prop: PropertyData;
     lang: Lang;
-    onBook: (id: number) => void; // UPDATED: Accepts ID
+    onBook: (id: number) => void;
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({ prop, lang, onBook }) => {
@@ -231,7 +362,6 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ prop, lang, onBook }) => {
                              <span className="text-sm font-medium text-stone-600">{prop.price}</span>
                         </div>
                         
-                        {/* NEW CHECK AVAILABILITY BUTTON */}
                         <button 
                             onClick={(e) => { e.stopPropagation(); onBook(prop.id); }}
                             className="w-full flex items-center justify-center gap-2 bg-mapstone-blue text-white py-3 rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-nobel-gold transition-colors shadow-md"
@@ -285,132 +415,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ prop, lang, onBook }) => {
     )
 }
 
-// UPDATED: onBook now accepts the property ID
 export const PropertyShowcase = ({ lang, onBook }: { lang: Lang; onBook: (id: number) => void }) => {
-    const properties = [
-        {
-            id: 1,
-            title: lang === 'en' ? "The Address Downtown" : "The Address Centre-ville",
-            location: "Downtown Dubai",
-            images: [
-                "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1555636222-cae831e670b3?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80"
-            ],
-            price: "AED 1,200 / night",
-            specs: "2 Beds • 1,400 sqft"
-        },
-        {
-            id: 2,
-            title: lang === 'en' ? "Palm Jumeirah Villa" : "Villa Palm Jumeirah",
-            location: "Palm Jumeirah",
-            images: [
-                "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1512918760532-3edbed72481b?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1615880484746-a134be9a6ecf?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1575517111478-7f60e9715b50?auto=format&fit=crop&w=800&q=80"
-            ],
-            price: "AED 3,500 / night",
-            specs: "5 Beds • Beach Access"
-        },
-        {
-            id: 3,
-            title: lang === 'en' ? "Marina Gate Penthouse" : "Marina Gate Penthouse",
-            location: "Dubai Marina",
-            images: [
-                "https://i.postimg.cc/nchK2cxx/1_Untitled_design.png",
-                "https://i.postimg.cc/BQn5pQ3G/2_Untitled_design.png",
-                "https://i.postimg.cc/GhmPKhR3/3_Untitled_design.png",
-                "https://i.postimg.cc/4NxvPNGf/4_Untitled_design.png",
-                "https://i.postimg.cc/xTpv4Djs/5_Untitled_design.png",
-                "https://i.postimg.cc/MK37F2Zr/6_Untitled_design.png",
-                "https://i.postimg.cc/SxX60TjG/7_Untitled_design.png",
-                "https://i.postimg.cc/sgBYF61q/8_Untitled_design.png",
-                "https://i.postimg.cc/8CMLc7R6/9_Untitled_design.png",
-                "https://i.postimg.cc/Xvd9qrfQ/10_Untitled_design.png",
-                "https://i.postimg.cc/5tL8yXBL/11_Untitled_design.png",
-                "https://i.postimg.cc/nLBqrX43/12_Untitled_design.png"
-            ],
-            price: "AED 2,100 / night",
-            specs: "3 Beds • Marina View"
-        },
-        {
-            id: 4,
-            title: lang === 'en' ? "Brand New Luxury Studio" : "Studio",
-            location: "Al Furjan",
-            images: [
-              "https://i.postimg.cc/5NG59J8F/w14.png",
-              "https://i.postimg.cc/tCfdRbFW/w15.png",
-              "https://i.postimg.cc/tCfdRbF3/w16.png",
-              "https://i.postimg.cc/dtXRQFGR/w17.png",
-              "https://i.postimg.cc/NfV8GtRx/w18.png",
-              "https://i.postimg.cc/xT7GjQLg/w19.png",
-              "https://i.postimg.cc/GhNP3Rv7/w2.png",
-              "https://i.postimg.cc/yY5h6K0r/w20.png",
-              "https://i.postimg.cc/28JdjYnJ/w200.png",
-              "https://i.postimg.cc/dtXRQFGz/w21.png",
-              "https://i.postimg.cc/y8ZmkGTv/w22.png",
-              "https://i.postimg.cc/13qGfdKd/w23.png",
-              "https://i.postimg.cc/3xvXdqZs/w24.png",
-              "https://i.postimg.cc/sghYvLcR/w3.png",
-              "https://i.postimg.cc/HkywVN2d/w300.png",
-              "https://i.postimg.cc/K8MPRWNz/w4.png",
-              "https://i.postimg.cc/BvfxDCYs/w400.png",
-              "https://i.postimg.cc/cJGQYc9L/w5.png",
-              "https://i.postimg.cc/6QxdRhj3/w500.png",
-              "https://i.postimg.cc/k5Px8y1x/w6.png",
-              "https://i.postimg.cc/nLKq1Qg7/w600.png",
-              "https://i.postimg.cc/ZqP6Ly2H/w7.png",
-              "https://i.postimg.cc/TPjncWFc/w8.png,",
-              "https://i.postimg.cc/LskjVZwy/w9.png"
-            ],
-            price: "AED 399 / night",
-            specs: "Studio • 460 sqft"
-        },
-        {
-            id: 5,
-            title: lang === 'en' ? "Spacious Executive 1BR" : "1BHK",
-            location: "Jumeirah Village Triangle(JVT)",
-            images: [
-                "https://i.postimg.cc/zBC9J39c/1-cloud.png",
-                "https://i.postimg.cc/d1PbPGS3/CLOUD-10.jpg",
-                "https://i.postimg.cc/85Q2QLnF/cloud-11.jpg",
-                "https://i.postimg.cc/QtG2GcnF/cloud-12.jpg",
-                "https://i.postimg.cc/nzbybqwK/cloud-13.png",
-                "https://i.postimg.cc/V6QxQXH7/cloud-14.png",
-                "https://i.postimg.cc/LXKcKj0Q/cloud-15.png",
-                "https://i.postimg.cc/ZR81T011/cloud-18.png",
-                "https://i.postimg.cc/Ss6wyjw1/cloud-19.jpg",
-                "https://i.postimg.cc/HnTFjdmD/cloud-2.png",
-                "https://i.postimg.cc/4d6rJnDG/cloud-21.jpg",
-                "https://i.postimg.cc/mDY0bhvT/cloud-23.jpg",
-                "https://i.postimg.cc/0QYL8rT8/cloud-25.jpg",
-                "https://i.postimg.cc/vTGCDbyG/cloud-26.jpg",
-                "https://i.postimg.cc/HnTFjdm5/cloud-27.png",
-                "https://i.postimg.cc/zvq438NG/cloud-29.jpg",
-                "https://i.postimg.cc/vTXkVk86/cloud-3.png",
-                "https://i.postimg.cc/Kc5dwk7v/cloud-30.png",
-                "https://i.postimg.cc/GtzVyV3K/cloud-4.png",
-                "https://i.postimg.cc/XNgTmGKB/cloud-6.png",
-                "https://i.postimg.cc/3rZPV4jD/cloud-7.png",
-                "https://i.postimg.cc/bYRKWD0d/CLOUD-8.jpg",
-                "https://i.postimg.cc/7PNpdG1N/cloud17.png",
-                "https://i.postimg.cc/ry9v30GS/cloud20.jpg",
-                "https://i.postimg.cc/Kc5dwk7P/cloud22.jpg",
-                "https://i.postimg.cc/05CLFMGn/cloud23.jpg",
-                "https://i.postimg.cc/zXX9rzp7/cloud28.png",
-                "https://i.postimg.cc/Kvvd2GQ7/cloud31.jpg",
-                "https://i.postimg.cc/zXX9rzpF/CLOUD9.jpg"
-            ],
-            price: "AED 499 / night",
-            specs: "1BHK • 549 sqft"
-        }
-    ];
+    // We now get the properties from the exported function
+    const properties = getProperties(lang);
 
     return (
         <BackgroundGradientAnimation
@@ -510,7 +517,7 @@ export const BookingBenefits = ({ lang }: { lang: Lang }) => {
                     visible: { opacity: 1, transition: { staggerChildren: 0.3 } }
                 }}
             >
-                 {/* Connecting line for desktop - Animated */}
+                {/* Connecting line for desktop - Animated */}
                 <MotionDiv 
                     className="hidden md:block absolute top-12 left-[16%] right-[16%] h-px bg-stone-200 z-0 origin-left"
                     initial={{ scaleX: 0 }}

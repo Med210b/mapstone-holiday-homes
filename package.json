@@ -11,6 +11,7 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@react-three/fiber": "^8.18.0",
     "@types/three": "^0.165.0",
     "cannon-es": "0.20.0",
