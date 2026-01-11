@@ -5,18 +5,6 @@ import { ArrowLeft, UploadCloud, FileText, X, Loader2, Check, UserPlus, AlertTri
 
 const MotionDiv = motion.div as any;
 
-const COUNTRY_CODES = [
-  { code: "+971", country: "United Arab Emirates", flag: "🇦🇪" },
-  { code: "+1", country: "United States", flag: "🇺🇸" },
-  { code: "+44", country: "United Kingdom", flag: "🇬🇧" },
-  { code: "+33", country: "France", flag: "🇫🇷" },
-  { code: "+7", country: "Russia", flag: "🇷🇺" },
-  { code: "+966", country: "Saudi Arabia", flag: "🇸🇦" },
-  { code: "+49", country: "Germany", flag: "🇩🇪" },
-  { code: "+91", country: "India", flag: "🇮🇳" },
-  { code: "+86", country: "China", flag: "🇨🇳" },
-];
-
 interface Props {
     lang: string;
     onBack: () => void;
@@ -48,15 +36,21 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
         guest2Name: '',
         guest2Passport: '',
         guest2Phone: '',
-        paymentMethod: 'visa' // Default
+        paymentMethod: 'visa'
     });
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, isSecondGuest: boolean) => {
         if (e.target.files && e.target.files.length > 0) {
+            const selectedFile = e.target.files[0];
+            // Validate size (Max 5MB to ensure email delivery)
+            if (selectedFile.size > 5 * 1024 * 1024) {
+                alert("File is too large. Please upload a file smaller than 5MB.");
+                return;
+            }
             if (isSecondGuest) {
-                setFile2(e.target.files[0]);
+                setFile2(selectedFile);
             } else {
-                setFile1(e.target.files[0]);
+                setFile1(selectedFile);
             }
             setFormError(''); 
         }
@@ -88,15 +82,15 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
 
         setIsSubmitting(true);
 
-        const formElement = e.target as HTMLFormElement;
+        // --- CONSTRUCT FORM DATA ---
         const formDataObj = new FormData(); 
 
-        // --- 1. CONFIGURATION ---
-        formDataObj.append("_subject", `New Booking: ${bookingData.propertyName}`);
+        // 1. Configuration
+        formDataObj.append("_subject", `New Booking + Docs: ${bookingData.propertyName}`);
         formDataObj.append("_captcha", "false");
         formDataObj.append("_template", "table");
 
-        // --- 2. BOOKING DATA ---
+        // 2. Text Data
         formDataObj.append("Property", bookingData.propertyName || "Unknown");
         const checkIn = bookingData.dateRange?.[0]?.toDateString() || "N/A";
         const checkOut = bookingData.dateRange?.[1]?.toDateString() || "N/A";
@@ -104,11 +98,10 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
         formDataObj.append("Check-out", checkOut);
         formDataObj.append("Total Guests", `${bookingData.guests.adults} Adults, ${bookingData.guests.children} Children`);
 
-        // --- 3. GUEST DATA ---
         formDataObj.append("Main Guest Name", formData.fullName);
-        formDataObj.append("Passport No", formData.passportNumber);
-        formDataObj.append("Phone", formData.phone);
-        formDataObj.append("Email", formData.email);
+        formDataObj.append("Main Guest Passport No", formData.passportNumber);
+        formDataObj.append("Main Guest Phone", formData.phone);
+        formDataObj.append("Main Guest Email", formData.email);
 
         if (requiresSecondGuest) {
             formDataObj.append("Second Guest Name", formData.guest2Name);
@@ -116,22 +109,29 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
             formDataObj.append("Second Guest Phone", formData.guest2Phone);
         }
 
-        // --- 4. PAYMENT METHOD ---
+        // Payment Label
         let paymentLabel = "Visa / Mastercard";
         if (formData.paymentMethod === 'apple_pay') paymentLabel = "Apple Pay";
         if (formData.paymentMethod === 'google_pay') paymentLabel = "Google Pay";
         if (formData.paymentMethod === 'paypal') paymentLabel = "PayPal";
-        
-        formDataObj.append("Selected Payment", paymentLabel);
+        formDataObj.append("Payment Method", paymentLabel);
 
-        // --- 5. FILE ATTACHMENTS ---
-        if (file1) formDataObj.append("attachment", file1); 
-        if (requiresSecondGuest && file2) formDataObj.append("attachment", file2);
+        // --- 3. FILES (CRITICAL FIX) ---
+        // We MUST use the key "attachment" for both files.
+        // FormSubmit sees multiple "attachment" keys and attaches them all to the email.
+        if (file1) {
+            formDataObj.append("attachment", file1); 
+        }
+        if (requiresSecondGuest && file2) {
+            formDataObj.append("attachment", file2);
+        }
 
         try {
+            // Using AJAX endpoint
             const response = await fetch("https://formsubmit.co/ajax/contact@mapstonegroup.com", {
                 method: "POST",
                 body: formDataObj
+                // Do NOT set Content-Type header here; browser does it automatically for FormData
             });
             
             const result = await response.json();
@@ -162,7 +162,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                     <p className="text-stone-500 mb-8">
                         Thank you, <span className="font-bold text-mapstone-blue">{formData.fullName}</span>. 
                         <br/><br/>
-                        We have received your details. We will send the payment link for <strong>{formData.paymentMethod === 'visa' ? 'Visa/Mastercard' : formData.paymentMethod.replace('_', ' ').toUpperCase()}</strong> to your email shortly.
+                        We have received your details and documents successfully. We will send the payment link for <strong>{formData.paymentMethod.replace('_', ' ').toUpperCase()}</strong> to your email shortly.
                     </p>
                     <button onClick={onBack} className="bg-mapstone-blue text-white px-8 py-3 rounded-sm uppercase font-bold hover:bg-nobel-gold transition-colors">
                         Back to Properties
@@ -263,25 +263,18 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                             <div className="pt-8 border-t border-stone-100">
                                 <h3 className="font-serif text-xl text-mapstone-blue mb-6">Payment Method</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {/* Visa / Mastercard */}
                                     <label className={`border p-4 rounded-lg flex items-center gap-4 cursor-pointer transition-all ${formData.paymentMethod === 'visa' ? 'border-nobel-gold bg-amber-50/20 ring-1 ring-nobel-gold' : 'border-stone-200 hover:border-stone-300'}`}>
                                         <input type="radio" name="paymentMethod" value="visa" className="accent-nobel-gold w-5 h-5" checked={formData.paymentMethod === 'visa'} onChange={() => setFormData({...formData, paymentMethod: 'visa'})} />
                                         <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><CreditCard size={18} /> Visa / Mastercard</p><p className="text-xs text-stone-400">Secure link via email.</p></div>
                                     </label>
-
-                                    {/* Apple Pay */}
                                     <label className={`border p-4 rounded-lg flex items-center gap-4 cursor-pointer transition-all ${formData.paymentMethod === 'apple_pay' ? 'border-nobel-gold bg-amber-50/20 ring-1 ring-nobel-gold' : 'border-stone-200 hover:border-stone-300'}`}>
                                         <input type="radio" name="paymentMethod" value="apple_pay" className="accent-nobel-gold w-5 h-5" checked={formData.paymentMethod === 'apple_pay'} onChange={() => setFormData({...formData, paymentMethod: 'apple_pay'})} />
                                         <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><Wallet size={18} /> Apple Pay</p><p className="text-xs text-stone-400">Secure wallet link via email.</p></div>
                                     </label>
-
-                                    {/* Google Pay */}
                                     <label className={`border p-4 rounded-lg flex items-center gap-4 cursor-pointer transition-all ${formData.paymentMethod === 'google_pay' ? 'border-nobel-gold bg-amber-50/20 ring-1 ring-nobel-gold' : 'border-stone-200 hover:border-stone-300'}`}>
                                         <input type="radio" name="paymentMethod" value="google_pay" className="accent-nobel-gold w-5 h-5" checked={formData.paymentMethod === 'google_pay'} onChange={() => setFormData({...formData, paymentMethod: 'google_pay'})} />
                                         <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><Smartphone size={18} /> Google Pay</p><p className="text-xs text-stone-400">Secure wallet link via email.</p></div>
                                     </label>
-
-                                    {/* PayPal */}
                                     <label className={`border p-4 rounded-lg flex items-center gap-4 cursor-pointer transition-all ${formData.paymentMethod === 'paypal' ? 'border-nobel-gold bg-amber-50/20 ring-1 ring-nobel-gold' : 'border-stone-200 hover:border-stone-300'}`}>
                                         <input type="radio" name="paymentMethod" value="paypal" className="accent-nobel-gold w-5 h-5" checked={formData.paymentMethod === 'paypal'} onChange={() => setFormData({...formData, paymentMethod: 'paypal'})} />
                                         <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><Globe size={18} /> PayPal</p><p className="text-xs text-stone-400">Official invoice via email.</p></div>
