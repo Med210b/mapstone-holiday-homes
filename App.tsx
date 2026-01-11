@@ -15,7 +15,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { IMaskInput } from 'react-imask';
 import { Lang, View } from './types';
 
-// --- TRANSLATIONS (Restored Full Original List) ---
+// --- TRANSLATIONS ---
 const translations = {
   en: {
     name: "English",
@@ -190,6 +190,7 @@ const App = () => {
             <img src="https://i.postimg.cc/qBQmntz0/logo-holiday.png" alt="MAPSTONE" className="h-12 md:h-20 w-auto object-contain transition-all duration-300"/>
           </div>
 
+          {/* Desktop Links */}
           <div className="hidden lg:flex items-center gap-8">
             {navLinks.map(link => (
               <button 
@@ -202,6 +203,7 @@ const App = () => {
             ))}
           </div>
 
+          {/* Desktop Lang & Book */}
           <div className="hidden lg:flex items-center gap-4">
             <div className="relative lang-dropdown">
               <button onClick={() => setLangDropdownOpen(!langDropdownOpen)} className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest ${scrolled || currentView !== 'home' ? 'text-mapstone-blue' : 'text-white'}`}>
@@ -219,13 +221,54 @@ const App = () => {
               {t.nav.book}
             </button>
           </div>
-          <button className={`lg:hidden z-[101] ${scrolled || menuOpen || currentView !== 'home' ? 'text-mapstone-blue' : 'text-white'}`} onClick={() => setMenuOpen(!menuOpen)}>
+
+          {/* Mobile Menu Button - Z-Index Increased to 201 */}
+          <button className={`lg:hidden z-[201] ${scrolled || menuOpen || currentView !== 'home' ? 'text-mapstone-blue' : 'text-white'}`} onClick={() => setMenuOpen(!menuOpen)}>
             {menuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </div>
       </nav>
 
-      {/* --- CONTENT AREA --- */}
+      {/* Mobile Menu Overlay - Z-Index increased to 200 */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, x: lang === 'ar' ? '-100%' : '100%' }} 
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: lang === 'ar' ? '-100%' : '100%' }}
+            transition={{ type: "tween", duration: 0.3 }}
+            className="fixed inset-0 z-[200] bg-white flex flex-col justify-center items-center lg:hidden overflow-y-auto"
+          >
+             <div className="flex flex-col gap-6 text-center w-full max-w-xs py-10">
+              {navLinks.map(link => (
+                <button 
+                  key={link.id}
+                  onClick={() => handleNavClick(link.id)}
+                  className="text-2xl font-serif text-mapstone-blue hover:text-nobel-gold transition-colors"
+                >
+                  {link.label}
+                </button>
+              ))}
+              <div className="w-12 h-px bg-stone-200 mx-auto my-4"></div>
+              
+              {/* Mobile Language */}
+              <div className="flex justify-center gap-4 text-sm font-bold text-stone-500">
+                  <button onClick={() => { setLang('en'); setMenuOpen(false); }} className={lang === 'en' ? 'text-nobel-gold' : ''}>EN</button>
+                  <button onClick={() => { setLang('fr'); setMenuOpen(false); }} className={lang === 'fr' ? 'text-nobel-gold' : ''}>FR</button>
+                  <button onClick={() => { setLang('ar'); setMenuOpen(false); }} className={lang === 'ar' ? 'text-nobel-gold' : ''}>AR</button>
+              </div>
+
+              <button 
+                onClick={() => { setBookingOpen(true); setMenuOpen(false); }}
+                className="mt-4 bg-nobel-gold text-white px-8 py-3 rounded-sm text-sm font-bold uppercase tracking-widest"
+              >
+                {t.nav.book}
+              </button>
+             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <AnimatePresence mode="wait">
         
         {/* 1. HOME VIEW */}
@@ -319,61 +362,41 @@ const App = () => {
 
       </AnimatePresence>
 
-      {/* --- FOOTER (RESTORED TO ORIGINAL FULL DETAIL) --- */}
       <footer id="contact" className="bg-[#204c77] pt-20 pb-10">
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-12 mb-16">
-            
-            {/* Col 1: Desc + Social */}
-            <div className="col-span-1">
-              <p className="text-stone-300 text-sm leading-relaxed mb-6">{t.footer.desc}</p>
-              <div className="flex gap-4">
-                <a href="https://www.instagram.com/mapstone_holiday_homes/" target="_blank" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-mapstone-blue transition-colors"><Instagram size={18} className="text-white hover:text-mapstone-blue"/></a>
-                <a href="https://www.facebook.com/profile.php?id=61582980871159" target="_blank" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-mapstone-blue transition-colors"><Facebook size={18} className="text-white hover:text-mapstone-blue"/></a>
-              </div>
+         <div className="container mx-auto px-6 text-white">
+            <div className="grid md:grid-cols-4 gap-12 mb-16">
+               <div className="col-span-1">
+                  <h3 className="font-serif text-lg mb-4">MAPSTONE</h3>
+                  <p className="text-sm text-stone-300 mb-6">{t.footer.desc}</p>
+                  <div className="flex gap-4">
+                    <a href="https://www.instagram.com/mapstone_holiday_homes/" target="_blank" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-mapstone-blue transition-colors"><Instagram size={18} className="text-white hover:text-mapstone-blue"/></a>
+                    <a href="https://www.facebook.com/profile.php?id=61582980871159" target="_blank" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-mapstone-blue transition-colors"><Facebook size={18} className="text-white hover:text-mapstone-blue"/></a>
+                  </div>
+               </div>
+               <div>
+                  <h4 className="font-bold text-white uppercase tracking-widest text-xs mb-4">{t.contactPage.locationLabel}</h4>
+                  <p className="text-stone-300 text-sm mb-2 flex items-start gap-2"><MapPin size={16} className="shrink-0 mt-0.5" /> <span>Al Barsha First<br/>Dubai, UAE</span></p>
+               </div>
+               <div>
+                  <h4 className="font-bold text-white uppercase tracking-widest text-xs mb-4">{t.contactPage.phoneLabel}</h4>
+                  <p className="text-stone-300 text-sm mb-2 flex items-center gap-2"><Phone size={16} /> +971 58 592 8787</p>
+                  <p className="text-stone-300 text-sm mb-2 flex items-center gap-2"><Mail size={16} /> contact@mapstonegroup.com</p>
+               </div>
+               <div>
+                  <h4 className="font-bold text-white uppercase tracking-widest text-xs mb-4">Links</h4>
+                  <ul className="space-y-2 text-sm text-stone-300">
+                    <li><button onClick={() => handleFooterLinkClick('privacy')} className="hover:text-white transition-colors">{t.footer.privacy}</button></li>
+                    <li><button onClick={() => handleFooterLinkClick('terms')} className="hover:text-white transition-colors">{t.footer.terms}</button></li>
+                    <li><button onClick={() => handleFooterLinkClick('faq')} className="hover:text-white transition-colors">{t.footer.faqs}</button></li>
+                  </ul>
+               </div>
             </div>
-
-            {/* Col 2: Location */}
-            <div>
-              <h4 className="font-bold text-white uppercase tracking-widest text-xs mb-6">{t.contactPage.locationLabel}</h4>
-              <p className="text-stone-300 text-sm mb-2 flex items-start gap-2">
-                <MapPin size={16} className="shrink-0 mt-0.5" />
-                <span>Al Barsha First - Al Barsha<br/>Business Centre, Dubai,<br/>United Arab Emirates</span>
-              </p>
+            <div className="border-t border-white/10 pt-8 flex justify-between items-center text-xs text-stone-400">
+                <p>&copy; {new Date().getFullYear()} MAPSTONE HOLIDAY HOMES RENTAL L.L.C</p>
+                <p>{t.footer.rights}</p>
             </div>
-
-             {/* Col 3: Contact Info */}
-             <div>
-              <h4 className="font-bold text-white uppercase tracking-widest text-xs mb-6">{t.contactPage.phoneLabel}</h4>
-              <p className="text-stone-300 text-sm mb-2 flex items-center gap-2">
-                <Phone size={16} />
-                <a href="tel:+971585928787" className="hover:text-nobel-gold transition-colors">+971 58 592 8787</a>
-              </p>
-               <p className="text-stone-300 text-sm mb-2 flex items-center gap-2">
-                <Mail size={16} />
-                <a href="mailto:contact@mapstonegroup.com" className="hover:text-nobel-gold transition-colors">contact@mapstonegroup.com</a>
-              </p>
-            </div>
-
-             {/* Col 4: Links */}
-             <div>
-              <h4 className="font-bold text-white uppercase tracking-widest text-xs mb-6">Links</h4>
-              <ul className="space-y-3 text-sm text-stone-300">
-                <li><button onClick={() => handleFooterLinkClick('privacy')} className="hover:text-nobel-gold transition-colors text-left">{t.footer.privacy}</button></li>
-                <li><button onClick={() => handleFooterLinkClick('terms')} className="hover:text-nobel-gold transition-colors text-left">{t.footer.terms}</button></li>
-                <li><button onClick={() => handleFooterLinkClick('faq')} className="hover:text-nobel-gold transition-colors text-left">{t.footer.faqs}</button></li>
-                <li><button onClick={() => handleNavClick('contact')} className="hover:text-nobel-gold transition-colors text-left">{t.nav.contact}</button></li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-stone-400">
-            <p>&copy; {new Date().getFullYear()} MAPSTONE HOLIDAY HOMES RENTAL L.L.C , {t.footer.rights}</p>
-            <p>Designed with excellence in Dubai.</p>
-          </div>
-        </div>
+         </div>
       </footer>
-      
       <WhatsAppButton />
       <BookingModal isOpen={bookingOpen} onClose={() => setBookingOpen(false)} lang={lang} />
     </div>
