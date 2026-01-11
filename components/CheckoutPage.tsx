@@ -86,54 +86,65 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
 
         setIsSubmitting(true);
 
-        const formElement = e.target as HTMLFormElement;
-        const formDataObj = new FormData(formElement);
+        // Create FormData
+        const formDataObj = new FormData();
 
-        const endpoint = "https://formsubmit.co/ajax/contact@mapstonegroup.com";
-        
-        formDataObj.append("_subject", `New Reservation: ${bookingData.propertyName}`);
+        // 1. Config Fields
+        formDataObj.append("_subject", `New Booking: ${bookingData.propertyName}`);
         formDataObj.append("_template", "table");
-        
+        formDataObj.append("_captcha", "false");
+
+        // 2. Data Fields
+        formDataObj.append("Property", bookingData.propertyName || "Unknown");
         const checkIn = bookingData.dateRange?.[0]?.toDateString() || "N/A";
         const checkOut = bookingData.dateRange?.[1]?.toDateString() || "N/A";
-        
-        formDataObj.append("Property", bookingData.propertyName || "Unknown");
         formDataObj.append("Check-in", checkIn);
         formDataObj.append("Check-out", checkOut);
         formDataObj.append("Total Guests", `${bookingData.guests.adults} Adults, ${bookingData.guests.children} Children`);
         
+        formDataObj.append("Main Guest Name", formData.fullName);
+        formDataObj.append("Main Guest Phone", formData.phone);
+        formDataObj.append("Main Guest Email", formData.email);
+
+        if (requiresSecondGuest) {
+            formDataObj.append("Second Guest Name", formData.guest2Name);
+            formDataObj.append("Second Guest Phone", formData.guest2Phone);
+        }
+
         let paymentLabel = "Visa / Mastercard";
         if (formData.paymentMethod === 'paypal') paymentLabel = "PayPal";
         if (formData.paymentMethod === 'cash') paymentLabel = "Cash (UAE)";
         formDataObj.append("Payment Method", paymentLabel);
 
-        // --- FILE HANDLING FIX ---
-        // FormSubmit looks for inputs named "attachment". 
-        // We ensure we append them with specific keys that might help, 
-        // but the 'attachment' name in input is key.
-        formDataObj.delete("attachment"); // clear auto-capture to be safe
-        formDataObj.delete("attachment2");
-
-        if (file1) formDataObj.append("attachment", file1);
-        if (requiresSecondGuest && file2) formDataObj.append("attachment2", file2);
+        // 3. File Attachments (CRITICAL FIX)
+        // We append both files with the exact name "attachment". 
+        // FormSubmit treats multiple fields with the name "attachment" as multiple file attachments.
+        if (file1) {
+            formDataObj.append("attachment", file1); 
+        }
+        if (requiresSecondGuest && file2) {
+            formDataObj.append("attachment", file2);
+        }
 
         try {
-            const response = await fetch(endpoint, {
+            // Using AJAX endpoint to prevent redirect issues
+            const response = await fetch("https://formsubmit.co/ajax/contact@mapstonegroup.com", {
                 method: "POST",
                 body: formDataObj
             });
             
             const result = await response.json();
             
-            if (response.ok || result.success === "true") {
+            if (response.ok) {
                 setSubmitted(true);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
+                 console.error("FormSubmit Error:", result);
                  throw new Error("Submission failed");
             }
         } catch (error) {
             console.error(error);
-            alert("Something went wrong. Please check your internet connection and try again.");
+            alert("Connection error. Please check your internet and try again.");
         } finally {
             setIsSubmitting(false);
         }
@@ -149,7 +160,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                     <h2 className="text-3xl font-serif text-mapstone-blue mb-4">Request Sent</h2>
                     <p className="text-stone-500 mb-8">
                         Thank you, <span className="font-bold text-mapstone-blue">{formData.fullName}</span>. 
-                        We have received your booking and documents.
+                        We have received your booking and documents. A confirmation email will be sent shortly.
                     </p>
                     <button onClick={onBack} className="bg-mapstone-blue text-white px-8 py-3 rounded-sm uppercase font-bold hover:bg-nobel-gold transition-colors">
                         Back to Properties
@@ -179,7 +190,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                     </div>
 
                     <div className="md:col-span-2">
-                        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-lg border border-stone-100 space-y-8" encType="multipart/form-data">
+                        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-lg border border-stone-100 space-y-8">
                             {formError && (
                                 <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-sm flex items-start gap-3 animate-pulse">
                                     <AlertTriangle size={20} className="shrink-0 mt-0.5" />
@@ -187,6 +198,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                 </div>
                             )}
 
+                            {/* MAIN GUEST */}
                             <div>
                                 <h3 className="font-serif text-xl text-mapstone-blue border-b border-stone-100 pb-2 mb-6">Main Guest Details</h3>
                                 <div className="space-y-4">
@@ -199,21 +211,21 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                         <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Upload Main Guest Passport / ID <span className="text-red-500">*</span></label>
                                         {!file1 ? (
                                             <div className={`border-2 border-dashed rounded-lg p-6 text-center bg-stone-50 hover:bg-white transition-colors group cursor-pointer relative ${formError && !file1 ? 'border-red-300 bg-red-50' : 'border-stone-300 hover:border-nobel-gold'}`}>
-                                                {/* IMPORTANT: name="attachment" is key for FormSubmit email attachments */}
-                                                <input type="file" name="attachment" accept=".pdf,.jpg,.jpeg,.png" required className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={(e) => handleFileChange(e, false)} />
+                                                <input type="file" accept=".pdf,.jpg,.jpeg,.png" required className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={(e) => handleFileChange(e, false)} />
                                                 <div className="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center mx-auto mb-2 text-stone-400 group-hover:text-nobel-gold transition-colors"><UploadCloud size={20} /></div>
                                                 <p className="text-xs font-bold text-mapstone-blue">Click to Upload Document</p>
                                             </div>
                                         ) : (
                                             <div className="border border-green-200 bg-green-50 rounded-lg p-3 flex items-center justify-between">
                                                 <div className="flex items-center gap-3"><div className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center"><FileText size={16} /></div><div><p className="text-xs font-bold text-green-800">Ready to upload</p><p className="text-[10px] text-green-600 truncate max-w-[150px]">{file1.name}</p></div></div>
-                                                <button onClick={(e) => removeFile(e, false)} className="text-green-400 hover:text-green-700 p-2"><X size={18} /></button>
+                                                <button onClick={(e) => removeFile(e, false)} type="button" className="text-green-400 hover:text-green-700 p-2"><X size={18} /></button>
                                             </div>
                                         )}
                                     </div>
                                 </div>
                             </div>
 
+                            {/* SECOND GUEST */}
                             {requiresSecondGuest && (
                                 <MotionDiv initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="pt-8 border-t border-stone-100">
                                     <div className="flex items-center gap-2 mb-6"><div className="bg-nobel-gold/10 p-2 rounded-full text-nobel-gold"><Users size={20} /></div><h3 className="font-serif text-xl text-mapstone-blue">Second Guest Details</h3></div>
@@ -225,15 +237,14 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                             <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Upload Guest 2 Passport / ID <span className="text-red-500">*</span></label>
                                             {!file2 ? (
                                                 <div className={`border-2 border-dashed rounded-lg p-6 text-center bg-white hover:bg-stone-50 transition-colors group cursor-pointer relative ${formError && !file2 ? 'border-red-300 bg-red-50' : 'border-stone-300 hover:border-nobel-gold'}`}>
-                                                    {/* IMPORTANT: name="attachment2" for second file */}
-                                                    <input type="file" name="attachment2" accept=".pdf,.jpg,.jpeg,.png" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={(e) => handleFileChange(e, true)} />
+                                                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={(e) => handleFileChange(e, true)} />
                                                     <div className="w-10 h-10 bg-stone-100 rounded-full shadow-sm flex items-center justify-center mx-auto mb-2 text-stone-400 group-hover:text-nobel-gold transition-colors"><UploadCloud size={20} /></div>
                                                     <p className="text-xs font-bold text-mapstone-blue">Click to Upload Document</p>
                                                 </div>
                                             ) : (
                                                 <div className="border border-green-200 bg-green-50 rounded-lg p-3 flex items-center justify-between">
                                                     <div className="flex items-center gap-3"><div className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center"><FileText size={16} /></div><div><p className="text-xs font-bold text-green-800">Ready to upload</p><p className="text-[10px] text-green-600 truncate max-w-[150px]">{file2.name}</p></div></div>
-                                                    <button onClick={(e) => removeFile(e, true)} className="text-green-400 hover:text-green-700 p-2"><X size={18} /></button>
+                                                    <button onClick={(e) => removeFile(e, true)} type="button" className="text-green-400 hover:text-green-700 p-2"><X size={18} /></button>
                                                 </div>
                                             )}
                                         </div>
@@ -241,6 +252,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                 </MotionDiv>
                             )}
                             
+                            {/* PAYMENT METHOD */}
                             <div className="pt-8 border-t border-stone-100">
                                 <h3 className="font-serif text-xl text-mapstone-blue mb-6">Payment Method</h3>
                                 <div className="grid grid-cols-1 gap-4">

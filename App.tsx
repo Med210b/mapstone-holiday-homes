@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { GeometricLuxuryScene } from './components/QuantumScene';
 import { PropertyShowcase, BookingBenefits, getProperties } from './components/Diagrams';
 import PremiumAmenities from './components/PremiumAmenities';
@@ -10,11 +10,12 @@ import LandlordsPage from './components/LandlordsPage';
 import { WhatsAppIcon, LogoBayut, LogoDubizzle, LogoPropertyFinder, LogoBooking, LogoAirbnb } from './components/Icons';
 import { PrivacyPolicy, TermsConditions, FAQs } from './components/LegalPages';
 import PhilosophyPage from './components/PhilosophyPage'; 
-import { ArrowDown, Menu, X, Globe, Phone, Mail, ChevronDown, Check, MapPin, Facebook, Instagram } from 'lucide-react';
+import { ArrowDown, Menu, X, Globe, MapPin, Phone, Mail, ChevronDown, Check, Instagram, Facebook } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { IMaskInput } from 'react-imask';
 import { Lang, View } from './types';
 
-// Constants for Translations and Data
+// --- TRANSLATIONS (Restored Full Original List) ---
 const translations = {
   en: {
     name: "English",
@@ -26,21 +27,27 @@ const translations = {
       desc: "Experience the pinnacle of luxury living in Dubai. Premium short-term rentals in the city's most prestigious locations.",
       cta: "Find Your Stay"
     },
-    landlords: { title: "For Homeowners", desc: "Maximize your property's potential." },
+    about: { label: "Our Philosophy", title: "Luxury Living, Redefined" },
+    properties: { label: "Locations", title: "Curated Residences", desc: "Discover our portfolio of exclusive apartments in Dubai's most sought-after neighborhoods." },
+    landlords: { label: "Property Management", title: "For Homeowners", desc: "Maximize your property's potential with our comprehensive management services." },
     partners: { title: "Our Partners" },
+    amenities: { title: "Premium Amenities", desc: "Every stay includes access to world-class facilities designed for your comfort." },
     footer: { desc: "Premium short-term rental management company in Dubai.", rights: "All rights reserved.", privacy: "Privacy Policy", terms: "Terms & Conditions", faqs: "FAQS" },
-    contactPage: { locationLabel: "Visit Us", phoneLabel: "Call Us" },
-    booking: { title: "Request a Consultation", subtitle: "Leave your details and our team will contact you shortly." }
+    contactPage: { title: "Get in Touch", subtitle: "We are here to assist you with your booking or property management inquiries.", phoneLabel: "Call Us", emailLabel: "Email Us", locationLabel: "Visit Us", socialLabel: "Follow Us" },
+    booking: { title: "Request a Consultation", subtitle: "Leave your details and our team will contact you shortly.", name: "Full Name", email: "Email Address", phone: "Phone Number", time: "Best Time to Call", submit: "SUBMIT", successTitle: "Welcome to the Inner Circle,", successBody: "Your journey with MAPSTONE starts now. Keep an eye on your inbox." },
   },
   ar: {
     name: "العربية",
     nav: { home: "الرئيسية", about: "من نحن", properties: "عقاراتنا", landlords: "الملاك", contact: "تواصل معنا", book: "احجز الآن", services: "المميزات" },
-    hero: { location: "دبي • الإمارات العربية المتحدة", title: "مابستون", subtitle: "بيوت العطلات", desc: "استمتع بقمة الرفاهية في دبي.", cta: "ابحث عن إقامتك" },
-    landlords: { title: "لأصحاب المنازل", desc: "ضاعف إمكانات عقارك." },
+    hero: { location: "دبي • الإمارات العربية المتحدة", title: "مابستون", subtitle: "بيوت العطلات", desc: "استمتع بقمة الرفاهية في دبي. إيجارات قصيرة الأجل فاخرة في أرقى المواقع.", cta: "ابحث عن إقامتك" },
+    about: { label: "فلسفتنا", title: "مفهوم جديد للرفاهية" },
+    properties: { label: "المواقع", title: "إقامات مميزة", desc: "اكتشف محفظتنا من الشقق الحصرية في أكثر الأحياء طلباً في دبي." },
+    landlords: { label: "إدارة العقارات", title: "لأصحاب المنازل", desc: "ضاعف إمكانات عقارك مع خدمات الإدارة الشاملة لدينا." },
     partners: { title: "شركاؤنا" },
+    amenities: { title: "وسائل الراحة", desc: "تشمل كل إقامة الوصول إلى مرافق عالمية المستوى مصممة لراحتك." },
     footer: { desc: "شركة إدارة تأجير قصير الأجل متميزة في دبي.", rights: "جميع الحقوق محفوظة.", privacy: "سياسة الخصوصية", terms: "الشروط والأحكام", faqs: "الأسئلة الشائعة" },
-    contactPage: { locationLabel: "زورونا", phoneLabel: "اتصل بنا" },
-    booking: { title: "طلب استشارة", subtitle: "اترك بياناتك وسيقوم فريقنا بالاتصال بك قريباً." }
+    contactPage: { title: "تواصل معنا", subtitle: "نحن هنا لمساعدتك في استفساراتك.", phoneLabel: "اتصل بنا", emailLabel: "راسلنا", locationLabel: "زورونا", socialLabel: "تابعونا" },
+    booking: { title: "طلب استشارة", subtitle: "اترك بياناتك وسيقوم فريقنا بالاتصال بك قريباً.", name: "الاسم الكامل", email: "البريد الإلكتروني", phone: "رقم الهاتف", time: "أفضل وقت للاتصال", submit: "إرسال", successTitle: "مرحباً بك في الدائرة المقربة،", successBody: "رحلتك مع مابستون تبدأ الآن." },
   }
 };
 
@@ -134,42 +141,17 @@ const App = () => {
   ];
 
   // --- NAVIGATION LOGIC ---
-  const scrollTo = (id: string) => {
+  const handleNavClick = (id: string) => {
     setMenuOpen(false);
     
-    // 1. Separate Views (These act like different pages)
-    if (id === 'landlords') {
-        setCurrentView('landlords');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (id === 'contact') {
+        const footer = document.getElementById('contact');
+        if (footer) footer.scrollIntoView({ behavior: 'smooth' });
         return;
     }
 
-    // 2. Main Page Sections (Home, About, Properties)
-    if (currentView !== 'home') {
-      // If we are on Landlords/Checkout page, go back to Home first
-      setCurrentView('home');
-      // Wait for Home to render, then scroll
-      setTimeout(() => {
-        const element = document.getElementById(id);
-        if (element) {
-          const offset = 80;
-          const elementPosition = element.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - offset;
-          window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-        }
-      }, 100);
-    } else {
-      // If already on Home, just scroll
-      const element = document.getElementById(id);
-      if (element) {
-        const offset = 80;
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - offset;
-        window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-      } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }
+    setCurrentView(id as View);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleFooterLinkClick = (view: View) => {
@@ -204,7 +186,7 @@ const App = () => {
 
       <nav className={`fixed w-full z-[100] transition-all duration-300 ${scrolled || currentView !== 'home' ? 'bg-white/95 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
-          <div className="flex items-center gap-2 z-50 cursor-pointer" onClick={() => scrollTo('home')}>
+          <div className="flex items-center gap-2 z-50 cursor-pointer" onClick={() => handleNavClick('home')}>
             <img src="https://i.postimg.cc/qBQmntz0/logo-holiday.png" alt="MAPSTONE" className="h-12 md:h-20 w-auto object-contain transition-all duration-300"/>
           </div>
 
@@ -212,7 +194,7 @@ const App = () => {
             {navLinks.map(link => (
               <button 
                 key={link.id}
-                onClick={() => scrollTo(link.id)}
+                onClick={() => handleNavClick(link.id)}
                 className={`text-sm font-medium uppercase tracking-wider hover:text-nobel-gold transition-colors ${scrolled || currentView !== 'home' ? 'text-mapstone-blue' : 'text-white'}`}
               >
                 {link.label}
@@ -243,12 +225,13 @@ const App = () => {
         </div>
       </nav>
 
+      {/* --- CONTENT AREA --- */}
       <AnimatePresence mode="wait">
-        {/* --- MAIN SCROLLABLE HOME PAGE --- */}
+        
+        {/* 1. HOME VIEW */}
         {currentView === 'home' && (
           <PageTransition key="home">
-            {/* 1. Hero Section */}
-            <header id="home" className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden bg-mapstone-dark border-b border-nobel-gold/20">
+            <header className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden bg-mapstone-dark border-b border-nobel-gold/20">
               <div className="absolute inset-0 w-full h-full z-0">
                  <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('https://i.postimg.cc/Y9ZFqfLc/69d1fa33-9d37-440c-9d9e-2b73216809f6.png')" }}></div>
                  <div className="absolute inset-0 bg-black/30 z-10"></div>
@@ -258,30 +241,13 @@ const App = () => {
                   <span className="inline-block py-1 px-3 border border-white/30 rounded-full text-[10px] font-bold tracking-[0.2em] text-white mb-6 uppercase">{t.hero.location}</span>
                   <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-2 tracking-tight">{t.hero.title}</h1>
                   <p className="text-xl md:text-3xl font-light text-nobel-gold uppercase tracking-[0.3em] mb-8">{t.hero.subtitle}</p>
-                  <button onClick={() => scrollTo('properties')} className="group relative overflow-hidden rounded-full bg-white text-mapstone-blue px-8 py-4 text-xs font-bold uppercase tracking-widest hover:bg-nobel-gold hover:text-white hover:shadow-xl transition-all duration-300">
+                  <button onClick={() => handleNavClick('properties')} className="group relative overflow-hidden rounded-full bg-white text-mapstone-blue px-8 py-4 text-xs font-bold uppercase tracking-widest hover:bg-nobel-gold hover:text-white hover:shadow-xl transition-all duration-300">
                     <span className="relative z-10 flex items-center gap-2">{t.hero.cta} <ArrowDown size={16} /></span>
                   </button>
               </div>
             </header>
-
-            {/* 2. Amenities Section */}
-            <div id="services">
-                <PremiumAmenities lang={lang} onBook={() => setBookingOpen(true)} />
-            </div>
-
-            {/* 3. Properties Section (Restored to Homepage) */}
-            <div id="properties">
-                <PropertyShowcase lang={lang} onBook={handleCheckAvailability} />
-            </div>
-
-            {/* 4. About Us (Philosophy) */}
-            <div id="about">
-                <PhilosophyPage />
-            </div>
-
-            {/* 5. Benefits & Partners */}
+            <PremiumAmenities lang={lang} onBook={() => setBookingOpen(true)} />
             <section className="py-16 bg-stone-50"><BookingBenefits lang={lang} /></section>
-            
             <section className="py-16 bg-white border-b border-nobel-gold/20 overflow-hidden">
               <div className="container mx-auto px-6 mb-20 text-center"><p className="text-3xl md:text-4xl font-serif text-mapstone-blue">{t.partners.title}</p></div>
               <div className="flex overflow-hidden w-full relative">
@@ -291,21 +257,37 @@ const App = () => {
           </PageTransition>
         )}
 
-        {/* --- SEPARATE VIEWS --- */}
-        
+        {/* 2. PROPERTIES PAGE */}
+        {currentView === 'properties' && (
+          <PageTransition key="properties">
+            <div className="pt-20"> 
+                <PropertyShowcase lang={lang} onBook={handleCheckAvailability} />
+            </div>
+          </PageTransition>
+        )}
+
+        {/* 3. ABOUT PAGE */}
+        {currentView === 'about' && (
+          <PageTransition key="about">
+             <PhilosophyPage />
+          </PageTransition>
+        )}
+
+        {/* 4. LANDLORDS PAGE */}
         {currentView === 'landlords' && (
             <PageTransition key="landlords">
                 <LandlordsPage lang={lang} onBook={() => setBookingOpen(true)} />
             </PageTransition>
         )}
 
+        {/* 5. BOOKING FLOW: CALENDAR */}
         {currentView === 'calendar' && (
             <PageTransition key="calendar">
                 <div className="min-h-screen bg-stone-100 pt-32 pb-20 px-4">
                     <div className="container mx-auto">
                         <AvailabilityCalendar 
                             lang={lang} 
-                            onClose={() => setCurrentView('home')} 
+                            onClose={() => setCurrentView('properties')} 
                             selectedProperty={selectedProperty}
                             onProceedToCheckout={handleProceedToCheckout}
                         />
@@ -314,6 +296,7 @@ const App = () => {
             </PageTransition>
         )}
 
+        {/* 6. BOOKING FLOW: CHECKOUT */}
         {currentView === 'checkout' && (
             <PageTransition key="checkout">
                 <CheckoutPage 
@@ -329,24 +312,68 @@ const App = () => {
             </PageTransition>
         )}
 
+        {/* 7. LEGAL PAGES */}
         {currentView === 'privacy' && <PageTransition key="privacy"><PrivacyPolicy /></PageTransition>}
         {currentView === 'terms' && <PageTransition key="terms"><TermsConditions /></PageTransition>}
         {currentView === 'faq' && <PageTransition key="faq"><FAQs /></PageTransition>}
 
       </AnimatePresence>
 
+      {/* --- FOOTER (RESTORED TO ORIGINAL FULL DETAIL) --- */}
       <footer id="contact" className="bg-[#204c77] pt-20 pb-10">
-         <div className="container mx-auto px-6 text-white">
-            <div className="grid md:grid-cols-3 gap-8">
-               <div><h3 className="font-serif text-lg mb-4">MAPSTONE</h3><p className="text-sm text-stone-300">{t.footer.desc}</p></div>
-               <div><h4 className="font-bold text-xs uppercase mb-4">Contact</h4><p className="text-sm text-stone-300">contact@mapstonegroup.com</p></div>
-               <div><h4 className="font-bold text-xs uppercase mb-4">Legal</h4>
-                 <button onClick={() => handleFooterLinkClick('privacy')} className="block text-sm text-stone-300 hover:text-white mb-2">{t.footer.privacy}</button>
-                 <button onClick={() => handleFooterLinkClick('terms')} className="block text-sm text-stone-300 hover:text-white">{t.footer.terms}</button>
-               </div>
+        <div className="container mx-auto px-6">
+          <div className="grid md:grid-cols-4 gap-12 mb-16">
+            
+            {/* Col 1: Desc + Social */}
+            <div className="col-span-1">
+              <p className="text-stone-300 text-sm leading-relaxed mb-6">{t.footer.desc}</p>
+              <div className="flex gap-4">
+                <a href="https://www.instagram.com/mapstone_holiday_homes/" target="_blank" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-mapstone-blue transition-colors"><Instagram size={18} className="text-white hover:text-mapstone-blue"/></a>
+                <a href="https://www.facebook.com/profile.php?id=61582980871159" target="_blank" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-mapstone-blue transition-colors"><Facebook size={18} className="text-white hover:text-mapstone-blue"/></a>
+              </div>
             </div>
-         </div>
+
+            {/* Col 2: Location */}
+            <div>
+              <h4 className="font-bold text-white uppercase tracking-widest text-xs mb-6">{t.contactPage.locationLabel}</h4>
+              <p className="text-stone-300 text-sm mb-2 flex items-start gap-2">
+                <MapPin size={16} className="shrink-0 mt-0.5" />
+                <span>Al Barsha First - Al Barsha<br/>Business Centre, Dubai,<br/>United Arab Emirates</span>
+              </p>
+            </div>
+
+             {/* Col 3: Contact Info */}
+             <div>
+              <h4 className="font-bold text-white uppercase tracking-widest text-xs mb-6">{t.contactPage.phoneLabel}</h4>
+              <p className="text-stone-300 text-sm mb-2 flex items-center gap-2">
+                <Phone size={16} />
+                <a href="tel:+971585928787" className="hover:text-nobel-gold transition-colors">+971 58 592 8787</a>
+              </p>
+               <p className="text-stone-300 text-sm mb-2 flex items-center gap-2">
+                <Mail size={16} />
+                <a href="mailto:contact@mapstonegroup.com" className="hover:text-nobel-gold transition-colors">contact@mapstonegroup.com</a>
+              </p>
+            </div>
+
+             {/* Col 4: Links */}
+             <div>
+              <h4 className="font-bold text-white uppercase tracking-widest text-xs mb-6">Links</h4>
+              <ul className="space-y-3 text-sm text-stone-300">
+                <li><button onClick={() => handleFooterLinkClick('privacy')} className="hover:text-nobel-gold transition-colors text-left">{t.footer.privacy}</button></li>
+                <li><button onClick={() => handleFooterLinkClick('terms')} className="hover:text-nobel-gold transition-colors text-left">{t.footer.terms}</button></li>
+                <li><button onClick={() => handleFooterLinkClick('faq')} className="hover:text-nobel-gold transition-colors text-left">{t.footer.faqs}</button></li>
+                <li><button onClick={() => handleNavClick('contact')} className="hover:text-nobel-gold transition-colors text-left">{t.nav.contact}</button></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-stone-400">
+            <p>&copy; {new Date().getFullYear()} MAPSTONE HOLIDAY HOMES RENTAL L.L.C , {t.footer.rights}</p>
+            <p>Designed with excellence in Dubai.</p>
+          </div>
+        </div>
       </footer>
+      
       <WhatsAppButton />
       <BookingModal isOpen={bookingOpen} onClose={() => setBookingOpen(false)} lang={lang} />
     </div>
