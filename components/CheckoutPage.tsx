@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, UploadCloud, FileText, X, Loader2, Check, UserPlus, AlertTriangle, Users } from 'lucide-react';
+import { ArrowLeft, UploadCloud, FileText, X, Loader2, Check, UserPlus, AlertTriangle, Users, CreditCard, Banknote, Globe } from 'lucide-react';
 
 // --- FIX: Bypass strict type check for framer-motion ---
 const MotionDiv = motion.div as any;
 
-// --- FIX: Embed Data directly to avoid import errors ---
 const COUNTRY_CODES = [
   { code: "+971", country: "United Arab Emirates", flag: "🇦🇪" },
   { code: "+1", country: "United States", flag: "🇺🇸" },
@@ -47,7 +46,8 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
         phone: '',
         email: '',
         guest2Name: '',
-        guest2Phone: ''
+        guest2Phone: '',
+        paymentMethod: 'visa' // Default payment method
     });
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, isSecondGuest: boolean) => {
@@ -92,8 +92,10 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
         const formDataObj = new FormData(formElement);
 
         // API Configuration
+        // FIX: Using /ajax/ endpoint prevents the "Redirect" error that freezes the processing state
+        const endpoint = "https://formsubmit.co/ajax/contact@mapstonegroup.com";
+        
         formDataObj.append("_subject", `New Reservation: ${bookingData.propertyName}`);
-        formDataObj.append("_captcha", "false");
         formDataObj.append("_template", "table");
         
         // Booking Context
@@ -104,9 +106,14 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
         formDataObj.append("Check-in", checkIn);
         formDataObj.append("Check-out", checkOut);
         formDataObj.append("Total Guests", `${bookingData.guests.adults} Adults, ${bookingData.guests.children} Children`);
+        
+        // Payment Method
+        let paymentLabel = "Visa / Mastercard";
+        if (formData.paymentMethod === 'paypal') paymentLabel = "PayPal";
+        if (formData.paymentMethod === 'cash') paymentLabel = "Cash (UAE)";
+        formDataObj.append("Payment Method", paymentLabel);
 
         // Explicitly Append Files with Clear Names to ensure attachment
-        // We delete the default 'attachment' keys from the auto-parsed form to avoid duplicates/confusion
         formDataObj.delete("attachment1"); 
         formDataObj.delete("attachment2");
 
@@ -119,14 +126,23 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
         }
 
         try {
-            await fetch("https://formsubmit.co/contact@mapstonegroup.com", {
+            const response = await fetch(endpoint, {
                 method: "POST",
                 body: formDataObj
             });
-            setSubmitted(true);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Even if response isn't 200, we check json status
+            const result = await response.json();
+            
+            if (response.ok || result.success === "true") {
+                setSubmitted(true);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                 throw new Error("Submission failed");
+            }
         } catch (error) {
-            alert("Something went wrong. Please try again.");
+            console.error(error);
+            alert("Something went wrong. Please check your internet connection and try again.");
         } finally {
             setIsSubmitting(false);
         }
@@ -142,7 +158,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                     <h2 className="text-3xl font-serif text-mapstone-blue mb-4">Request Sent</h2>
                     <p className="text-stone-500 mb-8">
                         Thank you, <span className="font-bold text-mapstone-blue">{formData.fullName}</span>. 
-                        We have received your booking and documents.
+                        We have received your booking and documents. A payment link will be sent to your email shortly.
                     </p>
                     <button onClick={onBack} className="bg-mapstone-blue text-white px-8 py-3 rounded-sm uppercase font-bold hover:bg-nobel-gold transition-colors">
                         Back to Properties
@@ -288,6 +304,62 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                     </div>
                                 </MotionDiv>
                             )}
+                            
+                            {/* --- SECTION 3: PAYMENT METHOD --- */}
+                            <div className="pt-8 border-t border-stone-100">
+                                <h3 className="font-serif text-xl text-mapstone-blue mb-6">Payment Method</h3>
+                                <div className="grid grid-cols-1 gap-4">
+                                    
+                                    {/* Visa / Mastercard */}
+                                    <label className={`border p-4 rounded-lg flex items-center gap-4 cursor-pointer transition-all ${formData.paymentMethod === 'visa' ? 'border-nobel-gold bg-amber-50/20 ring-1 ring-nobel-gold' : 'border-stone-200 hover:border-stone-300'}`}>
+                                        <input 
+                                            type="radio" 
+                                            name="paymentMethod" 
+                                            value="visa" 
+                                            className="accent-nobel-gold w-5 h-5" 
+                                            checked={formData.paymentMethod === 'visa'} 
+                                            onChange={() => setFormData({...formData, paymentMethod: 'visa'})} 
+                                        />
+                                        <div className="flex-1">
+                                            <p className="font-bold text-mapstone-blue flex items-center gap-2"><CreditCard size={18} /> Visa / Mastercard</p>
+                                            <p className="text-xs text-stone-400">A secure payment link will be sent to your email.</p>
+                                        </div>
+                                    </label>
+
+                                    {/* PayPal */}
+                                    <label className={`border p-4 rounded-lg flex items-center gap-4 cursor-pointer transition-all ${formData.paymentMethod === 'paypal' ? 'border-nobel-gold bg-amber-50/20 ring-1 ring-nobel-gold' : 'border-stone-200 hover:border-stone-300'}`}>
+                                        <input 
+                                            type="radio" 
+                                            name="paymentMethod" 
+                                            value="paypal" 
+                                            className="accent-nobel-gold w-5 h-5" 
+                                            checked={formData.paymentMethod === 'paypal'} 
+                                            onChange={() => setFormData({...formData, paymentMethod: 'paypal'})} 
+                                        />
+                                        <div className="flex-1">
+                                            <p className="font-bold text-mapstone-blue flex items-center gap-2"><Globe size={18} /> PayPal</p>
+                                            <p className="text-xs text-stone-400">You will receive an official invoice.</p>
+                                        </div>
+                                    </label>
+
+                                    {/* Cash */}
+                                    <label className={`border p-4 rounded-lg flex items-center gap-4 cursor-pointer transition-all ${formData.paymentMethod === 'cash' ? 'border-nobel-gold bg-amber-50/20 ring-1 ring-nobel-gold' : 'border-stone-200 hover:border-stone-300'}`}>
+                                        <input 
+                                            type="radio" 
+                                            name="paymentMethod" 
+                                            value="cash" 
+                                            className="accent-nobel-gold w-5 h-5" 
+                                            checked={formData.paymentMethod === 'cash'} 
+                                            onChange={() => setFormData({...formData, paymentMethod: 'cash'})} 
+                                        />
+                                        <div className="flex-1">
+                                            <p className="font-bold text-mapstone-blue flex items-center gap-2"><Banknote size={18} /> Cash</p>
+                                            <p className="text-xs text-stone-400">Available for UAE residents or payment upon arrival only.</p>
+                                        </div>
+                                    </label>
+
+                                </div>
+                            </div>
 
                             <button type="submit" disabled={isSubmitting} className="w-full bg-nobel-gold text-white py-4 rounded-sm font-bold uppercase tracking-widest hover:bg-mapstone-blue transition-colors shadow-lg flex justify-center items-center gap-2">
                                 {isSubmitting ? <><Loader2 size={20} className="animate-spin" /> Processing...</> : 'Complete Reservation'}
