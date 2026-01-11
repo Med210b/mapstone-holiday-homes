@@ -1,10 +1,11 @@
 // @ts-nocheck
 import React, { useState, useEffect, useRef } from 'react';
 import { GeometricLuxuryScene, WhiteLuxuryScene } from './components/QuantumScene';
-import { PropertyShowcase, BookingBenefits } from './components/Diagrams';
+// 1. IMPORT getProperties HERE
+import { PropertyShowcase, BookingBenefits, getProperties } from './components/Diagrams';
 import PremiumAmenities from './components/PremiumAmenities';
 import PageTransition from './components/PageTransition';
-import AvailabilityCalendar from './components/AvailabilityCalendar'; // <--- IMPORTED CALENDAR
+import AvailabilityCalendar from './components/AvailabilityCalendar'; 
 import { WhatsAppIcon, LogoBayut, LogoDubizzle, LogoPropertyFinder, LogoBooking, LogoAirbnb } from './components/Icons';
 import { PrivacyPolicy, TermsConditions, FAQs } from './components/LegalPages';
 import PhilosophyPage from './components/PhilosophyPage'; 
@@ -772,7 +773,10 @@ const App = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
-  const [selectedBookingDate, setSelectedBookingDate] = useState<Date | undefined>(undefined); // To pass date to modal
+  const [selectedBookingDate, setSelectedBookingDate] = useState<Date | undefined>(undefined); 
+  
+  // 2. ADD STATE FOR SELECTED CALENDAR PROPERTY
+  const [calendarProperty, setCalendarProperty] = useState(null);
 
   const t = translations[lang];
 
@@ -786,7 +790,7 @@ const App = () => {
     { id: 'home', label: t.nav.home },
     { id: 'about', label: t.nav.about },
     { id: 'properties', label: t.nav.properties },
-    { id: 'calendar', label: t.nav.calendar }, // ADDED CALENDAR HERE
+    { id: 'calendar', label: t.nav.calendar }, 
     { id: 'services', label: t.nav.services },
     { id: 'landlords', label: t.nav.landlords },
     { id: 'contact', label: t.nav.contact },
@@ -795,35 +799,31 @@ const App = () => {
   const scrollTo = (id: string) => {
     setMenuOpen(false);
     
-    // Handle "Calendar" view
     if (id === 'calendar') {
         setCurrentView('calendar');
+        setCalendarProperty(null); // Reset if they click the menu link directly
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
     }
 
-    // Handle "About" view
     if (id === 'about') {
       setCurrentView('about');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
-    // Handle "Properties" view
     if (id === 'properties') {
       setCurrentView('properties');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
-    // Handle "Home" view
     if (id === 'home') {
        setCurrentView('home');
        window.scrollTo({ top: 0, behavior: 'smooth' });
        return;
     }
 
-    // Default scroll behavior for sections on Home
     if (currentView !== 'home') {
       setCurrentView('home');
       setTimeout(() => {
@@ -853,7 +853,6 @@ const App = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const closeDropdown = (e: MouseEvent) => {
       if (langDropdownOpen && !(e.target as Element).closest('.lang-dropdown')) {
@@ -878,6 +877,17 @@ const App = () => {
       setBookingOpen(true);
   };
 
+  // 3. NEW HANDLER FOR CHECK AVAILABILITY BUTTON
+  const handleCheckAvailability = (id: number) => {
+      const allProps = getProperties(lang);
+      const prop = allProps.find(p => p.id === id);
+      if (prop) {
+        setCalendarProperty(prop);
+        setCurrentView('calendar');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+  };
+
   return (
     <div 
       className={`font-sans text-stone-800 antialiased selection:bg-nobel-gold selection:text-white overflow-x-hidden ${lang === 'ar' ? 'font-arabic' : ''}`}
@@ -887,14 +897,12 @@ const App = () => {
         {loading && <VideoPreloader onComplete={() => setLoading(false)} />}
       </AnimatePresence>
 
-      {/* Navbar */}
       <nav className={`fixed w-full z-[100] transition-all duration-300 ${scrolled || currentView !== 'home' ? 'bg-white/95 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
           <div className="flex items-center gap-2 z-50 cursor-pointer" onClick={() => scrollTo('home')}>
             <img src="https://i.postimg.cc/qBQmntz0/logo-holiday.png" alt="MAPSTONE" className="h-12 md:h-20 w-auto object-contain transition-all duration-300"/>
           </div>
 
-          {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-8">
             {navLinks.map(link => (
               <button 
@@ -951,7 +959,6 @@ const App = () => {
             </button>
           </div>
 
-          {/* Mobile Menu Toggle */}
           <button 
             className={`lg:hidden z-[101] ${scrolled || menuOpen || currentView !== 'home' ? 'text-mapstone-blue' : 'text-white'}`}
             onClick={() => setMenuOpen(!menuOpen)}
@@ -961,7 +968,6 @@ const App = () => {
         </div>
       </nav>
 
-      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div 
@@ -1009,7 +1015,6 @@ const App = () => {
         )}
       </AnimatePresence>
 
-      {/* Main Content Area */}
       <AnimatePresence mode="wait">
         {currentView === 'home' && (
           <PageTransition key="home">
@@ -1088,21 +1093,22 @@ const App = () => {
           </PageTransition>
         )}
 
+        {/* 4. PASS THE NEW HANDLER TO PROPERTYSHOWCASE */}
         {currentView === 'properties' && (
           <PageTransition key="properties">
-            <PropertyShowcase lang={lang} onBook={handleBookRequest} />
+            <PropertyShowcase lang={lang} onBook={handleCheckAvailability} />
           </PageTransition>
         )}
         
-        {/* --- CALENDAR VIEW --- */}
         {currentView === 'calendar' && (
             <PageTransition key="calendar">
                 <div className="min-h-screen bg-stone-100 pt-32 pb-20 px-4">
                     <div className="container mx-auto">
+                        {/* 5. PASS SELECTED PROPERTY TO CALENDAR */}
                         <AvailabilityCalendar 
                             lang={lang} 
                             onClose={() => setCurrentView('home')} 
-                            onBookRequest={handleBookRequest}
+                            selectedProperty={calendarProperty}
                         />
                     </div>
                 </div>
@@ -1128,7 +1134,6 @@ const App = () => {
         )}
       </AnimatePresence>
 
-      {/* Footer */}
       <footer id="contact" className="bg-[#204c77] pt-20 pb-10">
         <div className="container mx-auto px-6">
           <div className="grid md:grid-cols-4 gap-12 mb-16">
