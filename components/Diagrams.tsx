@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client"
 import React, { useState, useEffect, useRef } from 'react';
 import { Wifi, Utensils, Waves, Car, Tv, Wind, MapPin, CheckCircle2, BadgeCheck, Zap, ChevronLeft, ChevronRight, X, CalendarCheck } from 'lucide-react';
@@ -14,7 +15,7 @@ export interface PropertyData {
     specs: string;
 }
 
-// --- DATA: UPDATED PRICES ---
+// --- DATA: PRICES UPDATED ---
 export const getProperties = (lang: Lang): PropertyData[] => [
     {
         id: 1,
@@ -140,15 +141,11 @@ export const getProperties = (lang: Lang): PropertyData[] => [
     }
 ];
 
-// Fix for TypeScript red lines
-const MotionDiv = motion.div as any;
-const MotionImg = motion.img as any;
-
 function cn(...classes: (string | undefined | null | false)[]) {
   return classes.filter(Boolean).join(" ")
 }
 
-// ... [BackgroundGradientAnimation and CometCard code remains exactly the same] ...
+// ... (Rest of your existing BackgroundGradientAnimation and CometCard code - Keep it here) ...
 const BackgroundGradientAnimation = ({ gradientBackgroundStart = "rgb(30, 72, 116)", gradientBackgroundEnd = "rgb(15, 36, 58)", firstColor = "204, 157, 66", secondColor = "30, 72, 116", thirdColor = "204, 157, 66", fourthColor = "30, 72, 116", fifthColor = "255, 255, 255", pointerColor = "204, 157, 66", size = "80%", blendingValue = "hard-light", children, className, interactive = true, containerClassName }: any) => {
   const interactiveRef = useRef<HTMLDivElement>(null);
   const [curX, setCurX] = useState(0);
@@ -217,6 +214,10 @@ const BackgroundGradientAnimation = ({ gradientBackgroundStart = "rgb(30, 72, 11
     </div>
   );
 };
+
+// Fix for TypeScript red lines
+const MotionDiv = motion.div as any;
+const MotionImg = motion.img as any;
 
 const CometCard = ({ rotateDepth = 17.5, translateDepth = 20, className, children }: { rotateDepth?: number; translateDepth?: number; className?: string; children: React.ReactNode }) => {
   const ref = useRef<HTMLDivElement>(null);

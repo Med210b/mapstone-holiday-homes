@@ -5,7 +5,8 @@ import { PropertyShowcase, BookingBenefits, getProperties } from './components/D
 import PremiumAmenities from './components/PremiumAmenities';
 import PageTransition from './components/PageTransition';
 import AvailabilityCalendar from './components/AvailabilityCalendar'; 
-import { CheckoutPage } from './components/CheckoutPage'; // Ensure CheckoutPage is imported
+import { CheckoutPage } from './components/CheckoutPage'; 
+import LandlordsPage from './components/LandlordsPage'; // IMPORT THE NEW PAGE
 import { WhatsAppIcon, LogoBayut, LogoDubizzle, LogoPropertyFinder, LogoBooking, LogoAirbnb } from './components/Icons';
 import { PrivacyPolicy, TermsConditions, FAQs } from './components/LegalPages';
 import PhilosophyPage from './components/PhilosophyPage'; 
@@ -18,7 +19,6 @@ import { Lang, View } from './types';
 const translations = {
   en: {
     name: "English",
-    // REMOVED 'Availability' FROM NAV
     nav: { home: "Home", about: "About", properties: "Properties", landlords: "Landlords", contact: "Contact Us", book: "Book Now", services: "Amenities" },
     hero: {
       location: "DUBAI • UNITED ARAB EMIRATES",
@@ -36,7 +36,6 @@ const translations = {
     contactPage: { title: "Get in Touch", subtitle: "We are here to assist you.", phoneLabel: "Call Us", emailLabel: "Email Us", locationLabel: "Visit Us" },
     booking: { title: "Request a Consultation", subtitle: "Leave your details and our team will contact you shortly.", name: "Full Name", email: "Email Address", phone: "Phone Number", time: "Best Time to Call", submit: "SUBMIT", successTitle: "Welcome to the Inner Circle,", successBody: "Your journey with MAPSTONE starts now. Keep an eye on your inbox." },
   },
-  // ... (Other languages kept brief for code clarity, logic remains the same) ...
   ar: {
     name: "العربية",
     nav: { home: "الرئيسية", about: "من نحن", properties: "عقاراتنا", landlords: "الملاك", contact: "تواصل معنا", book: "احجز الآن", services: "المميزات" },
@@ -51,16 +50,6 @@ const translations = {
     booking: { title: "طلب استشارة", subtitle: "اترك بياناتك وسيقوم فريقنا بالاتصال بك قريباً.", name: "الاسم الكامل", email: "البريد الإلكتروني", phone: "رقم الهاتف", time: "أفضل وقت للاتصال", submit: "إرسال", successTitle: "مرحباً بك في الدائرة المقربة،", successBody: "رحلتك مع مابستون تبدأ الآن." },
   }
 };
-
-const COUNTRY_CODES = [
-  { code: "+971", country: "United Arab Emirates", flag: "🇦🇪" },
-  { code: "+1", country: "United States", flag: "🇺🇸" },
-  { code: "+44", country: "United Kingdom", flag: "🇬🇧" },
-  { code: "+33", country: "France", flag: "🇫🇷" },
-  { code: "+7", country: "Russia", flag: "🇷🇺" },
-  { code: "+966", country: "Saudi Arabia", flag: "🇸🇦" },
-  // ... (Can add full list back here)
-];
 
 const VideoPreloader: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   return (
@@ -99,10 +88,7 @@ const WhatsAppButton = () => (
   </a>
 );
 
-// --- BOOKING MODAL (Consultation Request) ---
-// Note: This is separate from the Property Booking flow
 const BookingModal: React.FC<any> = ({ isOpen, onClose, lang }) => {
-   // ... (Keep existing simple consultation modal logic if needed for "Book Now" in nav) ...
    if(!isOpen) return null;
    return (
        <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4" onClick={onClose}>
@@ -124,9 +110,8 @@ const App = () => {
   const [bookingOpen, setBookingOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   
-  // STATE: Property & Booking Data Handover
   const [selectedProperty, setSelectedProperty] = useState(null);
-  const [bookingDetails, setBookingDetails] = useState(null); // Stores Dates + Guests
+  const [bookingDetails, setBookingDetails] = useState(null); 
 
   const t = translations[lang] || translations['en'];
 
@@ -136,37 +121,41 @@ const App = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // UPDATED NAV LINKS (Removed Calendar)
   const navLinks = [
     { id: 'home', label: t.nav.home },
     { id: 'about', label: t.nav.about },
     { id: 'properties', label: t.nav.properties },
     { id: 'services', label: t.nav.services },
-    { id: 'landlords', label: t.nav.landlords },
+    { id: 'landlords', label: t.nav.landlords }, // THIS WILL NOW ROUTE TO A PAGE
     { id: 'contact', label: t.nav.contact },
   ];
 
   const scrollTo = (id: string) => {
     setMenuOpen(false);
     
+    // Switch Views for these IDs
+    if (id === 'landlords') {
+        setCurrentView('landlords');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+    }
     if (id === 'about') {
       setCurrentView('about');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
-
     if (id === 'properties') {
       setCurrentView('properties');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
-
     if (id === 'home') {
        setCurrentView('home');
        window.scrollTo({ top: 0, behavior: 'smooth' });
        return;
     }
 
+    // Default scroll
     if (currentView !== 'home') {
       setCurrentView('home');
       setTimeout(() => {
@@ -199,15 +188,14 @@ const App = () => {
       const prop = allProps.find(p => p.id === id);
       if (prop) {
         setSelectedProperty(prop);
-        setCurrentView('calendar'); // Show Calendar View
+        setCurrentView('calendar');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
   };
 
-  // STEP 2: Handle "Next" from Calendar -> Checkout
   const handleProceedToCheckout = (data: any) => {
       setBookingDetails(data);
-      setCurrentView('checkout'); // Switch to new Checkout Page
+      setCurrentView('checkout');
       window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -220,7 +208,6 @@ const App = () => {
         {loading && <VideoPreloader onComplete={() => setLoading(false)} />}
       </AnimatePresence>
 
-      {/* Navbar */}
       <nav className={`fixed w-full z-[100] transition-all duration-300 ${scrolled || currentView !== 'home' ? 'bg-white/95 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
           <div className="flex items-center gap-2 z-50 cursor-pointer" onClick={() => scrollTo('home')}>
@@ -240,7 +227,6 @@ const App = () => {
           </div>
 
           <div className="hidden lg:flex items-center gap-4">
-             {/* Language Dropdown (Simplified for brevity) */}
             <div className="relative lang-dropdown">
               <button onClick={() => setLangDropdownOpen(!langDropdownOpen)} className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest ${scrolled || currentView !== 'home' ? 'text-mapstone-blue' : 'text-white'}`}>
                 <Globe size={16} /> {lang.toUpperCase()}
@@ -253,19 +239,16 @@ const App = () => {
                   </div>
                )}
             </div>
-
             <button onClick={() => setBookingOpen(true)} className="bg-nobel-gold text-white px-6 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-mapstone-blue transition-colors shadow-lg">
               {t.nav.book}
             </button>
           </div>
-
           <button className={`lg:hidden z-[101] ${scrolled || menuOpen || currentView !== 'home' ? 'text-mapstone-blue' : 'text-white'}`} onClick={() => setMenuOpen(!menuOpen)}>
             {menuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </div>
       </nav>
 
-      {/* Main Content */}
       <AnimatePresence mode="wait">
         {currentView === 'home' && (
           <PageTransition key="home">
@@ -276,7 +259,6 @@ const App = () => {
               </div>
               <div className="absolute inset-0 z-0 opacity-60"><GeometricLuxuryScene /></div>
               <div className="container mx-auto px-6 relative z-20 text-center mt-20">
-                  {/* Hero Content */}
                   <span className="inline-block py-1 px-3 border border-white/30 rounded-full text-[10px] font-bold tracking-[0.2em] text-white mb-6 uppercase">{t.hero.location}</span>
                   <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-2 tracking-tight">{t.hero.title}</h1>
                   <p className="text-xl md:text-3xl font-light text-nobel-gold uppercase tracking-[0.3em] mb-8">{t.hero.subtitle}</p>
@@ -287,7 +269,6 @@ const App = () => {
             </header>
             <PremiumAmenities lang={lang} onBook={() => setBookingOpen(true)} />
             <section className="py-16 bg-stone-50"><BookingBenefits lang={lang} /></section>
-            <section id="landlords" className="py-24 bg-mapstone-blue text-white"><div className="container mx-auto px-6 text-center"><h2>{t.landlords.title}</h2><p>{t.landlords.desc}</p></div></section>
           </PageTransition>
         )}
 
@@ -297,7 +278,13 @@ const App = () => {
           </PageTransition>
         )}
 
-        {/* CALENDAR VIEW (Step 1) */}
+        {/* --- NEW HOMEOWNERS PAGE ROUTE --- */}
+        {currentView === 'landlords' && (
+            <PageTransition key="landlords">
+                <LandlordsPage lang={lang} onBook={() => setBookingOpen(true)} />
+            </PageTransition>
+        )}
+
         {currentView === 'calendar' && (
             <PageTransition key="calendar">
                 <div className="min-h-screen bg-stone-100 pt-32 pb-20 px-4">
@@ -313,7 +300,6 @@ const App = () => {
             </PageTransition>
         )}
 
-        {/* CHECKOUT VIEW (Step 2 - New Page) */}
         {currentView === 'checkout' && (
             <PageTransition key="checkout">
                 <CheckoutPage 
@@ -321,7 +307,7 @@ const App = () => {
                     onBack={() => setCurrentView('calendar')}
                     bookingData={{
                         propertyId: selectedProperty?.id,
-                        propertyName: selectedProperty?.title, // Passed for display
+                        propertyName: selectedProperty?.title,
                         dateRange: bookingDetails?.dateRange,
                         guests: bookingDetails?.guests
                     }}
@@ -349,7 +335,6 @@ const App = () => {
             </div>
          </div>
       </footer>
-
       <WhatsAppButton />
       <BookingModal isOpen={bookingOpen} onClose={() => setBookingOpen(false)} lang={lang} />
     </div>
