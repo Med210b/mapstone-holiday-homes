@@ -14,7 +14,7 @@ export interface PropertyData {
     specs: string;
 }
 
-// --- DATA: EXPORTED SO PARENT CAN USE IT ---
+// --- DATA: UPDATED PRICES ---
 export const getProperties = (lang: Lang): PropertyData[] => [
     {
         id: 1,

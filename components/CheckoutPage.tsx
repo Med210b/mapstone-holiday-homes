@@ -1,12 +1,10 @@
-// src/components/CheckoutPage.tsx
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, UploadCloud, FileText, X, Loader2, Check } from 'lucide-react';
+import { ArrowLeft, UploadCloud, FileText, X, Loader2, Check, UserPlus, AlertTriangle } from 'lucide-react';
 
-// --- FIX: Bypass strict type check for motion.div ---
+// --- FIX: Bypass strict type check for framer-motion ---
 const MotionDiv = motion.div as any;
 
-// --- FIX: Embed Data directly to avoid import errors ---
 const COUNTRY_CODES = [
   { code: "+971", country: "United Arab Emirates", flag: "🇦🇪" },
   { code: "+1", country: "United States", flag: "🇺🇸" },
@@ -17,7 +15,6 @@ const COUNTRY_CODES = [
   { code: "+49", country: "Germany", flag: "🇩🇪" },
   { code: "+91", country: "India", flag: "🇮🇳" },
   { code: "+86", country: "China", flag: "🇨🇳" },
-  // ... You can add more later if needed
 ];
 
 interface Props {
@@ -34,6 +31,8 @@ interface Props {
 export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+    const [showSecondGuest, setShowSecondGuest] = useState(false);
+    const [formError, setFormError] = useState('');
     
     // File Upload State
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -42,13 +41,15 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
     const [formData, setFormData] = useState({
         fullName: '',
         phone: '',
-        whatsapp: '',
         email: '',
+        guest2Name: '',
+        guest2Phone: ''
     });
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             setSelectedFile(e.target.files[0]);
+            setFormError(''); // Clear error on fix
         }
     };
 
@@ -60,10 +61,20 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
-        if (!selectedFile) {
-            alert("Please upload your Passport or Emirates ID.");
+        setFormError('');
+
+        // 1. Strict Validation for Main Guest
+        if (!formData.fullName || !formData.phone || !formData.email || !selectedFile) {
+            setFormError("Please fill in all Main Guest details and upload your ID.");
             return;
+        }
+
+        // 2. Strict Validation for Second Guest (if enabled)
+        if (showSecondGuest) {
+            if (!formData.guest2Name || !formData.guest2Phone) {
+                setFormError("You enabled Second Guest. Please fill their details or uncheck the box.");
+                return;
+            }
         }
 
         setIsSubmitting(true);
@@ -71,20 +82,22 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
         const formElement = e.target as HTMLFormElement;
         const formDataObj = new FormData(formElement);
 
-        // Add Configuration Fields for FormSubmit.co
         formDataObj.append("_subject", `New Reservation: ${bookingData.propertyName}`);
         formDataObj.append("_captcha", "false");
         formDataObj.append("_template", "table");
         
-        // Add Booking Context
         const checkIn = bookingData.dateRange?.[0]?.toDateString() || "N/A";
         const checkOut = bookingData.dateRange?.[1]?.toDateString() || "N/A";
         
         formDataObj.append("Property", bookingData.propertyName || "Unknown");
         formDataObj.append("Check-in", checkIn);
         formDataObj.append("Check-out", checkOut);
-        formDataObj.append("Adults", bookingData.guests.adults.toString());
-        formDataObj.append("Children/Infants", bookingData.guests.children.toString());
+        formDataObj.append("Total Guests", `${bookingData.guests.adults} Adults, ${bookingData.guests.children} Children`);
+
+        if (showSecondGuest) {
+            formDataObj.append("Second Guest Name", formData.guest2Name);
+            formDataObj.append("Second Guest Phone", formData.guest2Phone);
+        }
 
         try {
             await fetch("https://formsubmit.co/contact@mapstonegroup.com", {
@@ -110,7 +123,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                     <h2 className="text-3xl font-serif text-mapstone-blue mb-4">Request Sent</h2>
                     <p className="text-stone-500 mb-8">
                         Thank you, <span className="font-bold text-mapstone-blue">{formData.fullName}</span>. 
-                        We have received your documents and booking details for <span className="font-bold">{bookingData.propertyName}</span>.
+                        We have received your documents and booking details.
                     </p>
                     <button onClick={onBack} className="bg-mapstone-blue text-white px-8 py-3 rounded-sm uppercase font-bold hover:bg-nobel-gold transition-colors">
                         Back to Properties
@@ -157,6 +170,14 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                     <div className="md:col-span-2">
                         <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-lg border border-stone-100 space-y-6" encType="multipart/form-data">
                             
+                            {/* ERROR MESSAGE */}
+                            {formError && (
+                                <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-sm flex items-start gap-3 animate-pulse">
+                                    <AlertTriangle size={20} className="shrink-0 mt-0.5" />
+                                    <p className="text-sm font-bold">{formError}</p>
+                                </div>
+                            )}
+
                             <h3 className="font-serif text-xl text-mapstone-blue border-b border-stone-100 pb-2">Main Guest Details</h3>
                             
                             {/* Personal Details */}
@@ -172,14 +193,9 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                         <input type="tel" name="phone" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="+971 50 ..." value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">WhatsApp <span className="text-stone-300 font-normal">(Optional)</span></label>
-                                        <input type="tel" name="whatsapp" className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="Same as phone?" value={formData.whatsapp} onChange={e => setFormData({...formData, whatsapp: e.target.value})} />
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Email Address <span className="text-red-500">*</span></label>
+                                        <input type="email" name="email" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="example@email.com" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
                                     </div>
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Email Address <span className="text-red-500">*</span></label>
-                                    <input type="email" name="email" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="example@email.com" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
                                 </div>
                             </div>
 
@@ -189,7 +205,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                 <p className="text-xs text-stone-400 mb-4">Please upload a clear copy of your Passport or Emirates ID. This is required by Dubai Tourism law.</p>
                                 
                                 {!selectedFile ? (
-                                    <div className="border-2 border-dashed border-stone-300 rounded-lg p-8 text-center bg-stone-50 hover:bg-white hover:border-nobel-gold transition-colors group cursor-pointer relative">
+                                    <div className={`border-2 border-dashed rounded-lg p-8 text-center bg-stone-50 hover:bg-white transition-colors group cursor-pointer relative ${formError && !selectedFile ? 'border-red-300 bg-red-50' : 'border-stone-300 hover:border-nobel-gold'}`}>
                                         <input 
                                             type="file" 
                                             name="attachment" 
@@ -214,6 +230,36 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                         </div>
                                         <button onClick={removeFile} className="text-green-400 hover:text-green-700 p-2"><X size={20} /></button>
                                     </div>
+                                )}
+                            </div>
+
+                            {/* SECOND GUEST SECTION - FIX APPLIED HERE */}
+                            <div className="pt-6 border-t border-stone-100">
+                                <label className="flex items-center gap-3 cursor-pointer mb-6 group">
+                                    <div className={`w-5 h-5 border rounded-sm flex items-center justify-center transition-colors ${showSecondGuest ? 'bg-nobel-gold border-nobel-gold text-white' : 'border-stone-300 bg-white'}`}>
+                                        {showSecondGuest && <Check size={14} />}
+                                    </div>
+                                    <input type="checkbox" className="hidden" checked={showSecondGuest} onChange={() => setShowSecondGuest(!showSecondGuest)} />
+                                    <span className="font-bold text-mapstone-blue flex items-center gap-2">
+                                        <UserPlus size={18} /> Add Second Guest Details
+                                    </span>
+                                </label>
+
+                                {showSecondGuest && (
+                                    <MotionDiv 
+                                        initial={{ opacity: 0, height: 0 }} 
+                                        animate={{ opacity: 1, height: 'auto' }}
+                                        className="space-y-4 pl-4 border-l-2 border-stone-200"
+                                    >
+                                        <div>
+                                            <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Guest 2 Full Name <span className="text-red-500">*</span></label>
+                                            <input type="text" name="guest2Name" className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="Full Name" value={formData.guest2Name} onChange={e => setFormData({...formData, guest2Name: e.target.value})} />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Guest 2 Phone / WhatsApp <span className="text-red-500">*</span></label>
+                                            <input type="tel" name="guest2Phone" className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="+971..." value={formData.guest2Phone} onChange={e => setFormData({...formData, guest2Phone: e.target.value})} />
+                                        </div>
+                                    </MotionDiv>
                                 )}
                             </div>
 
