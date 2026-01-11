@@ -1,18 +1,17 @@
 // @ts-nocheck
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GeometricLuxuryScene } from './components/QuantumScene';
 import { PropertyShowcase, BookingBenefits, getProperties } from './components/Diagrams';
 import PremiumAmenities from './components/PremiumAmenities';
 import PageTransition from './components/PageTransition';
 import AvailabilityCalendar from './components/AvailabilityCalendar'; 
 import { CheckoutPage } from './components/CheckoutPage'; 
-import LandlordsPage from './components/LandlordsPage'; // IMPORT THE NEW PAGE
+import LandlordsPage from './components/LandlordsPage';
 import { WhatsAppIcon, LogoBayut, LogoDubizzle, LogoPropertyFinder, LogoBooking, LogoAirbnb } from './components/Icons';
 import { PrivacyPolicy, TermsConditions, FAQs } from './components/LegalPages';
 import PhilosophyPage from './components/PhilosophyPage'; 
-import { ArrowDown, Menu, X, Calendar as CalendarIcon, Globe, Phone, Mail, ChevronDown, Search, Check, MapPin, Facebook, Instagram, BarChart3, Users, Crown, AlertCircle, Loader2, CheckCircle2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { IMaskInput } from 'react-imask';
+import { ArrowDown, Menu, X, Globe, Phone, Mail, ChevronDown, Check, MapPin, Facebook, Instagram } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Lang, View } from './types';
 
 // Constants for Translations and Data
@@ -27,27 +26,21 @@ const translations = {
       desc: "Experience the pinnacle of luxury living in Dubai. Premium short-term rentals in the city's most prestigious locations.",
       cta: "Find Your Stay"
     },
-    about: { label: "Our Philosophy", title: "Luxury Living, Redefined", p1: "MAPSTONE Holiday Homes offers a curated selection of furnished apartments in Dubai's prime districts.", p2: "Whether you are visiting for business or leisure, our properties blend hotel-grade amenities with the comfort and privacy of a home." },
-    properties: { label: "Locations", title: "Curated Residences", desc: "Discover our portfolio of exclusive apartments in Dubai's most sought-after neighborhoods." },
-    landlords: { label: "Property Management", title: "For Homeowners", desc: "Maximize your property's potential with our comprehensive management services.", vipTitle: "VIP App Access", vipDesc: "Stay connected to your investment.", list: ["Live Revenue Dashboard", "Real-Time Booking Calendar", "Monthly Performance Reports", "Transparent Expense Tracking"] },
+    landlords: { title: "For Homeowners", desc: "Maximize your property's potential." },
     partners: { title: "Our Partners" },
-    amenities: { title: "Premium Amenities", desc: "Every stay includes access to world-class facilities designed for your comfort." },
     footer: { desc: "Premium short-term rental management company in Dubai.", rights: "All rights reserved.", privacy: "Privacy Policy", terms: "Terms & Conditions", faqs: "FAQS" },
-    contactPage: { title: "Get in Touch", subtitle: "We are here to assist you.", phoneLabel: "Call Us", emailLabel: "Email Us", locationLabel: "Visit Us" },
-    booking: { title: "Request a Consultation", subtitle: "Leave your details and our team will contact you shortly.", name: "Full Name", email: "Email Address", phone: "Phone Number", time: "Best Time to Call", submit: "SUBMIT", successTitle: "Welcome to the Inner Circle,", successBody: "Your journey with MAPSTONE starts now. Keep an eye on your inbox." },
+    contactPage: { locationLabel: "Visit Us", phoneLabel: "Call Us" },
+    booking: { title: "Request a Consultation", subtitle: "Leave your details and our team will contact you shortly." }
   },
   ar: {
     name: "العربية",
     nav: { home: "الرئيسية", about: "من نحن", properties: "عقاراتنا", landlords: "الملاك", contact: "تواصل معنا", book: "احجز الآن", services: "المميزات" },
     hero: { location: "دبي • الإمارات العربية المتحدة", title: "مابستون", subtitle: "بيوت العطلات", desc: "استمتع بقمة الرفاهية في دبي.", cta: "ابحث عن إقامتك" },
-    about: { label: "فلسفتنا", title: "مفهوم جديد للرفاهية", p1: "تقدم مابستون مجموعة مختارة من الشقق المفروشة في أرقى أحياء دبي.", p2: "تجمع عقاراتنا بين وسائل الراحة الفندقية وخصوصية المنزل." },
-    properties: { label: "المواقع", title: "إقامات مميزة", desc: "اكتشف محفظتنا من الشقق الحصرية." },
-    landlords: { label: "إدارة العقارات", title: "لأصحاب المنازل", desc: "ضاعف إمكانات عقارك مع خدمات الإدارة الشاملة لدينا.", vipTitle: "تطبيق كبار الشخصيات", vipDesc: "ابق على اتصال باستثمارك.", list: ["لوحة متابعة الإيرادات", "تقويم الحجوزات المباشر", "تقارير الأداء الشهرية", "تتبع المصاريف بشفافية"] },
+    landlords: { title: "لأصحاب المنازل", desc: "ضاعف إمكانات عقارك." },
     partners: { title: "شركاؤنا" },
-    amenities: { title: "وسائل الراحة", desc: "تشمل كل إقامة الوصول إلى مرافق عالمية المستوى." },
     footer: { desc: "شركة إدارة تأجير قصير الأجل متميزة في دبي.", rights: "جميع الحقوق محفوظة.", privacy: "سياسة الخصوصية", terms: "الشروط والأحكام", faqs: "الأسئلة الشائعة" },
-    contactPage: { title: "تواصل معنا", subtitle: "نحن هنا لمساعدتك.", phoneLabel: "اتصل بنا", emailLabel: "راسلنا", locationLabel: "زورونا" },
-    booking: { title: "طلب استشارة", subtitle: "اترك بياناتك وسيقوم فريقنا بالاتصال بك قريباً.", name: "الاسم الكامل", email: "البريد الإلكتروني", phone: "رقم الهاتف", time: "أفضل وقت للاتصال", submit: "إرسال", successTitle: "مرحباً بك في الدائرة المقربة،", successBody: "رحلتك مع مابستون تبدأ الآن." },
+    contactPage: { locationLabel: "زورونا", phoneLabel: "اتصل بنا" },
+    booking: { title: "طلب استشارة", subtitle: "اترك بياناتك وسيقوم فريقنا بالاتصال بك قريباً." }
   }
 };
 
@@ -88,6 +81,16 @@ const WhatsAppButton = () => (
   </a>
 );
 
+const PartnerLogos = () => (
+  <>
+    <LogoAirbnb className="h-10 md:h-14 w-auto text-[#FF5A5F] mx-8 md:mx-12" />
+    <LogoBooking className="h-8 md:h-10 w-auto text-[#006CE4] mx-8 md:mx-12" />
+    <LogoPropertyFinder className="h-10 md:h-14 w-auto text-[#EF5E62] mx-8 md:mx-12" />
+    <LogoBayut className="h-10 md:h-14 w-auto text-[#28B16D] mx-8 md:mx-12" />
+    <LogoDubizzle className="h-10 md:h-14 w-auto text-[#E50000] mx-8 md:mx-12" />
+  </>
+);
+
 const BookingModal: React.FC<any> = ({ isOpen, onClose, lang }) => {
    if(!isOpen) return null;
    return (
@@ -126,38 +129,26 @@ const App = () => {
     { id: 'about', label: t.nav.about },
     { id: 'properties', label: t.nav.properties },
     { id: 'services', label: t.nav.services },
-    { id: 'landlords', label: t.nav.landlords }, // THIS WILL NOW ROUTE TO A PAGE
+    { id: 'landlords', label: t.nav.landlords },
     { id: 'contact', label: t.nav.contact },
   ];
 
+  // --- NAVIGATION LOGIC ---
   const scrollTo = (id: string) => {
     setMenuOpen(false);
     
-    // Switch Views for these IDs
+    // 1. Separate Views (These act like different pages)
     if (id === 'landlords') {
         setCurrentView('landlords');
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
     }
-    if (id === 'about') {
-      setCurrentView('about');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-    if (id === 'properties') {
-      setCurrentView('properties');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-    if (id === 'home') {
-       setCurrentView('home');
-       window.scrollTo({ top: 0, behavior: 'smooth' });
-       return;
-    }
 
-    // Default scroll
+    // 2. Main Page Sections (Home, About, Properties)
     if (currentView !== 'home') {
+      // If we are on Landlords/Checkout page, go back to Home first
       setCurrentView('home');
+      // Wait for Home to render, then scroll
       setTimeout(() => {
         const element = document.getElementById(id);
         if (element) {
@@ -168,12 +159,15 @@ const App = () => {
         }
       }, 100);
     } else {
+      // If already on Home, just scroll
       const element = document.getElementById(id);
       if (element) {
         const offset = 80;
         const elementPosition = element.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - offset;
         window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
   };
@@ -250,8 +244,10 @@ const App = () => {
       </nav>
 
       <AnimatePresence mode="wait">
+        {/* --- MAIN SCROLLABLE HOME PAGE --- */}
         {currentView === 'home' && (
           <PageTransition key="home">
+            {/* 1. Hero Section */}
             <header id="home" className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden bg-mapstone-dark border-b border-nobel-gold/20">
               <div className="absolute inset-0 w-full h-full z-0">
                  <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('https://i.postimg.cc/Y9ZFqfLc/69d1fa33-9d37-440c-9d9e-2b73216809f6.png')" }}></div>
@@ -267,18 +263,36 @@ const App = () => {
                   </button>
               </div>
             </header>
-            <PremiumAmenities lang={lang} onBook={() => setBookingOpen(true)} />
+
+            {/* 2. Amenities Section */}
+            <div id="services">
+                <PremiumAmenities lang={lang} onBook={() => setBookingOpen(true)} />
+            </div>
+
+            {/* 3. Properties Section (Restored to Homepage) */}
+            <div id="properties">
+                <PropertyShowcase lang={lang} onBook={handleCheckAvailability} />
+            </div>
+
+            {/* 4. About Us (Philosophy) */}
+            <div id="about">
+                <PhilosophyPage />
+            </div>
+
+            {/* 5. Benefits & Partners */}
             <section className="py-16 bg-stone-50"><BookingBenefits lang={lang} /></section>
+            
+            <section className="py-16 bg-white border-b border-nobel-gold/20 overflow-hidden">
+              <div className="container mx-auto px-6 mb-20 text-center"><p className="text-3xl md:text-4xl font-serif text-mapstone-blue">{t.partners.title}</p></div>
+              <div className="flex overflow-hidden w-full relative">
+                <div className="flex animate-marquee whitespace-nowrap"><PartnerLogos /><PartnerLogos /><PartnerLogos /><PartnerLogos /></div>
+              </div>
+            </section>
           </PageTransition>
         )}
 
-        {currentView === 'properties' && (
-          <PageTransition key="properties">
-            <PropertyShowcase lang={lang} onBook={handleCheckAvailability} />
-          </PageTransition>
-        )}
-
-        {/* --- NEW HOMEOWNERS PAGE ROUTE --- */}
+        {/* --- SEPARATE VIEWS --- */}
+        
         {currentView === 'landlords' && (
             <PageTransition key="landlords">
                 <LandlordsPage lang={lang} onBook={() => setBookingOpen(true)} />
@@ -291,7 +305,7 @@ const App = () => {
                     <div className="container mx-auto">
                         <AvailabilityCalendar 
                             lang={lang} 
-                            onClose={() => setCurrentView('properties')} 
+                            onClose={() => setCurrentView('home')} 
                             selectedProperty={selectedProperty}
                             onProceedToCheckout={handleProceedToCheckout}
                         />
@@ -315,8 +329,6 @@ const App = () => {
             </PageTransition>
         )}
 
-        {/* Legal Pages */}
-        {currentView === 'about' && <PageTransition key="about"><PhilosophyPage /></PageTransition>}
         {currentView === 'privacy' && <PageTransition key="privacy"><PrivacyPolicy /></PageTransition>}
         {currentView === 'terms' && <PageTransition key="terms"><TermsConditions /></PageTransition>}
         {currentView === 'faq' && <PageTransition key="faq"><FAQs /></PageTransition>}
