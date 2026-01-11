@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, UploadCloud, FileText, X, Loader2, Check, UserPlus, AlertTriangle, Users, CreditCard, Banknote, Globe } from 'lucide-react';
+import { ArrowLeft, UploadCloud, FileText, X, Loader2, Check, UserPlus, AlertTriangle, Users, CreditCard, Wallet, Smartphone, Globe, Key } from 'lucide-react';
 
 const MotionDiv = motion.div as any;
 
@@ -42,11 +42,13 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
     // Form State
     const [formData, setFormData] = useState({
         fullName: '',
+        passportNumber: '',
         phone: '',
         email: '',
         guest2Name: '',
+        guest2Passport: '',
         guest2Phone: '',
-        paymentMethod: 'visa'
+        paymentMethod: 'visa' // Default
     });
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, isSecondGuest: boolean) => {
@@ -72,13 +74,13 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
         setFormError('');
 
         // 1. Strict Validation
-        if (!formData.fullName || !formData.phone || !formData.email || !file1) {
+        if (!formData.fullName || !formData.passportNumber || !formData.phone || !formData.email || !file1) {
             setFormError("Please fill in all Main Guest details and upload your ID.");
             return;
         }
 
         if (requiresSecondGuest) {
-            if (!formData.guest2Name || !formData.guest2Phone || !file2) {
+            if (!formData.guest2Name || !formData.guest2Passport || !formData.guest2Phone || !file2) {
                 setFormError("Second Guest details and ID are required.");
                 return;
             }
@@ -86,48 +88,47 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
 
         setIsSubmitting(true);
 
-        // Create FormData
-        const formDataObj = new FormData();
+        const formElement = e.target as HTMLFormElement;
+        const formDataObj = new FormData(); 
 
-        // 1. Config Fields
+        // --- 1. CONFIGURATION ---
         formDataObj.append("_subject", `New Booking: ${bookingData.propertyName}`);
-        formDataObj.append("_template", "table");
         formDataObj.append("_captcha", "false");
+        formDataObj.append("_template", "table");
 
-        // 2. Data Fields
+        // --- 2. BOOKING DATA ---
         formDataObj.append("Property", bookingData.propertyName || "Unknown");
         const checkIn = bookingData.dateRange?.[0]?.toDateString() || "N/A";
         const checkOut = bookingData.dateRange?.[1]?.toDateString() || "N/A";
         formDataObj.append("Check-in", checkIn);
         formDataObj.append("Check-out", checkOut);
         formDataObj.append("Total Guests", `${bookingData.guests.adults} Adults, ${bookingData.guests.children} Children`);
-        
+
+        // --- 3. GUEST DATA ---
         formDataObj.append("Main Guest Name", formData.fullName);
-        formDataObj.append("Main Guest Phone", formData.phone);
-        formDataObj.append("Main Guest Email", formData.email);
+        formDataObj.append("Passport No", formData.passportNumber);
+        formDataObj.append("Phone", formData.phone);
+        formDataObj.append("Email", formData.email);
 
         if (requiresSecondGuest) {
             formDataObj.append("Second Guest Name", formData.guest2Name);
+            formDataObj.append("Second Guest Passport", formData.guest2Passport);
             formDataObj.append("Second Guest Phone", formData.guest2Phone);
         }
 
+        // --- 4. PAYMENT METHOD ---
         let paymentLabel = "Visa / Mastercard";
+        if (formData.paymentMethod === 'apple_pay') paymentLabel = "Apple Pay";
+        if (formData.paymentMethod === 'google_pay') paymentLabel = "Google Pay";
         if (formData.paymentMethod === 'paypal') paymentLabel = "PayPal";
-        if (formData.paymentMethod === 'cash') paymentLabel = "Cash (UAE)";
-        formDataObj.append("Payment Method", paymentLabel);
+        
+        formDataObj.append("Selected Payment", paymentLabel);
 
-        // 3. File Attachments (CRITICAL FIX)
-        // We append both files with the exact name "attachment". 
-        // FormSubmit treats multiple fields with the name "attachment" as multiple file attachments.
-        if (file1) {
-            formDataObj.append("attachment", file1); 
-        }
-        if (requiresSecondGuest && file2) {
-            formDataObj.append("attachment", file2);
-        }
+        // --- 5. FILE ATTACHMENTS ---
+        if (file1) formDataObj.append("attachment", file1); 
+        if (requiresSecondGuest && file2) formDataObj.append("attachment", file2);
 
         try {
-            // Using AJAX endpoint to prevent redirect issues
             const response = await fetch("https://formsubmit.co/ajax/contact@mapstonegroup.com", {
                 method: "POST",
                 body: formDataObj
@@ -139,12 +140,12 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                 setSubmitted(true);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
-                 console.error("FormSubmit Error:", result);
+                 console.error("Submission Error:", result);
                  throw new Error("Submission failed");
             }
         } catch (error) {
             console.error(error);
-            alert("Connection error. Please check your internet and try again.");
+            alert("Network error. Please check your connection and try again.");
         } finally {
             setIsSubmitting(false);
         }
@@ -157,10 +158,11 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                     <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
                         <Check size={40} />
                     </div>
-                    <h2 className="text-3xl font-serif text-mapstone-blue mb-4">Request Sent</h2>
+                    <h2 className="text-3xl font-serif text-mapstone-blue mb-4">Request Received</h2>
                     <p className="text-stone-500 mb-8">
                         Thank you, <span className="font-bold text-mapstone-blue">{formData.fullName}</span>. 
-                        We have received your booking and documents. A confirmation email will be sent shortly.
+                        <br/><br/>
+                        We have received your details. We will send the payment link for <strong>{formData.paymentMethod === 'visa' ? 'Visa/Mastercard' : formData.paymentMethod.replace('_', ' ').toUpperCase()}</strong> to your email shortly.
                     </p>
                     <button onClick={onBack} className="bg-mapstone-blue text-white px-8 py-3 rounded-sm uppercase font-bold hover:bg-nobel-gold transition-colors">
                         Back to Properties
@@ -178,6 +180,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                 </button>
 
                 <div className="grid md:grid-cols-3 gap-8">
+                    {/* LEFT: SUMMARY */}
                     <div className="md:col-span-1">
                         <div className="bg-white p-6 rounded-xl shadow-sm border border-stone-100 sticky top-32">
                             <h3 className="font-serif text-xl text-mapstone-blue mb-4">Your Booking</h3>
@@ -189,6 +192,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                         </div>
                     </div>
 
+                    {/* RIGHT: FORM */}
                     <div className="md:col-span-2">
                         <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-lg border border-stone-100 space-y-8">
                             {formError && (
@@ -202,11 +206,13 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                             <div>
                                 <h3 className="font-serif text-xl text-mapstone-blue border-b border-stone-100 pb-2 mb-6">Main Guest Details</h3>
                                 <div className="space-y-4">
-                                    <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Full Name <span className="text-red-500">*</span></label><input type="text" name="fullName" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="As shown on ID" value={formData.fullName} onChange={e => setFormData({...formData, fullName: e.target.value})} /></div>
+                                    <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Full Name <span className="text-red-500">*</span></label><input type="text" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="As shown on ID" value={formData.fullName} onChange={e => setFormData({...formData, fullName: e.target.value})} /></div>
+                                    <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Passport / Emirates ID Number <span className="text-red-500">*</span></label><input type="text" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="X0000000" value={formData.passportNumber} onChange={e => setFormData({...formData, passportNumber: e.target.value})} /></div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Phone Number <span className="text-red-500">*</span></label><input type="tel" name="phone" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="+971 50 ..." value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} /></div>
-                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Email Address <span className="text-red-500">*</span></label><input type="email" name="email" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="example@email.com" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} /></div>
+                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Phone Number <span className="text-red-500">*</span></label><input type="tel" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="+971 50 ..." value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} /></div>
+                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Email Address <span className="text-red-500">*</span></label><input type="email" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="example@email.com" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} /></div>
                                     </div>
+                                    <div className="bg-amber-50 text-amber-700 text-xs p-3 rounded-sm border border-amber-100 flex items-start gap-2"><Key size={14} className="shrink-0 mt-0.5"/><p><strong>Important:</strong> Your digital E-Keys and building access codes will be sent to the email address above.</p></div>
                                     <div className="pt-2">
                                         <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Upload Main Guest Passport / ID <span className="text-red-500">*</span></label>
                                         {!file1 ? (
@@ -231,8 +237,9 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                     <div className="flex items-center gap-2 mb-6"><div className="bg-nobel-gold/10 p-2 rounded-full text-nobel-gold"><Users size={20} /></div><h3 className="font-serif text-xl text-mapstone-blue">Second Guest Details</h3></div>
                                     <div className="bg-stone-50/50 p-6 rounded-lg border border-stone-200 space-y-4">
                                         <p className="text-xs text-stone-400 mb-2 font-medium flex items-center gap-1"><AlertTriangle size={12} className="text-nobel-gold" /> Required because you selected {bookingData.guests.adults} adults.</p>
-                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Guest 2 Full Name <span className="text-red-500">*</span></label><input type="text" name="guest2Name" className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" placeholder="Full Name" value={formData.guest2Name} onChange={e => setFormData({...formData, guest2Name: e.target.value})} /></div>
-                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Guest 2 Phone / WhatsApp <span className="text-red-500">*</span></label><input type="tel" name="guest2Phone" className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" placeholder="+971..." value={formData.guest2Phone} onChange={e => setFormData({...formData, guest2Phone: e.target.value})} /></div>
+                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Guest 2 Full Name <span className="text-red-500">*</span></label><input type="text" className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" placeholder="Full Name" value={formData.guest2Name} onChange={e => setFormData({...formData, guest2Name: e.target.value})} /></div>
+                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Guest 2 Passport / ID Number <span className="text-red-500">*</span></label><input type="text" className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" placeholder="X0000000" value={formData.guest2Passport} onChange={e => setFormData({...formData, guest2Passport: e.target.value})} /></div>
+                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Guest 2 Phone / WhatsApp <span className="text-red-500">*</span></label><input type="tel" className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" placeholder="+971..." value={formData.guest2Phone} onChange={e => setFormData({...formData, guest2Phone: e.target.value})} /></div>
                                         <div className="pt-2">
                                             <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Upload Guest 2 Passport / ID <span className="text-red-500">*</span></label>
                                             {!file2 ? (
@@ -255,18 +262,29 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                             {/* PAYMENT METHOD */}
                             <div className="pt-8 border-t border-stone-100">
                                 <h3 className="font-serif text-xl text-mapstone-blue mb-6">Payment Method</h3>
-                                <div className="grid grid-cols-1 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {/* Visa / Mastercard */}
                                     <label className={`border p-4 rounded-lg flex items-center gap-4 cursor-pointer transition-all ${formData.paymentMethod === 'visa' ? 'border-nobel-gold bg-amber-50/20 ring-1 ring-nobel-gold' : 'border-stone-200 hover:border-stone-300'}`}>
                                         <input type="radio" name="paymentMethod" value="visa" className="accent-nobel-gold w-5 h-5" checked={formData.paymentMethod === 'visa'} onChange={() => setFormData({...formData, paymentMethod: 'visa'})} />
-                                        <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><CreditCard size={18} /> Visa / Mastercard</p><p className="text-xs text-stone-400">A secure payment link will be sent to your email.</p></div>
+                                        <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><CreditCard size={18} /> Visa / Mastercard</p><p className="text-xs text-stone-400">Secure link via email.</p></div>
                                     </label>
+
+                                    {/* Apple Pay */}
+                                    <label className={`border p-4 rounded-lg flex items-center gap-4 cursor-pointer transition-all ${formData.paymentMethod === 'apple_pay' ? 'border-nobel-gold bg-amber-50/20 ring-1 ring-nobel-gold' : 'border-stone-200 hover:border-stone-300'}`}>
+                                        <input type="radio" name="paymentMethod" value="apple_pay" className="accent-nobel-gold w-5 h-5" checked={formData.paymentMethod === 'apple_pay'} onChange={() => setFormData({...formData, paymentMethod: 'apple_pay'})} />
+                                        <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><Wallet size={18} /> Apple Pay</p><p className="text-xs text-stone-400">Secure wallet link via email.</p></div>
+                                    </label>
+
+                                    {/* Google Pay */}
+                                    <label className={`border p-4 rounded-lg flex items-center gap-4 cursor-pointer transition-all ${formData.paymentMethod === 'google_pay' ? 'border-nobel-gold bg-amber-50/20 ring-1 ring-nobel-gold' : 'border-stone-200 hover:border-stone-300'}`}>
+                                        <input type="radio" name="paymentMethod" value="google_pay" className="accent-nobel-gold w-5 h-5" checked={formData.paymentMethod === 'google_pay'} onChange={() => setFormData({...formData, paymentMethod: 'google_pay'})} />
+                                        <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><Smartphone size={18} /> Google Pay</p><p className="text-xs text-stone-400">Secure wallet link via email.</p></div>
+                                    </label>
+
+                                    {/* PayPal */}
                                     <label className={`border p-4 rounded-lg flex items-center gap-4 cursor-pointer transition-all ${formData.paymentMethod === 'paypal' ? 'border-nobel-gold bg-amber-50/20 ring-1 ring-nobel-gold' : 'border-stone-200 hover:border-stone-300'}`}>
                                         <input type="radio" name="paymentMethod" value="paypal" className="accent-nobel-gold w-5 h-5" checked={formData.paymentMethod === 'paypal'} onChange={() => setFormData({...formData, paymentMethod: 'paypal'})} />
-                                        <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><Globe size={18} /> PayPal</p><p className="text-xs text-stone-400">You will receive an official invoice.</p></div>
-                                    </label>
-                                    <label className={`border p-4 rounded-lg flex items-center gap-4 cursor-pointer transition-all ${formData.paymentMethod === 'cash' ? 'border-nobel-gold bg-amber-50/20 ring-1 ring-nobel-gold' : 'border-stone-200 hover:border-stone-300'}`}>
-                                        <input type="radio" name="paymentMethod" value="cash" className="accent-nobel-gold w-5 h-5" checked={formData.paymentMethod === 'cash'} onChange={() => setFormData({...formData, paymentMethod: 'cash'})} />
-                                        <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><Banknote size={18} /> Cash</p><p className="text-xs text-stone-400">Available for UAE residents or payment upon arrival only.</p></div>
+                                        <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><Globe size={18} /> PayPal</p><p className="text-xs text-stone-400">Official invoice via email.</p></div>
                                     </label>
                                 </div>
                             </div>
