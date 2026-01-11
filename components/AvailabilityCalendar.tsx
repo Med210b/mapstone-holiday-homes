@@ -1,283 +1,183 @@
 import React, { useState } from 'react';
 import Calendar from 'react-calendar';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, X, User, Mail, Phone, Calendar as CalendarIcon, CheckCircle } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ChevronLeft, ChevronRight, X, AlertCircle } from 'lucide-react';
 import 'react-calendar/dist/Calendar.css'; 
 import { Lang } from '../types';
 
-// --- Types ---
+// --- FIX: Bypass strict type check for motion.div ---
+const MotionDiv = motion.div as any;
+
 interface PropertyData {
     id: number;
     title: string;
     location: string;
     price: string;
-    image?: string; // Optional: to show a thumbnail
+    specs: string; 
 }
 
 interface Props {
     lang: Lang;
     onClose: () => void;
-    selectedProperty: PropertyData | null; // We pass the selected property here
+    selectedProperty: PropertyData | null;
+    onProceedToCheckout: (data: { dateRange: [Date, Date], guests: { adults: number, children: number } }) => void;
 }
 
-interface BookingFormData {
-    name: string;
-    email: string;
-    phone: string;
-    message: string;
-    date: Date;
-}
-
-// --- Animation Variants ---
-const slideUp = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: 50 }
-};
-
-const stepVariants = {
-    hidden: { opacity: 0, x: 20 },
-    visible: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: -20 }
-};
-
-const AvailabilityCalendar: React.FC<Props> = ({ lang, onClose, selectedProperty }) => {
-    // Steps: 1 = Date Select, 2 = Details Form, 3 = Success
-    const [step, setStep] = useState<number>(1);
+const AvailabilityCalendar: React.FC<Props> = ({ lang, onClose, selectedProperty, onProceedToCheckout }) => {
+    // State for Date Range (Start & End)
+    const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
     
-    // Form State
-    const [formData, setFormData] = useState<BookingFormData>({
-        name: '',
-        email: '',
-        phone: '',
-        message: '',
-        date: new Date()
-    });
+    // State for Guests
+    const [adults, setAdults] = useState(1);
+    const [children, setChildren] = useState(0);
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    // LOGIC: Check if property is a Studio
+    const isStudio = selectedProperty?.specs?.toLowerCase().includes('studio') || selectedProperty?.title?.toLowerCase().includes('studio');
 
-    // Update form fields
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+    // Validation Limits
+    const MAX_ADULTS = isStudio ? 2 : 6; // Studio max 2 adults
+    const MAX_CHILDREN = isStudio ? 1 : 4; // Studio max 1 infant
 
-    // Handle Date Selection
     const handleDateChange = (value: any) => {
-        setFormData({ ...formData, date: value });
+        setDateRange(value);
     };
 
-    // Submit Logic
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        
-        // SIMULATE API CALL
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        console.log("Booking Request Sent:", { property: selectedProperty?.title, ...formData });
-        setIsSubmitting(false);
-        setStep(3); // Move to success step
+    const handleProceed = () => {
+        if (dateRange[0] && dateRange[1]) {
+            onProceedToCheckout({
+                dateRange: [dateRange[0], dateRange[1]],
+                guests: { adults, children }
+            });
+        }
     };
 
-    // --- Render Helpers ---
-
-    // STEP 1: CALENDAR
-    const renderStepOne = () => (
-        <motion.div 
-            key="step1"
-            variants={stepVariants}
-            initial="hidden" animate="visible" exit="exit"
-            className="flex flex-col h-full"
-        >
-            <div className="text-center mb-6">
-                <p className="text-stone-500 uppercase tracking-widest text-xs font-bold mb-2">Step 1 of 2</p>
-                <h3 className="font-serif text-2xl text-mapstone-blue">
-                    {lang === 'ar' ? 'اختر تاريخ الوصول' : 'Select Check-in Date'}
-                </h3>
-            </div>
-
-            {/* Calendar Wrapper */}
-            <div className="bg-white p-4 rounded-xl shadow-sm border border-stone-100 mb-6">
-                 <style>{`
-                    .react-calendar { width: 100%; border: none; font-family: 'Lato', sans-serif; }
-                    .react-calendar__navigation button { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: #1B365D; }
-                    .react-calendar__tile { height: 50px; border-radius: 0.5rem; }
-                    .react-calendar__tile--active, .react-calendar__tile--active:enabled:hover { background: #1B365D; color: white; }
-                    .react-calendar__tile--now { background: transparent; color: #C5A059; border: 1px solid #C5A059; }
-                `}</style>
-                <Calendar 
-                    onChange={handleDateChange} 
-                    value={formData.date}
-                    minDate={new Date()}
-                    nextLabel={<ChevronRight size={16} />}
-                    prevLabel={<ChevronLeft size={16} />}
-                />
-            </div>
-
-            <div className="mt-auto">
-                <button 
-                    onClick={() => setStep(2)}
-                    className="w-full bg-mapstone-blue text-white py-4 rounded-sm font-bold uppercase tracking-widest hover:bg-nobel-gold transition-colors flex items-center justify-center gap-2"
-                >
-                    {lang === 'ar' ? 'التالي' : 'Next Step'} <ChevronRight size={18} />
-                </button>
-            </div>
-        </motion.div>
-    );
-
-    // STEP 2: GUEST DETAILS FORM
-    const renderStepTwo = () => (
-        <motion.div 
-            key="step2"
-            variants={stepVariants}
-            initial="hidden" animate="visible" exit="exit"
-        >
-            <button onClick={() => setStep(1)} className="text-stone-400 hover:text-mapstone-blue flex items-center gap-1 text-xs uppercase font-bold mb-4">
-                <ChevronLeft size={14} /> Back
-            </button>
-
-            <div className="text-center mb-6">
-                <p className="text-stone-500 uppercase tracking-widest text-xs font-bold mb-2">Step 2 of 2</p>
-                <h3 className="font-serif text-2xl text-mapstone-blue">
-                    {lang === 'ar' ? 'تفاصيل الاتصال' : 'Your Details'}
-                </h3>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="relative group">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 group-focus-within:text-nobel-gold transition-colors" size={20} />
-                    <input 
-                        type="text" 
-                        name="name"
-                        placeholder={lang === 'ar' ? 'الاسم الكامل' : 'Full Name'}
-                        required
-                        className="w-full bg-stone-50 border border-stone-200 rounded-sm py-4 pl-12 pr-4 focus:outline-none focus:border-nobel-gold focus:ring-1 focus:ring-nobel-gold transition-all"
-                        onChange={handleInputChange}
-                    />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="relative group">
-                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 group-focus-within:text-nobel-gold transition-colors" size={20} />
-                        <input 
-                            type="email" 
-                            name="email"
-                            placeholder={lang === 'ar' ? 'البريد الإلكتروني' : 'Email Address'}
-                            required
-                            className="w-full bg-stone-50 border border-stone-200 rounded-sm py-4 pl-12 pr-4 focus:outline-none focus:border-nobel-gold transition-all"
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div className="relative group">
-                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 group-focus-within:text-nobel-gold transition-colors" size={20} />
-                        <input 
-                            type="tel" 
-                            name="phone"
-                            placeholder={lang === 'ar' ? 'رقم الهاتف' : 'Phone Number'}
-                            required
-                            className="w-full bg-stone-50 border border-stone-200 rounded-sm py-4 pl-12 pr-4 focus:outline-none focus:border-nobel-gold transition-all"
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                </div>
-
-                <div className="relative group">
-                    <textarea 
-                        name="message"
-                        rows={3}
-                        placeholder={lang === 'ar' ? 'رسالة إضافية' : 'Special Requests / Message'}
-                        className="w-full bg-stone-50 border border-stone-200 rounded-sm py-4 px-4 focus:outline-none focus:border-nobel-gold transition-all resize-none"
-                        onChange={handleInputChange}
-                    />
-                </div>
-
-                <div className="bg-stone-50 p-4 rounded-sm border border-stone-200 mt-4 flex items-center justify-between">
-                    <div>
-                        <span className="block text-xs text-stone-400 uppercase font-bold">Checking In</span>
-                        <span className="font-serif text-mapstone-blue">{formData.date.toDateString()}</span>
-                    </div>
-                    <div className="text-right">
-                        <span className="block text-xs text-stone-400 uppercase font-bold">Property</span>
-                        <span className="font-serif text-nobel-gold font-bold">{selectedProperty?.title || 'Selected Property'}</span>
-                    </div>
-                </div>
-
-                <button 
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full bg-nobel-gold text-white py-4 rounded-sm font-bold uppercase tracking-widest hover:bg-mapstone-blue transition-colors shadow-lg disabled:opacity-70 disabled:cursor-not-allowed mt-4"
-                >
-                    {isSubmitting ? (
-                        <span className="animate-pulse">Processing...</span>
-                    ) : (
-                        lang === 'ar' ? 'إرسال الطلب' : 'Submit Booking Request'
-                    )}
-                </button>
-            </form>
-        </motion.div>
-    );
-
-    // STEP 3: SUCCESS
-    const renderStepThree = () => (
-        <motion.div 
-            key="step3"
-            variants={stepVariants}
-            initial="hidden" animate="visible"
-            className="flex flex-col items-center justify-center h-full text-center py-12"
-        >
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center text-green-600 mb-6">
-                <CheckCircle size={40} />
-            </div>
-            <h3 className="font-serif text-3xl text-mapstone-blue mb-4">
-                {lang === 'ar' ? 'تم استلام طلبك' : 'Request Received'}
-            </h3>
-            <p className="text-stone-500 max-w-md mx-auto mb-8 leading-relaxed">
-                Thank you, <span className="text-nobel-gold font-bold">{formData.name}</span>. 
-                We have received your enquiry for <span className="font-bold text-mapstone-blue">{selectedProperty?.title}</span>. 
-                Our concierge team will contact you shortly to confirm availability.
-            </p>
-            <button 
-                onClick={onClose}
-                className="bg-stone-100 text-stone-600 px-8 py-3 rounded-sm font-bold uppercase tracking-widest hover:bg-stone-200 transition-colors"
-            >
-                Close Window
-            </button>
-        </motion.div>
-    );
+    // Calculate nights
+    const nights = dateRange[0] && dateRange[1] 
+        ? Math.round((dateRange[1].getTime() - dateRange[0].getTime()) / (1000 * 60 * 60 * 24)) 
+        : 0;
 
     return (
-        <motion.div 
-            initial="hidden" animate="visible" exit="exit"
-            variants={slideUp}
-            className="w-full max-w-2xl mx-auto bg-white shadow-2xl rounded-t-[2rem] md:rounded-[2rem] relative overflow-hidden flex flex-col max-h-[90vh]"
+        <MotionDiv 
+            initial={{ opacity: 0, y: 50 }} 
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="w-full max-w-4xl mx-auto bg-white shadow-2xl rounded-[2rem] overflow-hidden flex flex-col md:flex-row h-auto md:h-[600px]"
         >
-            {/* Header */}
-            <div className="bg-mapstone-blue p-6 md:p-8 text-center relative shrink-0">
-                <button onClick={onClose} className="absolute top-6 right-6 text-white/50 hover:text-nobel-gold transition-colors z-10">
+            {/* Left Side: Property Info & Guest Select */}
+            <div className="bg-mapstone-blue p-8 text-white md:w-1/3 flex flex-col relative">
+                <button onClick={onClose} className="absolute top-6 left-6 text-white/50 hover:text-white transition-colors md:hidden">
                     <X size={24} />
                 </button>
-                <div className="flex justify-center mb-3">
-                    <CalendarIcon className="text-nobel-gold" size={32} />
+
+                <div className="mt-8 md:mt-0">
+                    <p className="text-nobel-gold text-xs font-bold uppercase tracking-widest mb-2">Selected Property</p>
+                    <h2 className="font-serif text-2xl md:text-3xl mb-4 leading-tight">{selectedProperty?.title}</h2>
+                    <div className="h-1 w-12 bg-nobel-gold mb-6"></div>
+                    
+                    {isStudio && (
+                        <div className="bg-white/10 p-3 rounded-sm border border-white/20 mb-6 flex gap-3">
+                            <AlertCircle className="text-nobel-gold shrink-0" size={20} />
+                            <p className="text-xs text-stone-300 leading-relaxed">
+                                <strong>Studio Policy:</strong> Maximum occupancy is 2 Adults & 1 Infant (under 2 years) as per Dubai Tourism regulations.
+                            </p>
+                        </div>
+                    )}
                 </div>
-                <h2 className="text-2xl md:text-3xl font-serif text-white mb-1">
-                    {lang === 'ar' ? 'حجز إقامتك' : 'Book Your Stay'}
-                </h2>
-                {selectedProperty && (
-                    <p className="text-white/70 text-sm font-light">
-                        Enquiring for: <span className="text-nobel-gold">{selectedProperty.title}</span>
-                    </p>
-                )}
+
+                <div className="mt-auto space-y-6">
+                    {/* Adult Counter */}
+                    <div>
+                        <div className="flex justify-between items-center mb-2">
+                            <span className="text-sm font-bold uppercase tracking-wider">Adults</span>
+                            <span className="text-xl font-serif">{adults}</span>
+                        </div>
+                        <div className="flex items-center gap-2 bg-white/10 rounded-sm p-1">
+                            <button 
+                                onClick={() => setAdults(Math.max(1, adults - 1))}
+                                className="flex-1 hover:bg-white/20 rounded-sm py-2 transition-colors"
+                            >-</button>
+                            <button 
+                                onClick={() => setAdults(Math.min(MAX_ADULTS, adults + 1))}
+                                disabled={adults >= MAX_ADULTS}
+                                className="flex-1 hover:bg-white/20 rounded-sm py-2 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                            >+</button>
+                        </div>
+                    </div>
+
+                    {/* Children Counter */}
+                    <div>
+                        <div className="flex justify-between items-center mb-2">
+                            <span className="text-sm font-bold uppercase tracking-wider">
+                                {isStudio ? 'Infant (<2yr)' : 'Children'}
+                            </span>
+                            <span className="text-xl font-serif">{children}</span>
+                        </div>
+                        <div className="flex items-center gap-2 bg-white/10 rounded-sm p-1">
+                            <button 
+                                onClick={() => setChildren(Math.max(0, children - 1))}
+                                className="flex-1 hover:bg-white/20 rounded-sm py-2 transition-colors"
+                            >-</button>
+                            <button 
+                                onClick={() => setChildren(Math.min(MAX_CHILDREN, children + 1))}
+                                disabled={children >= MAX_CHILDREN}
+                                className="flex-1 hover:bg-white/20 rounded-sm py-2 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                            >+</button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            {/* Content Area */}
-            <div className="p-6 md:p-10 bg-white overflow-y-auto custom-scrollbar">
-                <AnimatePresence mode="wait">
-                    {step === 1 && renderStepOne()}
-                    {step === 2 && renderStepTwo()}
-                    {step === 3 && renderStepThree()}
-                </AnimatePresence>
+            {/* Right Side: Calendar */}
+            <div className="bg-white p-6 md:p-8 md:w-2/3 flex flex-col">
+                <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-mapstone-blue font-serif text-xl">Select Dates</h3>
+                    <button onClick={onClose} className="text-stone-300 hover:text-mapstone-blue transition-colors hidden md:block">
+                        <X size={24} />
+                    </button>
+                </div>
+
+                <div className="flex-1 calendar-wrapper">
+                    <style>{`
+                        .react-calendar { width: 100%; border: none; font-family: 'Lato', sans-serif; }
+                        .react-calendar__navigation button { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: #1B365D; }
+                        .react-calendar__tile { height: 45px; border-radius: 0.5rem; font-size: 0.9rem; }
+                        .react-calendar__tile--active { background: #1B365D !important; color: white !important; }
+                        .react-calendar__tile--now { background: transparent; color: #C5A059; border: 1px solid #C5A059; }
+                        .react-calendar__tile--range { background: #e0e6ed; color: #1B365D; }
+                        .react-calendar__tile--rangeStart, .react-calendar__tile--rangeEnd { background: #1B365D !important; color: white !important; }
+                    `}</style>
+                    <Calendar 
+                        onChange={handleDateChange} 
+                        selectRange={true}
+                        minDate={new Date()}
+                        nextLabel={<ChevronRight size={16} />}
+                        prevLabel={<ChevronLeft size={16} />}
+                        className="w-full"
+                    />
+                </div>
+
+                <div className="mt-6 border-t border-stone-100 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div className="text-center md:text-left">
+                        {dateRange[0] && dateRange[1] ? (
+                            <div>
+                                <p className="text-xs text-stone-400 font-bold uppercase tracking-wider">Total Stay</p>
+                                <p className="text-mapstone-blue font-serif text-lg">{nights} Nights Selected</p>
+                            </div>
+                        ) : (
+                            <p className="text-sm text-stone-400 italic">Please select check-in and check-out</p>
+                        )}
+                    </div>
+                    
+                    <button 
+                        onClick={handleProceed}
+                        disabled={!dateRange[0] || !dateRange[1]}
+                        className="w-full md:w-auto bg-nobel-gold text-white px-8 py-3 rounded-sm font-bold uppercase tracking-widest hover:bg-mapstone-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                    >
+                        Continue to Details
+                    </button>
+                </div>
             </div>
-        </motion.div>
+        </MotionDiv>
     );
 };
 
