@@ -28,7 +28,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, isSecondGuest: boolean) => {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
-            if (file.size > 10 * 1024 * 1024) { 
+            if (file.size > 10 * 1024 * 1024) { // 10MB
                 alert("File too large. Max 10MB.");
                 return;
             }
