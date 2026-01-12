@@ -1,7 +1,7 @@
 // @ts-nocheck
-// components/PremiumAmenities.tsx
 import React, { useState } from "react";
 import { Wifi, UtensilsCrossed, Waves, Car, Tv, Wind, Shield, Zap } from 'lucide-react';
+// If "../types" does not exist in your project, you can remove this line
 import { Lang } from "../types"; 
 
 // --- TRANSLATIONS FOR AMENITIES ---

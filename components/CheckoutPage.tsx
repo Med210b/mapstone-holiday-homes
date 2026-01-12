@@ -31,9 +31,9 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, isSecondGuest: boolean) => {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
-            // 5MB limit per file is safer for email delivery
-            if (file.size > 5 * 1024 * 1024) {
-                alert("File too large. Max 5MB.");
+            // 10MB limit
+            if (file.size > 10 * 1024 * 1024) {
+                alert("File too large. Max 10MB.");
                 return;
             }
             if (isSecondGuest) setFile2(file);
@@ -106,39 +106,36 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                             encType="multipart/form-data" 
                             className="bg-white p-8 rounded-xl shadow-lg border border-stone-100 space-y-8"
                         >
-                            {/* --- CONFIG FIELDS --- */}
+                            {/* CONFIGURATION */}
                             <input type="hidden" name="_subject" value={`New Booking: ${bookingData.propertyName}`} />
                             <input type="hidden" name="_template" value="table" />
                             <input type="hidden" name="_captcha" value="true" />
                             <input type="hidden" name="_next" value="https://www.mapstoneholidayhome.com/?success=true" />
                             
-                            {/* Hidden Data */}
                             <input type="hidden" name="Property" value={bookingData.propertyName || "Unknown"} />
                             <input type="hidden" name="Check-in" value={checkIn} />
                             <input type="hidden" name="Check-out" value={checkOut} />
                             <input type="hidden" name="Total_Guests" value={totalGuests} />
 
-                            {/* --- MAIN GUEST --- */}
+                            {/* MAIN GUEST */}
                             <div>
                                 <h3 className="font-serif text-xl text-mapstone-blue border-b border-stone-100 pb-2 mb-6">Main Guest Details</h3>
                                 <div className="space-y-4">
                                     <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Full Name <span className="text-red-500">*</span></label><input type="text" name="Main_Name" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="As shown on ID" /></div>
                                     <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Passport / Emirates ID No <span className="text-red-500">*</span></label><input type="text" name="Main_Passport_No" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="X0000000" /></div>
-                                    
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Phone <span className="text-red-500">*</span></label><input type="tel" name="Main_Phone" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="+971..." /></div>
                                         <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Email <span className="text-red-500">*</span></label><input type="email" name="Main_Email" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="email@example.com" /></div>
                                     </div>
-
                                     <div className="bg-amber-50 text-amber-700 text-xs p-3 rounded-sm border border-amber-100 flex items-start gap-2">
                                         <Key size={14} className="shrink-0 mt-0.5"/><p><strong>Important:</strong> Digital E-Keys will be sent to this email.</p>
                                     </div>
 
-                                    {/* UPLOAD 1 - Changed to "attachment" (Singular) */}
+                                    {/* UPLOAD 1 - Unique Name: Main_Passport */}
                                     <div className="pt-2">
                                         <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Upload Main Guest Passport/ID <span className="text-red-500">*</span></label>
                                         <div className={`border-2 border-dashed rounded-lg p-6 text-center bg-stone-50 relative ${!file1 ? 'border-red-300' : 'border-green-300 bg-green-50'}`}>
-                                            <input type="file" name="attachment" accept=".pdf,.jpg,.jpeg,.png" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={(e) => handleFileChange(e, false)} />
+                                            <input type="file" name="Main_Passport" accept=".pdf,.jpg,.jpeg,.png" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={(e) => handleFileChange(e, false)} />
                                             <div className="flex flex-col items-center">
                                                 {file1 ? <Check className="text-green-600 mb-2"/> : <UploadCloud className="text-stone-400 mb-2"/>}
                                                 <p className="text-xs font-bold text-stone-600">{file1 ? file1.name : "Click to Upload Document"}</p>
@@ -148,7 +145,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                 </div>
                             </div>
 
-                            {/* --- SECOND GUEST --- */}
+                            {/* SECOND GUEST */}
                             {requiresSecondGuest && (
                                 <MotionDiv initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="pt-8 border-t border-stone-100">
                                     <div className="flex items-center gap-2 mb-6"><div className="bg-nobel-gold/10 p-2 rounded-full text-nobel-gold"><Users size={20} /></div><h3 className="font-serif text-xl text-mapstone-blue">Second Guest Details</h3></div>
@@ -157,12 +154,11 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                         <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Passport / ID No <span className="text-red-500">*</span></label><input type="text" name="Guest2_Passport_No" required className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" /></div>
                                         <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Phone <span className="text-red-500">*</span></label><input type="tel" name="Guest2_Phone" required className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" /></div>
                                         
-                                        {/* UPLOAD 2 - Changed to "attachment2" (Distinct Name) */}
+                                        {/* UPLOAD 2 - Unique Name: Second_Passport */}
                                         <div className="pt-2">
                                             <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Upload Guest 2 Passport/ID <span className="text-red-500">*</span></label>
                                             <div className={`border-2 border-dashed rounded-lg p-6 text-center bg-white relative ${!file2 ? 'border-red-300' : 'border-green-300 bg-green-50'}`}>
-                                                {/* Use a distinct name to prevent array collision error on server */}
-                                                <input type="file" name="Second_Guest_ID_attachment" accept=".pdf,.jpg,.jpeg,.png" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={(e) => handleFileChange(e, true)} />
+                                                <input type="file" name="Second_Passport" accept=".pdf,.jpg,.jpeg,.png" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={(e) => handleFileChange(e, true)} />
                                                 <div className="flex flex-col items-center">
                                                     {file2 ? <Check className="text-green-600 mb-2"/> : <UploadCloud className="text-stone-400 mb-2"/>}
                                                     <p className="text-xs font-bold text-stone-600">{file2 ? file2.name : "Click to Upload Document"}</p>
@@ -173,7 +169,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                 </MotionDiv>
                             )}
                             
-                            {/* --- PAYMENT --- */}
+                            {/* PAYMENT */}
                             <div className="pt-8 border-t border-stone-100">
                                 <h3 className="font-serif text-xl text-mapstone-blue mb-6">Payment Method</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
