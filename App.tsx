@@ -11,7 +11,7 @@ import ThankYouPage from './components/ThankYouPage';
 import { WhatsAppIcon, LogoBayut, LogoDubizzle, LogoPropertyFinder, LogoBooking, LogoAirbnb } from './components/Icons';
 import { PrivacyPolicy, TermsConditions, FAQs } from './components/LegalPages';
 import PhilosophyPage from './components/PhilosophyPage'; 
-import { ArrowDown, Menu, X, Globe, MapPin, Phone, Mail, Instagram, Facebook } from 'lucide-react';
+import { ArrowDown, Menu, X, Globe, MapPin, Phone, Mail, Instagram, Facebook, Star, Utensils, Car, Key } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Lang, View } from './types';
 
@@ -113,13 +113,9 @@ const App = () => {
     { id: 'contact', label: t.nav.contact },
   ];
 
-  // --- FIXED NAVIGATION LOGIC ---
   const handleNavClick = (id: string) => {
     setMenuOpen(false);
-    
-    // 1. Contact (Footer Scroll)
     if (id === 'contact') {
-        // If we are not on home, go to home first
         if (currentView !== 'home') {
             setCurrentView('home');
             setTimeout(() => {
@@ -132,15 +128,12 @@ const App = () => {
         }
         return;
     }
-
-    // 2. Amenities / Services (Home Scroll)
     if (id === 'services') {
         if (currentView !== 'home') {
             setCurrentView('home');
             setTimeout(() => {
                 const servicesSection = document.getElementById('services');
                 if (servicesSection) {
-                    // Scroll to it
                     const offset = 80;
                     const elementPosition = servicesSection.getBoundingClientRect().top;
                     const offsetPosition = elementPosition + window.pageYOffset - offset;
@@ -158,8 +151,6 @@ const App = () => {
         }
         return;
     }
-
-    // 3. Normal Page Switching
     setCurrentView(id as View);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -228,7 +219,87 @@ const App = () => {
               <div className="absolute inset-0 z-0 opacity-60"><GeometricLuxuryScene /></div>
               <div className="container mx-auto px-6 relative z-20 text-center mt-20"><span className="inline-block py-1 px-3 border border-white/30 rounded-full text-[10px] font-bold tracking-[0.2em] text-white mb-6 uppercase">{t.hero.location}</span><h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-2 tracking-tight">{t.hero.title}</h1><p className="text-xl md:text-3xl font-light text-nobel-gold uppercase tracking-[0.3em] mb-8">{t.hero.subtitle}</p><button onClick={() => handleNavClick('properties')} className="group relative overflow-hidden rounded-full bg-white text-mapstone-blue px-8 py-4 text-xs font-bold uppercase tracking-widest hover:bg-nobel-gold hover:text-white hover:shadow-xl transition-all duration-300"><span className="relative z-10 flex items-center gap-2">{t.hero.cta} <ArrowDown size={16} /></span></button></div>
             </header>
+            
+            {/* AMENITIES SECTION (Original) */}
             <PremiumAmenities lang={lang} onBook={() => setBookingOpen(true)} />
+
+            {/* --- NEW SECTION 1: LUXURY STANDARD --- */}
+            <section className="py-24 bg-white">
+              <div className="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+                 <div>
+                    <span className="text-nobel-gold font-bold tracking-widest text-xs uppercase mb-3 block">Our Standard</span>
+                    <h2 className="text-4xl md:text-5xl font-serif text-mapstone-blue mb-6">Beyond Accommodation</h2>
+                    <p className="text-stone-500 leading-relaxed text-lg mb-8">At Mapstone, we don't just provide a place to sleep; we curate a lifestyle. Every property is selected for its architectural significance and interior elegance, ensuring that your stay in Dubai is nothing short of exceptional.</p>
+                    <div className="flex gap-8">
+                        <div><h4 className="text-3xl font-serif text-nobel-gold mb-1">50+</h4><p className="text-xs uppercase tracking-widest text-stone-400">Properties</p></div>
+                        <div><h4 className="text-3xl font-serif text-nobel-gold mb-1">24/7</h4><p className="text-xs uppercase tracking-widest text-stone-400">Support</p></div>
+                        <div><h4 className="text-3xl font-serif text-nobel-gold mb-1">9.8</h4><p className="text-xs uppercase tracking-widest text-stone-400">Guest Rating</p></div>
+                    </div>
+                 </div>
+                 <div className="h-[500px] bg-stone-200 rounded-sm overflow-hidden relative group">
+                    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" alt="Luxury Interior" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"/>
+                    <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-500"></div>
+                 </div>
+              </div>
+            </section>
+
+            {/* --- NEW SECTION 2: CONCIERGE SERVICES --- */}
+            <section className="py-24 bg-stone-50 border-y border-stone-200">
+               <div className="container mx-auto px-6 text-center">
+                  <span className="text-nobel-gold font-bold tracking-widest text-xs uppercase mb-3 block">Services</span>
+                  <h2 className="text-4xl md:text-5xl font-serif text-mapstone-blue mb-16">Bespoke Concierge</h2>
+                  <div className="grid md:grid-cols-3 gap-8">
+                     <div className="bg-white p-10 rounded-sm shadow-sm border border-stone-100 hover:-translate-y-2 transition-transform duration-500">
+                        <div className="w-16 h-16 bg-mapstone-blue/5 rounded-full flex items-center justify-center mx-auto mb-6 text-nobel-gold"><Car size={32} /></div>
+                        <h3 className="text-xl font-serif text-mapstone-blue mb-4">Chauffeur Service</h3>
+                        <p className="text-stone-400 text-sm leading-relaxed">Arrive in style with our fleet of luxury vehicles and professional drivers available 24/7.</p>
+                     </div>
+                     <div className="bg-white p-10 rounded-sm shadow-sm border border-stone-100 hover:-translate-y-2 transition-transform duration-500">
+                        <div className="w-16 h-16 bg-mapstone-blue/5 rounded-full flex items-center justify-center mx-auto mb-6 text-nobel-gold"><Utensils size={32} /></div>
+                        <h3 className="text-xl font-serif text-mapstone-blue mb-4">Private Chef</h3>
+                        <p className="text-stone-400 text-sm leading-relaxed">Experience fine dining in the privacy of your home with curated menus by top chefs.</p>
+                     </div>
+                     <div className="bg-white p-10 rounded-sm shadow-sm border border-stone-100 hover:-translate-y-2 transition-transform duration-500">
+                        <div className="w-16 h-16 bg-mapstone-blue/5 rounded-full flex items-center justify-center mx-auto mb-6 text-nobel-gold"><Star size={32} /></div>
+                        <h3 className="text-xl font-serif text-mapstone-blue mb-4">VIP Reservations</h3>
+                        <p className="text-stone-400 text-sm leading-relaxed">Priority access to Dubai's most exclusive beach clubs, restaurants, and events.</p>
+                     </div>
+                  </div>
+               </div>
+            </section>
+
+            {/* --- NEW SECTION 3: TESTIMONIALS --- */}
+            <section className="py-32 bg-mapstone-blue text-white relative overflow-hidden">
+               <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
+               <div className="container mx-auto px-6 text-center relative z-10">
+                  <div className="mb-8 text-nobel-gold opacity-50"><Star size={24} className="inline mx-1"/><Star size={24} className="inline mx-1"/><Star size={24} className="inline mx-1"/><Star size={24} className="inline mx-1"/><Star size={24} className="inline mx-1"/></div>
+                  <h2 className="text-3xl md:text-5xl font-serif mb-10 leading-tight max-w-4xl mx-auto">"An absolute masterpiece of hospitality. Mapstone defined our Dubai experience with elegance and precision."</h2>
+                  <div className="flex items-center justify-center gap-4">
+                      <div className="w-12 h-12 bg-nobel-gold/20 rounded-full flex items-center justify-center text-nobel-gold font-serif font-bold text-lg">J</div>
+                      <div className="text-left">
+                          <p className="text-white font-bold uppercase tracking-widest text-xs">Jonathan & Sarah</p>
+                          <p className="text-white/50 text-xs">London, UK</p>
+                      </div>
+                  </div>
+               </div>
+            </section>
+
+            {/* --- NEW SECTION 4: CITY GUIDE --- */}
+            <section className="py-24 bg-white">
+               <div className="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+                  <div className="order-2 md:order-1 h-[600px] grid grid-cols-2 gap-4">
+                      <img src="https://images.unsplash.com/photo-1518684079-3c830dcef6c5?auto=format&fit=crop&w=400&q=80" className="w-full h-full object-cover rounded-sm mt-12 shadow-lg" alt="Dubai City" />
+                      <img src="https://images.unsplash.com/photo-1528702748617-c64d49f918af?auto=format&fit=crop&w=400&q=80" className="w-full h-full object-cover rounded-sm mb-12 shadow-lg" alt="Dubai Beach" />
+                  </div>
+                  <div className="order-1 md:order-2">
+                     <span className="text-nobel-gold font-bold tracking-widest text-xs uppercase mb-3 block">Destination</span>
+                     <h2 className="text-4xl md:text-5xl font-serif text-mapstone-blue mb-6">The Heart of Dubai</h2>
+                     <p className="text-stone-500 leading-relaxed text-lg mb-8">From the pristine sands of Palm Jumeirah to the vibrant energy of Downtown, our properties place you at the center of the world's most dynamic city. Explore elite dining, world-class shopping, and iconic landmarks just moments from your door.</p>
+                     <button onClick={() => handleNavClick('properties')} className="text-mapstone-blue font-bold uppercase tracking-widest text-xs border-b-2 border-nobel-gold pb-1 hover:text-nobel-gold transition-colors">Explore Locations</button>
+                  </div>
+               </div>
+            </section>
+
             <section className="py-16 bg-stone-50"><BookingBenefits lang={lang} /></section>
             <section className="py-16 bg-white border-b border-nobel-gold/20 overflow-hidden"><div className="container mx-auto px-6 mb-20 text-center"><p className="text-3xl md:text-4xl font-serif text-mapstone-blue">{t.partners.title}</p></div><div className="flex overflow-hidden w-full relative"><div className="flex animate-marquee whitespace-nowrap"><PartnerLogos /><PartnerLogos /><PartnerLogos /><PartnerLogos /></div></div></section>
           </PageTransition>
