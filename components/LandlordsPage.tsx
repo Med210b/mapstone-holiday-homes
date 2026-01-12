@@ -1,41 +1,94 @@
 // @ts-nocheck
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Crown, BarChart3, Calendar, Mail, Users } from 'lucide-react';
+import { Check, Send, Building2, TrendingUp, ShieldCheck, Phone, CheckCircle2, Crown, BarChart3, Calendar, Mail, Users } from 'lucide-react';
 import { Lang } from '../types';
 
-interface Props {
-    lang: Lang;
-    onBook: () => void;
-}
+const MotionDiv = motion.div as any;
 
-const LandlordsPage: React.FC<Props> = ({ lang, onBook }) => {
+const translations = {
+    en: {
+        title: "Maximize Your Property's Potential",
+        subtitle: "Property Management",
+        desc: "Partner with MAPSTONE for premium property management. We handle everything from marketing to maintenance, ensuring high occupancy and peace of mind.",
+        benefit1: "Higher Occupancy Rates",
+        benefit2: "Premium Guest Screening",
+        benefit3: "24/7 Property Care",
+        formTitle: "List Your Property",
+        name: "Full Name",
+        email: "Email Address",
+        phone: "Phone Number",
+        propType: "Property Type",
+        propLoc: "Property Location",
+        submit: "Submit Request",
+        submitting: "Sending...",
+        success: "Request Sent Successfully!",
+        types: { apt: "Apartment", villa: "Villa", pent: "Penthouse" },
+        vipTitle: "VIP App Access",
+        vipDesc: "Stay connected to your investment. Our exclusive Owner App gives you real-time access to your property's performance.",
+        list: ["Live Revenue Dashboard", "Real-Time Booking Calendar", "Monthly Performance Reports", "Transparent Expense Tracking"],
+        cta: "List Your Property"
+    },
+    fr: {
+        title: "Maximisez le Potentiel de votre Propriété",
+        subtitle: "Gestion Immobilière",
+        desc: "Associez-vous à MAPSTONE pour une gestion immobilière haut de gamme. Nous gérons tout, du marketing à la maintenance.",
+        benefit1: "Taux d'Occupation Élevés",
+        benefit2: "Sélection Premium des Invités",
+        benefit3: "Entretien 24/7",
+        formTitle: "Listez votre Propriété",
+        name: "Nom Complet",
+        email: "Adresse E-mail",
+        phone: "Numéro de Téléphone",
+        propType: "Type de Propriété",
+        propLoc: "Emplacement",
+        submit: "Envoyer la Demande",
+        submitting: "Envoi...",
+        success: "Demande Envoyée !",
+        types: { apt: "Appartement", villa: "Villa", pent: "Penthouse" },
+        vipTitle: "Accès VIP à l'Application",
+        vipDesc: "Restez connecté à votre investissement. Notre application propriétaire exclusive vous donne un accès en temps réel aux performances de votre propriété.",
+        list: ["Tableau de bord des revenus", "Calendrier de réservation", "Rapports mensuels", "Suivi des dépenses"],
+        cta: "Listez votre Propriété"
+    },
+    ar: {
+        title: "عظم إمكانات عقارك",
+        subtitle: "إدارة العقارات",
+        desc: "شراكة مع مابستون لإدارة الممتلكات المتميزة. نحن نتعامل مع كل شيء من التسويق إلى الصيانة.",
+        benefit1: "معدلات إشغال أعلى",
+        benefit2: "فحص دقيق للضيوف",
+        benefit3: "رعاية للعقار 24/7",
+        formTitle: "اعرض عقارك معنا",
+        name: "الاسم الكامل",
+        email: "البريد الإلكتروني",
+        phone: "رقم الهاتف",
+        propType: "نوع العقار",
+        propLoc: "موقع العقار",
+        submit: "إرسال الطلب",
+        submitting: "جاري الإرسال...",
+        success: "تم الإرسال بنجاح!",
+        types: { apt: "شقة", villa: "فيلا", pent: "بنثهاوس" },
+        vipTitle: "تطبيق كبار الشخصيات",
+        vipDesc: "ابق على اتصال باستثمارك من خلال تطبيق الملاك الحصري.",
+        list: ["لوحة متابعة الإيرادات", "تقويم الحجوزات المباشر", "تقارير الأداء الشهرية", "تتبع المصاريف بشفافية"],
+        cta: "أدرج عقارك معنا"
+    }
+};
+
+const LandlordsPage = ({ lang, onBook }: { lang: Lang; onBook: () => void }) => {
+    const t = translations[lang] || translations['en'];
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isSent, setIsSent] = useState(false);
     const isAr = lang === 'ar';
-    
-    // Translations specific to this page
-    const content = {
-        en: {
-            title: "For Homeowners",
-            subtitle: "Property Management",
-            desc: "Maximize your property's potential with our comprehensive management services. We handle marketing, guest vetting, and maintenance so you don't have to.",
-            vipTitle: "VIP App Access",
-            vipDesc: "Stay connected to your investment. Our exclusive Owner App gives you real-time access to your property's performance.",
-            list: ["Live Revenue Dashboard", "Real-Time Booking Calendar", "Monthly Performance Reports", "Transparent Expense Tracking"],
-            cta: "List Your Property"
-        },
-        ar: {
-            title: "لأصحاب المنازل",
-            subtitle: "إدارة العقارات",
-            desc: "ضاعف إمكانات عقارك مع خدمات الإدارة الشاملة لدينا. نحن نتولى التسويق وفحص الضيوف والصيانة.",
-            vipTitle: "تطبيق كبار الشخصيات",
-            vipDesc: "ابق على اتصال باستثمارك من خلال تطبيق الملاك الحصري.",
-            list: ["لوحة متابعة الإيرادات", "تقويم الحجوزات المباشر", "تقارير الأداء الشهرية", "تتبع المصاريف بشفافية"],
-            cta: "أدرج عقارك معنا"
-        }
-        // Add other languages as needed, defaulting to EN for now
-    };
 
-    const t = content[lang === 'ar' ? 'ar' : 'en'];
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        setTimeout(() => {
+            setIsSubmitting(false);
+            setIsSent(true);
+        }, 1500);
+    };
 
     // Mockup Component
     const OwnerAppMockup = () => (
@@ -92,60 +145,84 @@ const LandlordsPage: React.FC<Props> = ({ lang, onBook }) => {
     );
 
     return (
-        <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            exit={{ opacity: 0 }}
-            className="pt-32 pb-20 bg-mapstone-blue text-white min-h-screen relative overflow-hidden"
-        >
-             {/* Background Decoration */}
-             <div className="absolute top-0 right-0 w-1/2 h-full bg-nobel-gold/5 hidden lg:block pointer-events-none"></div>
-             
-             <div className="container mx-auto px-6 relative z-10">
-                 <div className="grid lg:grid-cols-2 gap-16 items-center">
-                   
-                   {/* Text Content */}
-                   <div className={`order-2 ${isAr ? 'lg:order-2 text-right' : 'lg:order-1'}`}>
-                      <span className="text-nobel-gold font-bold tracking-widest text-xs uppercase mb-2 block">{t.subtitle}</span>
-                      <h2 className="text-4xl md:text-5xl font-serif mb-6">{t.title}</h2>
-                      <p className="text-stone-300 leading-relaxed mb-8 text-lg max-w-lg">{t.desc}</p>
-                      
-                      <div className="bg-white/10 p-8 rounded-xl backdrop-blur-sm border border-white/10 mb-8">
-                        <h3 className="font-serif text-xl mb-3 text-nobel-gold flex items-center gap-2">
-                            {t.vipTitle}
-                        </h3>
-                        <p className="text-sm text-stone-300 mb-6">{t.vipDesc}</p>
-                        <ul className="grid grid-cols-1 gap-4">
-                            {t.list.map((item, idx) => (
-                              <li key={idx} className="flex items-center gap-3 text-sm font-medium">
-                                  <div className="w-6 h-6 rounded-full bg-nobel-gold/20 flex items-center justify-center text-nobel-gold shrink-0">
-                                    <CheckCircle2 size={14} />
-                                  </div>
-                                  {item}
-                              </li>
-                            ))}
-                         </ul>
-                      </div>
-                      
-                      <button 
-                        onClick={onBook} 
-                        className="bg-white text-mapstone-blue px-10 py-4 rounded-sm text-sm font-bold uppercase tracking-widest hover:bg-nobel-gold hover:text-white transition-colors shadow-lg"
-                      >
-                          {t.cta}
-                      </button>
-                   </div>
+        <div className="min-h-screen bg-stone-50 pt-32 pb-20" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+            <div className="container mx-auto px-6">
+                <div className="grid md:grid-cols-2 gap-16 items-center mb-20">
+                    <MotionDiv initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
+                        <h1 className="text-4xl md:text-6xl font-serif text-mapstone-blue mb-6">{t.title}</h1>
+                        <p className="text-stone-500 text-lg mb-8 leading-relaxed">{t.desc}</p>
+                        
+                        <div className="space-y-6 mb-10">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 bg-nobel-gold/10 rounded-full flex items-center justify-center text-nobel-gold"><TrendingUp size={24} /></div>
+                                <span className="font-serif text-xl text-mapstone-blue">{t.benefit1}</span>
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 bg-nobel-gold/10 rounded-full flex items-center justify-center text-nobel-gold"><ShieldCheck size={24} /></div>
+                                <span className="font-serif text-xl text-mapstone-blue">{t.benefit2}</span>
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 bg-nobel-gold/10 rounded-full flex items-center justify-center text-nobel-gold"><Building2 size={24} /></div>
+                                <span className="font-serif text-xl text-mapstone-blue">{t.benefit3}</span>
+                            </div>
+                        </div>
+                    </MotionDiv>
 
-                   {/* Mockup */}
-                   <div className={`order-1 ${isAr ? 'lg:order-1' : 'lg:order-2'} flex justify-center`}>
-                      <div className="relative">
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-white/5 rounded-full blur-3xl animate-pulse"></div>
-                        <OwnerAppMockup />
-                      </div>
-                   </div>
+                    <MotionDiv initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }}>
+                        <div className="bg-white p-10 rounded-xl shadow-xl border border-stone-100">
+                            {isSent ? (
+                                <div className="text-center py-10">
+                                    <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6"><Check size={40} /></div>
+                                    <h3 className="text-2xl font-serif text-mapstone-blue">{t.success}</h3>
+                                </div>
+                            ) : (
+                                <form onSubmit={handleSubmit} className="space-y-6">
+                                    <h3 className="text-2xl font-serif text-mapstone-blue mb-6">{t.formTitle}</h3>
+                                    <input type="text" placeholder={t.name} required className="w-full border-b border-stone-200 py-3 focus:outline-none focus:border-nobel-gold transition-colors" />
+                                    <input type="email" placeholder={t.email} required className="w-full border-b border-stone-200 py-3 focus:outline-none focus:border-nobel-gold transition-colors" />
+                                    <input type="tel" placeholder={t.phone} required className="w-full border-b border-stone-200 py-3 focus:outline-none focus:border-nobel-gold transition-colors" />
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <select className="w-full border-b border-stone-200 py-3 focus:outline-none focus:border-nobel-gold bg-transparent">
+                                            <option>{t.types.apt}</option>
+                                            <option>{t.types.villa}</option>
+                                            <option>{t.types.pent}</option>
+                                        </select>
+                                        <input type="text" placeholder={t.propLoc} className="w-full border-b border-stone-200 py-3 focus:outline-none focus:border-nobel-gold" />
+                                    </div>
+                                    <button type="submit" disabled={isSubmitting} className="w-full bg-mapstone-blue text-white py-4 rounded-sm font-bold uppercase tracking-widest hover:bg-nobel-gold transition-colors mt-4">
+                                        {isSubmitting ? t.submitting : t.submit}
+                                    </button>
+                                </form>
+                            )}
+                        </div>
+                    </MotionDiv>
+                </div>
 
-                 </div>
-             </div>
-        </motion.div>
+                {/* VIP SECTION */}
+                <div className="bg-mapstone-blue text-white rounded-3xl p-10 relative overflow-hidden">
+                     <div className="grid lg:grid-cols-2 gap-16 items-center relative z-10">
+                        <div className={`order-2 ${isAr ? 'lg:order-2 text-right' : 'lg:order-1'}`}>
+                            <span className="text-nobel-gold font-bold tracking-widest text-xs uppercase mb-2 block">{t.subtitle}</span>
+                            <h2 className="text-4xl md:text-5xl font-serif mb-6">{t.vipTitle}</h2>
+                            <p className="text-stone-300 leading-relaxed mb-8 text-lg max-w-lg">{t.vipDesc}</p>
+                            <ul className="grid grid-cols-1 gap-4 mb-8">
+                                {t.list.map((item, idx) => (
+                                <li key={idx} className="flex items-center gap-3 text-sm font-medium">
+                                    <div className="w-6 h-6 rounded-full bg-nobel-gold/20 flex items-center justify-center text-nobel-gold shrink-0">
+                                        <CheckCircle2 size={14} />
+                                    </div>
+                                    {item}
+                                </li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div className={`order-1 ${isAr ? 'lg:order-1' : 'lg:order-2'} flex justify-center`}>
+                            <OwnerAppMockup />
+                        </div>
+                     </div>
+                </div>
+            </div>
+        </div>
     );
 };
 

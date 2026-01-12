@@ -16,19 +16,26 @@ interface Props {
     };
 }
 
+const translations = {
+    en: { back: "Back", yourBooking: "Your Booking", property: "Property", dates: "Dates", guests: "Guests", mainGuest: "Main Guest Details", fullName: "Full Name", passport: "Passport / Emirates ID No", phone: "Phone", email: "Email", eKey: "Important: Digital E-Keys will be sent to this email.", uploadMain: "Upload Main Guest Passport/ID", upload2: "Upload Guest 2 Passport/ID", clickUpload: "Click to Upload Document", secondGuest: "Second Guest Details", payment: "Payment Method", complete: "Complete Reservation", visa: "Visa / Mastercard", apple: "Apple Pay", google: "Google Pay", paypal: "PayPal" },
+    fr: { back: "Retour", yourBooking: "Votre Réservation", property: "Propriété", dates: "Dates", guests: "Voyageurs", mainGuest: "Détails de l'Invité Principal", fullName: "Nom Complet", passport: "Passeport / ID", phone: "Téléphone", email: "E-mail", eKey: "Important : Les clés numériques seront envoyées à cet e-mail.", uploadMain: "Télécharger Passeport/ID (Principal)", upload2: "Télécharger Passeport/ID (Invité 2)", clickUpload: "Cliquez pour Télécharger", secondGuest: "Détails du 2ème Invité", payment: "Méthode de Paiement", complete: "Terminer la Réservation", visa: "Visa / Mastercard", apple: "Apple Pay", google: "Google Pay", paypal: "PayPal" },
+    ar: { back: "رجوع", yourBooking: "حجزك", property: "العقار", dates: "التواريخ", guests: "الضيوف", mainGuest: "تفاصيل الضيف الرئيسي", fullName: "الاسم الكامل", passport: "رقم الجواز / الهوية", phone: "الهاتف", email: "البريد الإلكتروني", eKey: "مهم: سيتم إرسال المفاتيح الرقمية إلى هذا البريد.", uploadMain: "تحميل جواز/هوية الضيف الرئيسي", upload2: "تحميل جواز/هوية الضيف الثاني", clickUpload: "اضغط لتحميل المستند", secondGuest: "تفاصيل الضيف الثاني", payment: "طريقة الدفع", complete: "إتمام الحجز", visa: "فيزا / ماستركارد", apple: "أبل باي", google: "جوجل باي", paypal: "باي بال" }
+};
+
 export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => {
     const [file1, setFile1] = useState<File | null>(null);
     const [file2, setFile2] = useState<File | null>(null);
     const [formError, setFormError] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('visa');
     
+    const t = translations[lang] || translations['en'];
     const requiresSecondGuest = bookingData.guests.adults > 1;
     const formRef = useRef<HTMLFormElement>(null);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, isSecondGuest: boolean) => {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
-            if (file.size > 10 * 1024 * 1024) { // 10MB
+            if (file.size > 10 * 1024 * 1024) { 
                 alert("File too large. Max 10MB.");
                 return;
             }
@@ -64,20 +71,20 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
     const totalGuests = `${bookingData.guests.adults} Adults, ${bookingData.guests.children} Children`;
 
     return (
-        <div className="min-h-screen bg-stone-50 pt-32 pb-20 px-4 md:px-0">
+        <div className="min-h-screen bg-stone-50 pt-32 pb-20 px-4 md:px-0" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
             <div className="container mx-auto max-w-4xl">
                 <button onClick={onBack} className="flex items-center gap-2 text-stone-400 hover:text-mapstone-blue transition-colors mb-8 font-bold text-xs uppercase tracking-widest">
-                    <ArrowLeft size={16} /> Back
+                    <ArrowLeft size={16} /> {t.back}
                 </button>
 
                 <div className="grid md:grid-cols-3 gap-8">
                     <div className="md:col-span-1">
                         <div className="bg-white p-6 rounded-xl shadow-sm border border-stone-100 sticky top-32">
-                            <h3 className="font-serif text-xl text-mapstone-blue mb-4">Your Booking</h3>
+                            <h3 className="font-serif text-xl text-mapstone-blue mb-4">{t.yourBooking}</h3>
                             <div className="space-y-4 text-sm">
-                                <div><p className="text-stone-400 text-xs font-bold uppercase">Property</p><p className="font-medium text-mapstone-blue">{bookingData.propertyName}</p></div>
-                                <div><p className="text-stone-400 text-xs font-bold uppercase">Dates</p><p className="font-medium text-stone-700">{bookingData.dateRange?.[0]?.toLocaleDateString()} — {bookingData.dateRange?.[1]?.toLocaleDateString()}</p></div>
-                                <div><p className="text-stone-400 text-xs font-bold uppercase">Guests</p><p className="font-medium text-stone-700">{totalGuests}</p></div>
+                                <div><p className="text-stone-400 text-xs font-bold uppercase">{t.property}</p><p className="font-medium text-mapstone-blue">{bookingData.propertyName}</p></div>
+                                <div><p className="text-stone-400 text-xs font-bold uppercase">{t.dates}</p><p className="font-medium text-stone-700">{bookingData.dateRange?.[0]?.toLocaleDateString()} — {bookingData.dateRange?.[1]?.toLocaleDateString()}</p></div>
+                                <div><p className="text-stone-400 text-xs font-bold uppercase">{t.guests}</p><p className="font-medium text-stone-700">{totalGuests}</p></div>
                             </div>
                         </div>
                     </div>
@@ -97,7 +104,6 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                             encType="multipart/form-data" 
                             className="bg-white p-8 rounded-xl shadow-lg border border-stone-100 space-y-8"
                         >
-                            {/* CONFIGURATION */}
                             <input type="hidden" name="_subject" value={`New Booking: ${bookingData.propertyName}`} />
                             <input type="hidden" name="_template" value="table" />
                             <input type="hidden" name="_captcha" value="true" />
@@ -110,26 +116,25 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
 
                             {/* MAIN GUEST */}
                             <div>
-                                <h3 className="font-serif text-xl text-mapstone-blue border-b border-stone-100 pb-2 mb-6">Main Guest Details</h3>
+                                <h3 className="font-serif text-xl text-mapstone-blue border-b border-stone-100 pb-2 mb-6">{t.mainGuest}</h3>
                                 <div className="space-y-4">
-                                    <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Full Name <span className="text-red-500">*</span></label><input type="text" name="Main_Name" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="As shown on ID" /></div>
-                                    <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Passport / Emirates ID No <span className="text-red-500">*</span></label><input type="text" name="Main_Passport_No" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="X0000000" /></div>
+                                    <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">{t.fullName} <span className="text-red-500">*</span></label><input type="text" name="Main_Name" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="As shown on ID" /></div>
+                                    <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">{t.passport} <span className="text-red-500">*</span></label><input type="text" name="Main_Passport_No" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="X0000000" /></div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Phone <span className="text-red-500">*</span></label><input type="tel" name="Main_Phone" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="+971..." /></div>
-                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Email <span className="text-red-500">*</span></label><input type="email" name="Main_Email" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="email@example.com" /></div>
+                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">{t.phone} <span className="text-red-500">*</span></label><input type="tel" name="Main_Phone" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="+971..." /></div>
+                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">{t.email} <span className="text-red-500">*</span></label><input type="email" name="Main_Email" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="email@example.com" /></div>
                                     </div>
                                     <div className="bg-amber-50 text-amber-700 text-xs p-3 rounded-sm border border-amber-100 flex items-start gap-2">
-                                        <Key size={14} className="shrink-0 mt-0.5"/><p><strong>Important:</strong> Digital E-Keys will be sent to this email.</p>
+                                        <Key size={14} className="shrink-0 mt-0.5"/><p><strong>{t.eKey}</strong></p>
                                     </div>
 
-                                    {/* UPLOAD 1 - Name: Main_Passport */}
                                     <div className="pt-2">
-                                        <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Upload Main Guest Passport/ID <span className="text-red-500">*</span></label>
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">{t.uploadMain} <span className="text-red-500">*</span></label>
                                         <div className={`border-2 border-dashed rounded-lg p-6 text-center bg-stone-50 relative ${!file1 ? 'border-red-300' : 'border-green-300 bg-green-50'}`}>
                                             <input type="file" name="Main_Passport" accept=".pdf,.jpg,.jpeg,.png" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={(e) => handleFileChange(e, false)} />
                                             <div className="flex flex-col items-center">
                                                 {file1 ? <Check className="text-green-600 mb-2"/> : <UploadCloud className="text-stone-400 mb-2"/>}
-                                                <p className="text-xs font-bold text-stone-600">{file1 ? file1.name : "Click to Upload Document"}</p>
+                                                <p className="text-xs font-bold text-stone-600">{file1 ? file1.name : t.clickUpload}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -139,20 +144,19 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                             {/* SECOND GUEST */}
                             {requiresSecondGuest && (
                                 <MotionDiv initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="pt-8 border-t border-stone-100">
-                                    <div className="flex items-center gap-2 mb-6"><div className="bg-nobel-gold/10 p-2 rounded-full text-nobel-gold"><Users size={20} /></div><h3 className="font-serif text-xl text-mapstone-blue">Second Guest Details</h3></div>
+                                    <div className="flex items-center gap-2 mb-6"><div className="bg-nobel-gold/10 p-2 rounded-full text-nobel-gold"><Users size={20} /></div><h3 className="font-serif text-xl text-mapstone-blue">{t.secondGuest}</h3></div>
                                     <div className="bg-stone-50/50 p-6 rounded-lg border border-stone-200 space-y-4">
-                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Full Name <span className="text-red-500">*</span></label><input type="text" name="Guest2_Name" required className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" /></div>
-                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Passport / ID No <span className="text-red-500">*</span></label><input type="text" name="Guest2_Passport_No" required className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" /></div>
-                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Phone <span className="text-red-500">*</span></label><input type="tel" name="Guest2_Phone" required className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" /></div>
+                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">{t.fullName} <span className="text-red-500">*</span></label><input type="text" name="Guest2_Name" required className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" /></div>
+                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">{t.passport} <span className="text-red-500">*</span></label><input type="text" name="Guest2_Passport_No" required className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" /></div>
+                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">{t.phone} <span className="text-red-500">*</span></label><input type="tel" name="Guest2_Phone" required className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" /></div>
                                         
-                                        {/* UPLOAD 2 - Name: Second_Passport */}
                                         <div className="pt-2">
-                                            <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Upload Guest 2 Passport/ID <span className="text-red-500">*</span></label>
+                                            <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">{t.upload2} <span className="text-red-500">*</span></label>
                                             <div className={`border-2 border-dashed rounded-lg p-6 text-center bg-white relative ${!file2 ? 'border-red-300' : 'border-green-300 bg-green-50'}`}>
                                                 <input type="file" name="Second_Passport" accept=".pdf,.jpg,.jpeg,.png" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={(e) => handleFileChange(e, true)} />
                                                 <div className="flex flex-col items-center">
                                                     {file2 ? <Check className="text-green-600 mb-2"/> : <UploadCloud className="text-stone-400 mb-2"/>}
-                                                    <p className="text-xs font-bold text-stone-600">{file2 ? file2.name : "Click to Upload Document"}</p>
+                                                    <p className="text-xs font-bold text-stone-600">{file2 ? file2.name : t.clickUpload}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -162,29 +166,29 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                             
                             {/* PAYMENT */}
                             <div className="pt-8 border-t border-stone-100">
-                                <h3 className="font-serif text-xl text-mapstone-blue mb-6">Payment Method</h3>
+                                <h3 className="font-serif text-xl text-mapstone-blue mb-6">{t.payment}</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <label className={`border p-4 rounded-lg flex items-center gap-4 cursor-pointer ${paymentMethod === 'Visa' ? 'border-nobel-gold bg-amber-50/20' : 'border-stone-200'}`}>
                                         <input type="radio" name="Payment_Method" value="Visa" checked={paymentMethod === 'Visa'} onChange={() => setPaymentMethod('Visa')} className="accent-nobel-gold w-5 h-5" />
-                                        <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><CreditCard size={18}/> Visa / Mastercard</p></div>
+                                        <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><CreditCard size={18}/> {t.visa}</p></div>
                                     </label>
                                     <label className={`border p-4 rounded-lg flex items-center gap-4 cursor-pointer ${paymentMethod === 'Apple_Pay' ? 'border-nobel-gold bg-amber-50/20' : 'border-stone-200'}`}>
                                         <input type="radio" name="Payment_Method" value="Apple_Pay" checked={paymentMethod === 'Apple_Pay'} onChange={() => setPaymentMethod('Apple_Pay')} className="accent-nobel-gold w-5 h-5" />
-                                        <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><Wallet size={18}/> Apple Pay</p></div>
+                                        <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><Wallet size={18}/> {t.apple}</p></div>
                                     </label>
                                     <label className={`border p-4 rounded-lg flex items-center gap-4 cursor-pointer ${paymentMethod === 'Google_Pay' ? 'border-nobel-gold bg-amber-50/20' : 'border-stone-200'}`}>
                                         <input type="radio" name="Payment_Method" value="Google_Pay" checked={paymentMethod === 'Google_Pay'} onChange={() => setPaymentMethod('Google_Pay')} className="accent-nobel-gold w-5 h-5" />
-                                        <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><Smartphone size={18}/> Google Pay</p></div>
+                                        <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><Smartphone size={18}/> {t.google}</p></div>
                                     </label>
                                     <label className={`border p-4 rounded-lg flex items-center gap-4 cursor-pointer ${paymentMethod === 'PayPal' ? 'border-nobel-gold bg-amber-50/20' : 'border-stone-200'}`}>
                                         <input type="radio" name="Payment_Method" value="PayPal" checked={paymentMethod === 'PayPal'} onChange={() => setPaymentMethod('PayPal')} className="accent-nobel-gold w-5 h-5" />
-                                        <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><Globe size={18}/> PayPal</p></div>
+                                        <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><Globe size={18}/> {t.paypal}</p></div>
                                     </label>
                                 </div>
                             </div>
 
                             <button type="button" onClick={validateAndSubmit} className="w-full bg-nobel-gold text-white py-4 rounded-sm font-bold uppercase tracking-widest hover:bg-mapstone-blue transition-colors shadow-lg flex justify-center items-center gap-2">
-                                Complete Reservation
+                                {t.complete}
                             </button>
                         </form>
                     </div>

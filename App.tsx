@@ -17,30 +17,58 @@ import { Lang, View } from './types';
 
 const translations = {
   en: {
-    name: "English",
     nav: { home: "Home", about: "About", properties: "Properties", landlords: "Landlords", contact: "Contact Us", book: "Book Now", services: "Amenities" },
     hero: { location: "DUBAI • UNITED ARAB EMIRATES", title: "MAPSTONE", subtitle: "Holiday Homes", desc: "Experience the pinnacle of luxury living in Dubai. Premium short-term rentals in the city's most prestigious locations.", cta: "Find Your Stay" },
-    about: { label: "Our Philosophy", title: "Luxury Living, Redefined" },
-    properties: { label: "Locations", title: "Curated Residences", desc: "Discover our portfolio of exclusive apartments in Dubai's most sought-after neighborhoods." },
-    landlords: { label: "Property Management", title: "For Homeowners", desc: "Maximize your property's potential with our comprehensive management services." },
-    partners: { title: "Our Partners" },
-    amenities: { title: "Premium Amenities", desc: "Every stay includes access to world-class facilities designed for your comfort." },
-    footer: { desc: "Premium short-term rental management company in Dubai.", rights: "All rights reserved.", privacy: "Privacy Policy", terms: "Terms & Conditions", faqs: "FAQS" },
+    footer: { desc: "Premium short-term rental management company in Dubai.", rights: "All rights reserved.", privacy: "Privacy Policy", terms: "Terms & Conditions", faqs: "FAQS", linksTitle: "Links", address: "Al Barsha First, Dubai, UAE" },
     contactPage: { title: "Get in Touch", subtitle: "We are here to assist you.", phoneLabel: "Call Us", emailLabel: "Email Us", locationLabel: "Visit Us", socialLabel: "Follow Us" },
     booking: { title: "Request a Consultation", subtitle: "Leave your details and our team will contact you shortly." },
+    standard: { label: "Our Standard", title: "Beyond Accommodation", desc: "At MAPSTONE, we don't just provide a place to sleep; we curate a lifestyle. Every property is selected for its architectural significance and interior elegance, ensuring that your stay in Dubai is nothing short of exceptional." },
+    concierge: { 
+        label: "Services", 
+        title: "Bespoke Concierge", 
+        item1Title: "Chauffeur Service", item1Desc: "Arrive in style with our fleet of luxury vehicles and professional drivers available 24/7.",
+        item2Title: "Private Chef", item2Desc: "Experience fine dining in the privacy of your home with curated menus by top chefs.",
+        item3Title: "VIP Reservations", item3Desc: "Priority access to Dubai's most exclusive beach clubs, restaurants, and events."
+    },
+    testimonials: { text: "\"An absolute masterpiece of hospitality. MAPSTONE defined our Dubai experience with elegance and precision.\"", author: "Jonathan & Sarah", location: "London, UK" },
+    cityGuide: { label: "Destination", title: "The Heart of Dubai", desc: "From the pristine sands of Palm Jumeirah to the vibrant energy of Downtown, our properties place you at the center of the world's most dynamic city. Explore elite dining, world-class shopping, and iconic landmarks just moments from your door.", cta: "Explore Locations" },
+    partners: { title: "Our Partners" }
+  },
+  fr: {
+    nav: { home: "Accueil", about: "À Propos", properties: "Propriétés", landlords: "Propriétaires", contact: "Contact", book: "Réserver", services: "Équipements" },
+    hero: { location: "DUBAÏ • ÉMIRATS ARABES UNIS", title: "MAPSTONE", subtitle: "Maisons de Vacances", desc: "Découvrez le summum de la vie de luxe à Dubaï. Locations à court terme haut de gamme dans les endroits les plus prestigieux.", cta: "Trouver votre Séjour" },
+    footer: { desc: "Société de gestion de location à court terme haut de gamme à Dubaï.", rights: "Tous droits réservés.", privacy: "Politique de Confidentialité", terms: "Termes et Conditions", faqs: "FAQ", linksTitle: "Liens Utiles", address: "Al Barsha First, Dubaï, EAU" },
+    contactPage: { title: "Contactez-nous", subtitle: "Nous sommes là pour vous aider.", phoneLabel: "Appelez-nous", emailLabel: "Envoyez un e-mail", locationLabel: "Rendez-nous visite", socialLabel: "Suivez-nous" },
+    booking: { title: "Demander une Consultation", subtitle: "Laissez vos coordonnées et notre équipe vous contactera sous peu." },
+    standard: { label: "Notre Standard", title: "Au-delà de l'Hébergement", desc: "Chez MAPSTONE, nous ne fournissons pas seulement un endroit pour dormir ; nous organisons un style de vie. Chaque propriété est sélectionnée pour son importance architecturale et son élégance intérieure." },
+    concierge: { 
+        label: "Services", 
+        title: "Conciergerie Sur Mesure", 
+        item1Title: "Service de Chauffeur", item1Desc: "Arrivez avec style grâce à notre flotte de véhicules de luxe et nos chauffeurs professionnels disponibles 24/7.",
+        item2Title: "Chef Privé", item2Desc: "Faites l'expérience d'un dîner gastronomique dans l'intimité de votre maison avec des menus élaborés par de grands chefs.",
+        item3Title: "Réservations VIP", item3Desc: "Accès prioritaire aux clubs de plage, restaurants et événements les plus exclusifs de Dubaï."
+    },
+    testimonials: { text: "\"Un chef-d'œuvre absolu d'hospitalité. MAPSTONE a défini notre expérience à Dubaï avec élégance et précision.\"", author: "Jonathan & Sarah", location: "Londres, RU" },
+    cityGuide: { label: "Destination", title: "Le Cœur de Dubaï", desc: "Des sables immaculés de Palm Jumeirah à l'énergie vibrante du centre-ville, nos propriétés vous placent au centre de la ville la plus dynamique du monde.", cta: "Explorer les Lieux" },
+    partners: { title: "Nos Partenaires" }
   },
   ar: {
-    name: "العربية",
     nav: { home: "الرئيسية", about: "من نحن", properties: "عقاراتنا", landlords: "الملاك", contact: "تواصل معنا", book: "احجز الآن", services: "المميزات" },
     hero: { location: "دبي • الإمارات العربية المتحدة", title: "مابستون", subtitle: "بيوت العطلات", desc: "استمتع بقمة الرفاهية في دبي. إيجارات قصيرة الأجل فاخرة في أرقى المواقع.", cta: "ابحث عن إقامتك" },
-    about: { label: "فلسفتنا", title: "مفهوم جديد للرفاهية" },
-    properties: { label: "المواقع", title: "إقامات مميزة", desc: "اكتشف محفظتنا من الشقق الحصرية في أكثر الأحياء طلباً في دبي." },
-    landlords: { label: "إدارة العقارات", title: "لأصحاب المنازل", desc: "ضاعف إمكانات عقارك مع خدمات الإدارة الشاملة لدينا." },
-    partners: { title: "شركاؤنا" },
-    amenities: { title: "وسائل الراحة", desc: "تشمل كل إقامة الوصول إلى مرافق عالمية المستوى مصممة لراحتك." },
-    footer: { desc: "شركة إدارة تأجير قصير الأجل متميزة في دبي.", rights: "جميع الحقوق محفوظة.", privacy: "سياسة الخصوصية", terms: "الشروط والأحكام", faqs: "الأسئلة الشائعة" },
+    footer: { desc: "شركة إدارة تأجير قصير الأجل متميزة في دبي.", rights: "جميع الحقوق محفوظة.", privacy: "سياسة الخصوصية", terms: "الشروط والأحكام", faqs: "الأسئلة الشائعة", linksTitle: "روابط سريعة", address: "البرشاء الأولى، دبي، الإمارات" },
     contactPage: { title: "تواصل معنا", subtitle: "نحن هنا لمساعدتك.", phoneLabel: "اتصل بنا", emailLabel: "راسلنا", locationLabel: "زورونا", socialLabel: "تابعونا" },
     booking: { title: "طلب استشارة", subtitle: "اترك بياناتك وسيقوم فريقنا بالاتصال بك قريباً." },
+    standard: { label: "معاييرنا", title: "ما وراء الإقامة", desc: "في مابستون، نحن لا نوفر مجرد مكان للنوم؛ نحن نصمم أسلوب حياة. يتم اختيار كل عقار لأهميته المعمارية وأناقته الداخلية، مما يضمن أن إقامتك في دبي استثنائية." },
+    concierge: { 
+        label: "الخدمات", 
+        title: "كونسيرج مخصص", 
+        item1Title: "خدمة السائق", item1Desc: "صل بأناقة مع أسطولنا من السيارات الفاخرة والسائقين المحترفين المتاحين على مدار الساعة.",
+        item2Title: "طاهٍ خاص", item2Desc: "استمتع بتناول الطعام الفاخر في خصوصية منزلك مع قوائم طعام من إعداد كبار الطهاة.",
+        item3Title: "حجوزات VIP", item3Desc: "أولوية الدخول إلى أرقى النوادي الشاطئية والمطاعم والفعاليات في دبي."
+    },
+    testimonials: { text: "\"تحفة مطلقة في الضيافة. حددت مابستون تجربتنا في دبي بأناقة ودقة.\"", author: "جوناثان وسارة", location: "لندن، المملكة المتحدة" },
+    cityGuide: { label: "الوجهة", title: "قلب دبي", desc: "من الرمال النقية في نخلة جميرا إلى الطاقة النابضة بالحياة في وسط المدينة، تضعك عقاراتنا في قلب أكثر مدن العالم ديناميكية.", cta: "استكشف المواقع" },
+    partners: { title: "شركاؤنا" }
   }
 };
 
@@ -115,33 +143,17 @@ const App = () => {
 
   const handleNavClick = (id: string) => {
     setMenuOpen(false);
-    
     if (id === 'contact') {
-        if (currentView !== 'home') {
-            setCurrentView('home');
-            setTimeout(() => {
-                const footer = document.getElementById('contact');
-                if (footer) footer.scrollIntoView({ behavior: 'smooth' });
-            }, 100);
-        } else {
+        if (currentView !== 'home') setCurrentView('home');
+        setTimeout(() => {
             const footer = document.getElementById('contact');
             if (footer) footer.scrollIntoView({ behavior: 'smooth' });
-        }
+        }, 100);
         return;
     }
     if (id === 'services') {
-        if (currentView !== 'home') {
-            setCurrentView('home');
-            setTimeout(() => {
-                const servicesSection = document.getElementById('services');
-                if (servicesSection) {
-                    const offset = 80;
-                    const elementPosition = servicesSection.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.pageYOffset - offset;
-                    window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-                }
-            }, 100);
-        } else {
+        if (currentView !== 'home') setCurrentView('home');
+        setTimeout(() => {
             const servicesSection = document.getElementById('services');
             if (servicesSection) {
                 const offset = 80;
@@ -149,7 +161,7 @@ const App = () => {
                 const offsetPosition = elementPosition + window.pageYOffset - offset;
                 window.scrollTo({ top: offsetPosition, behavior: "smooth" });
             }
-        }
+        }, 100);
         return;
     }
     setCurrentView(id as View);
@@ -208,7 +220,7 @@ const App = () => {
         {currentView === 'thankyou' && (
             <PageTransition key="thankyou">
                 <div className="pt-20">
-                    <ThankYouPage onHome={() => setCurrentView('home')} />
+                    <ThankYouPage onHome={() => setCurrentView('home')} lang={lang} />
                 </div>
             </PageTransition>
         )}
@@ -221,16 +233,15 @@ const App = () => {
               <div className="container mx-auto px-6 relative z-20 text-center mt-20"><span className="inline-block py-1 px-3 border border-white/30 rounded-full text-[10px] font-bold tracking-[0.2em] text-white mb-6 uppercase">{t.hero.location}</span><h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-2 tracking-tight">{t.hero.title}</h1><p className="text-xl md:text-3xl font-light text-nobel-gold uppercase tracking-[0.3em] mb-8">{t.hero.subtitle}</p><button onClick={() => handleNavClick('properties')} className="group relative overflow-hidden rounded-full bg-white text-mapstone-blue px-8 py-4 text-xs font-bold uppercase tracking-widest hover:bg-nobel-gold hover:text-white hover:shadow-xl transition-all duration-300"><span className="relative z-10 flex items-center gap-2">{t.hero.cta} <ArrowDown size={16} /></span></button></div>
             </header>
             
-            {/* AMENITIES SECTION */}
             <PremiumAmenities lang={lang} onBook={() => setBookingOpen(true)} />
 
-            {/* --- NEW SECTION 1: LUXURY STANDARD --- */}
+            {/* LUXURY STANDARD */}
             <section className="py-24 bg-white">
               <div className="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
                  <div>
-                    <span className="text-nobel-gold font-bold tracking-widest text-xs uppercase mb-3 block">Our Standard</span>
-                    <h2 className="text-4xl md:text-5xl font-serif text-mapstone-blue mb-6">Beyond Accommodation</h2>
-                    <p className="text-stone-500 leading-relaxed text-lg mb-8">At Mapstone, we don't just provide a place to sleep; we curate a lifestyle. Every property is selected for its architectural significance and interior elegance, ensuring that your stay in Dubai is nothing short of exceptional.</p>
+                    <span className="text-nobel-gold font-bold tracking-widest text-xs uppercase mb-3 block">{t.standard.label}</span>
+                    <h2 className="text-4xl md:text-5xl font-serif text-mapstone-blue mb-6">{t.standard.title}</h2>
+                    <p className="text-stone-500 leading-relaxed text-lg mb-8">{t.standard.desc}</p>
                     <div className="flex gap-8">
                         <div><h4 className="text-3xl font-serif text-nobel-gold mb-1">50+</h4><p className="text-xs uppercase tracking-widest text-stone-400">Properties</p></div>
                         <div><h4 className="text-3xl font-serif text-nobel-gold mb-1">24/7</h4><p className="text-xs uppercase tracking-widest text-stone-400">Support</p></div>
@@ -244,60 +255,59 @@ const App = () => {
               </div>
             </section>
 
-            {/* --- NEW SECTION 2: CONCIERGE SERVICES --- */}
+            {/* CONCIERGE SERVICES */}
             <section className="py-24 bg-stone-50 border-y border-stone-200">
                <div className="container mx-auto px-6 text-center">
-                  <span className="text-nobel-gold font-bold tracking-widest text-xs uppercase mb-3 block">Services</span>
-                  <h2 className="text-4xl md:text-5xl font-serif text-mapstone-blue mb-16">Bespoke Concierge</h2>
+                  <span className="text-nobel-gold font-bold tracking-widest text-xs uppercase mb-3 block">{t.concierge.label}</span>
+                  <h2 className="text-4xl md:text-5xl font-serif text-mapstone-blue mb-16">{t.concierge.title}</h2>
                   <div className="grid md:grid-cols-3 gap-8">
                      <div className="bg-white p-10 rounded-sm shadow-sm border border-stone-100 hover:-translate-y-2 transition-transform duration-500">
                         <div className="w-16 h-16 bg-mapstone-blue/5 rounded-full flex items-center justify-center mx-auto mb-6 text-nobel-gold"><Car size={32} /></div>
-                        <h3 className="text-xl font-serif text-mapstone-blue mb-4">Chauffeur Service</h3>
-                        <p className="text-stone-400 text-sm leading-relaxed">Arrive in style with our fleet of luxury vehicles and professional drivers available 24/7.</p>
+                        <h3 className="text-xl font-serif text-mapstone-blue mb-4">{t.concierge.item1Title}</h3>
+                        <p className="text-stone-400 text-sm leading-relaxed">{t.concierge.item1Desc}</p>
                      </div>
                      <div className="bg-white p-10 rounded-sm shadow-sm border border-stone-100 hover:-translate-y-2 transition-transform duration-500">
                         <div className="w-16 h-16 bg-mapstone-blue/5 rounded-full flex items-center justify-center mx-auto mb-6 text-nobel-gold"><Utensils size={32} /></div>
-                        <h3 className="text-xl font-serif text-mapstone-blue mb-4">Private Chef</h3>
-                        <p className="text-stone-400 text-sm leading-relaxed">Experience fine dining in the privacy of your home with curated menus by top chefs.</p>
+                        <h3 className="text-xl font-serif text-mapstone-blue mb-4">{t.concierge.item2Title}</h3>
+                        <p className="text-stone-400 text-sm leading-relaxed">{t.concierge.item2Desc}</p>
                      </div>
                      <div className="bg-white p-10 rounded-sm shadow-sm border border-stone-100 hover:-translate-y-2 transition-transform duration-500">
                         <div className="w-16 h-16 bg-mapstone-blue/5 rounded-full flex items-center justify-center mx-auto mb-6 text-nobel-gold"><Star size={32} /></div>
-                        <h3 className="text-xl font-serif text-mapstone-blue mb-4">VIP Reservations</h3>
-                        <p className="text-stone-400 text-sm leading-relaxed">Priority access to Dubai's most exclusive beach clubs, restaurants, and events.</p>
+                        <h3 className="text-xl font-serif text-mapstone-blue mb-4">{t.concierge.item3Title}</h3>
+                        <p className="text-stone-400 text-sm leading-relaxed">{t.concierge.item3Desc}</p>
                      </div>
                   </div>
                </div>
             </section>
 
-            {/* --- NEW SECTION 3: TESTIMONIALS --- */}
+            {/* TESTIMONIALS */}
             <section className="py-32 bg-mapstone-blue text-white relative overflow-hidden">
                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
                <div className="container mx-auto px-6 text-center relative z-10">
                   <div className="mb-8 text-nobel-gold opacity-50"><Star size={24} className="inline mx-1"/><Star size={24} className="inline mx-1"/><Star size={24} className="inline mx-1"/><Star size={24} className="inline mx-1"/><Star size={24} className="inline mx-1"/></div>
-                  <h2 className="text-3xl md:text-5xl font-serif mb-10 leading-tight max-w-4xl mx-auto">"An absolute masterpiece of hospitality. MAPSTONE defined our Dubai experience with elegance and precision."</h2>
+                  <h2 className="text-3xl md:text-5xl font-serif mb-10 leading-tight max-w-4xl mx-auto">{t.testimonials.text}</h2>
                   <div className="flex items-center justify-center gap-4">
                       <div className="w-12 h-12 bg-nobel-gold/20 rounded-full flex items-center justify-center text-nobel-gold font-serif font-bold text-lg">J</div>
                       <div className="text-left">
-                          <p className="text-white font-bold uppercase tracking-widest text-xs">Jonathan & Sarah</p>
-                          <p className="text-white/50 text-xs">London, UK</p>
+                          <p className="text-white font-bold uppercase tracking-widest text-xs">{t.testimonials.author}</p>
+                          <p className="text-white/50 text-xs">{t.testimonials.location}</p>
                       </div>
                   </div>
                </div>
             </section>
 
-            {/* --- NEW SECTION 4: CITY GUIDE --- */}
+            {/* CITY GUIDE */}
             <section className="py-24 bg-white">
                <div className="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
                   <div className="order-2 md:order-1 h-[600px] grid grid-cols-2 gap-4">
-                      {/* UPDATED: Using the specific PostImage links you provided */}
                       <img src="https://i.postimg.cc/8P2gPMMy/Dubai.jpg" className="w-full h-full object-cover rounded-sm mt-12 shadow-lg" alt="Dubai City" />
                       <img src="https://i.postimg.cc/SNBbNCCV/download.jpg" className="w-full h-full object-cover rounded-sm mb-12 shadow-lg" alt="Dubai Beach" />
                   </div>
                   <div className="order-1 md:order-2">
-                     <span className="text-nobel-gold font-bold tracking-widest text-xs uppercase mb-3 block">Destination</span>
-                     <h2 className="text-4xl md:text-5xl font-serif text-mapstone-blue mb-6">The Heart of Dubai</h2>
-                     <p className="text-stone-500 leading-relaxed text-lg mb-8">From the pristine sands of Palm Jumeirah to the vibrant energy of Downtown, our properties place you at the center of the world's most dynamic city. Explore elite dining, world-class shopping, and iconic landmarks just moments from your door.</p>
-                     <button onClick={() => handleNavClick('properties')} className="text-mapstone-blue font-bold uppercase tracking-widest text-xs border-b-2 border-nobel-gold pb-1 hover:text-nobel-gold transition-colors">Explore Locations</button>
+                     <span className="text-nobel-gold font-bold tracking-widest text-xs uppercase mb-3 block">{t.cityGuide.label}</span>
+                     <h2 className="text-4xl md:text-5xl font-serif text-mapstone-blue mb-6">{t.cityGuide.title}</h2>
+                     <p className="text-stone-500 leading-relaxed text-lg mb-8">{t.cityGuide.desc}</p>
+                     <button onClick={() => handleNavClick('properties')} className="text-mapstone-blue font-bold uppercase tracking-widest text-xs border-b-2 border-nobel-gold pb-1 hover:text-nobel-gold transition-colors">{t.cityGuide.cta}</button>
                   </div>
                </div>
             </section>
@@ -308,7 +318,7 @@ const App = () => {
         )}
 
         {currentView === 'properties' && <PageTransition key="properties"><div className="pt-20"><PropertyShowcase lang={lang} onBook={handleCheckAvailability} /></div></PageTransition>}
-        {currentView === 'about' && <PageTransition key="about"><PhilosophyPage /></PageTransition>}
+        {currentView === 'about' && <PageTransition key="about"><PhilosophyPage lang={lang} /></PageTransition>}
         {currentView === 'landlords' && <PageTransition key="landlords"><LandlordsPage lang={lang} onBook={() => setBookingOpen(true)} /></PageTransition>}
         {currentView === 'calendar' && <PageTransition key="calendar"><div className="min-h-screen bg-stone-100 pt-32 pb-20 px-4"><div className="container mx-auto"><AvailabilityCalendar lang={lang} onClose={() => setCurrentView('properties')} selectedProperty={selectedProperty} onProceedToCheckout={handleProceedToCheckout} /></div></div></PageTransition>}
         {currentView === 'checkout' && <PageTransition key="checkout"><CheckoutPage lang={lang} onBack={() => setCurrentView('calendar')} bookingData={{ propertyId: selectedProperty?.id, propertyName: selectedProperty?.title, dateRange: bookingDetails?.dateRange, guests: bookingDetails?.guests }} /></PageTransition>}
@@ -321,9 +331,9 @@ const App = () => {
          <div className="container mx-auto px-6 text-white">
             <div className="grid md:grid-cols-4 gap-12 mb-16">
                <div className="col-span-1"><h3 className="font-serif text-lg mb-4">MAPSTONE</h3><p className="text-sm text-stone-300 mb-6">{t.footer.desc}</p><div className="flex gap-4"><a href="https://www.instagram.com/mapstone_holiday_homes/" target="_blank" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-mapstone-blue transition-colors"><Instagram size={18} className="text-white hover:text-mapstone-blue"/></a><a href="https://www.facebook.com/profile.php?id=61582980871159" target="_blank" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-mapstone-blue transition-colors"><Facebook size={18} className="text-white hover:text-mapstone-blue"/></a></div></div>
-               <div><h4 className="font-bold text-white uppercase tracking-widest text-xs mb-4">{t.contactPage.locationLabel}</h4><p className="text-stone-300 text-sm mb-2 flex items-start gap-2"><MapPin size={16} className="shrink-0 mt-0.5" /> <span>Al Barsha First<br/>Dubai, UAE</span></p></div>
+               <div><h4 className="font-bold text-white uppercase tracking-widest text-xs mb-4">{t.contactPage.locationLabel}</h4><p className="text-stone-300 text-sm mb-2 flex items-start gap-2"><MapPin size={16} className="shrink-0 mt-0.5" /> <span>{t.footer.address}</span></p></div>
                <div><h4 className="font-bold text-white uppercase tracking-widest text-xs mb-4">{t.contactPage.phoneLabel}</h4><p className="text-stone-300 text-sm mb-2 flex items-center gap-2"><Phone size={16} /> +971 58 592 8787</p><p className="text-stone-300 text-sm mb-2 flex items-center gap-2"><Mail size={16} /> contact@mapstonegroup.com</p></div>
-               <div><h4 className="font-bold text-white uppercase tracking-widest text-xs mb-4">Links</h4><ul className="space-y-2 text-sm text-stone-300"><li><button onClick={() => handleFooterLinkClick('privacy')} className="hover:text-white transition-colors">{t.footer.privacy}</button></li><li><button onClick={() => handleFooterLinkClick('terms')} className="hover:text-white transition-colors">{t.footer.terms}</button></li><li><button onClick={() => handleFooterLinkClick('faq')} className="hover:text-white transition-colors">{t.footer.faqs}</button></li></ul></div>
+               <div><h4 className="font-bold text-white uppercase tracking-widest text-xs mb-4">{t.footer.linksTitle}</h4><ul className="space-y-2 text-sm text-stone-300"><li><button onClick={() => handleFooterLinkClick('privacy')} className="hover:text-white transition-colors">{t.footer.privacy}</button></li><li><button onClick={() => handleFooterLinkClick('terms')} className="hover:text-white transition-colors">{t.footer.terms}</button></li><li><button onClick={() => handleFooterLinkClick('faq')} className="hover:text-white transition-colors">{t.footer.faqs}</button></li></ul></div>
             </div>
             <div className="border-t border-white/10 pt-8 flex justify-between items-center text-xs text-stone-400"><p>&copy; {new Date().getFullYear()} MAPSTONE HOLIDAY HOMES RENTAL L.L.C</p><p>{t.footer.rights}</p></div>
          </div>

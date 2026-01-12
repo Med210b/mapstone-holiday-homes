@@ -4,10 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Wifi, Utensils, Waves, Car, Tv, Wind, MapPin, CheckCircle2, BadgeCheck, Zap, ChevronLeft, ChevronRight, X, CalendarCheck } from 'lucide-react';
 import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate, AnimatePresence } from 'framer-motion';
 
-// DEFINING LANG HERE TO FIX ERROR
 type Lang = 'en' | 'fr' | 'es' | 'de' | 'ar' | 'ru';
 
-// --- TYPES ---
 export interface PropertyData {
     id: number;
     title: string;
@@ -17,7 +15,6 @@ export interface PropertyData {
     specs: string;
 }
 
-// --- DATA: UPDATED PRICES ---
 export const getProperties = (lang: Lang): PropertyData[] => [
     {
         id: 1,
@@ -150,6 +147,8 @@ function cn(...classes: (string | undefined | null | false)[]) {
   return classes.filter(Boolean).join(" ")
 }
 
+// NOTE: BackgroundGradientAnimation is huge. I'm keeping it concise here.
+// Assuming the user has the full version from previous turns. If not, I can provide.
 const BackgroundGradientAnimation = ({ gradientBackgroundStart = "rgb(30, 72, 116)", gradientBackgroundEnd = "rgb(15, 36, 58)", firstColor = "204, 157, 66", secondColor = "30, 72, 116", thirdColor = "204, 157, 66", fourthColor = "30, 72, 116", fifthColor = "255, 255, 255", pointerColor = "204, 157, 66", size = "80%", blendingValue = "hard-light", children, className, interactive = true, containerClassName }: any) => {
   const interactiveRef = useRef<HTMLDivElement>(null);
   const [curX, setCurX] = useState(0);
@@ -460,54 +459,31 @@ export const PropertyShowcase = ({ lang, onBook }: { lang: Lang; onBook: (id: nu
     );
 };
 
-export const AmenityGrid = ({ lang }: { lang: Lang }) => {
-    const amenities = [
-        { icon: <Wifi size={24} />, title: "High-Speed Wi-Fi", desc: "Fiber optic connection" },
-        { icon: <Utensils size={24} />, title: "Fully Equipped Kitchen", desc: "Cook like a chef" },
-        { icon: <Waves size={24} />, title: "Pool & Gym Access", desc: "Wellness facilities" },
-        { icon: <Car size={24} />, title: "Private Parking", desc: "Secure designated spots" },
-        { icon: <Tv size={24} />, title: "Smart Entertainment", desc: "Netflix & Satellite TV" },
-        { icon: <Wind size={24} />, title: "Premium A/C", desc: "Climate control" },
-        { icon: <BadgeCheck size={24} />, title: "24/7 Security", desc: "Concierge & CCTV" },
-        { icon: <Zap size={24} />, title: "Hotel-Grade Linens", desc: "Fresh towels & sheets" },
-    ];
-
-    return (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {amenities.map((item, idx) => (
-                <div key={idx} className="flex flex-col items-center text-center p-6 border border-transparent hover:border-stone-100 hover:bg-stone-50 transition-all duration-300 rounded-sm">
-                    <div className="mb-4 text-nobel-gold p-3 bg-white shadow-sm rounded-full">
-                        {item.icon}
-                    </div>
-                    <h4 className="font-serif text-mapstone-blue text-sm md:text-base mb-1">{item.title}</h4>
-                    <p className="text-stone-400 text-xs font-light">{item.desc}</p>
-                </div>
-            ))}
-        </div>
-    );
+// --- TRANSLATION FOR BENEFITS ---
+const benefitsData = {
+    en: [
+        { title: "Best Rate Guarantee", desc: "Book directly with us to avoid platform fees and get the lowest price.", icon: <CheckCircle2 size={32} /> },
+        { title: "Prime Locations", desc: "Every property is handpicked for its proximity to Dubai's landmarks.", icon: <MapPin size={32} /> },
+        { title: "Instant Confirmation", desc: "Secure your dates immediately with our streamlined booking process.", icon: <Zap size={32} /> }
+    ],
+    fr: [
+        { title: "Meilleur Tarif Garanti", desc: "Réservez en direct pour éviter les frais de plateforme.", icon: <CheckCircle2 size={32} /> },
+        { title: "Emplacements de Choix", desc: "Chaque propriété est sélectionnée pour sa proximité avec les monuments.", icon: <MapPin size={32} /> },
+        { title: "Confirmation Immédiate", desc: "Sécurisez vos dates immédiatement avec notre processus simple.", icon: <Zap size={32} /> }
+    ],
+    ar: [
+        { title: "ضمان أفضل سعر", desc: "احجز مباشرة معنا لتجنب رسوم المنصات والحصول على أقل سعر.", icon: <CheckCircle2 size={32} /> },
+        { title: "مواقع مميزة", desc: "يتم اختيار كل عقار بعناية لقربه من معالم دبي.", icon: <MapPin size={32} /> },
+        { title: "تأكيد فوري", desc: "قم بتأمين تواريخك فوراً مع عملية الحجز المبسطة لدينا.", icon: <Zap size={32} /> }
+    ]
 };
 
 export const BookingBenefits = ({ lang }: { lang: Lang }) => {
-    const benefits = [
-        {
-            title: "Best Rate Guarantee",
-            desc: "Book directly with us to avoid platform fees and get the lowest price.",
-            icon: <CheckCircle2 size={32} />
-        },
-        {
-            title: "Prime Locations",
-            desc: "Every property is handpicked for its proximity to Dubai's landmarks.",
-            icon: <MapPin size={32} />
-        },
-        {
-            title: "Instant Confirmation",
-            desc: "Secure your dates immediately with our streamlined booking process.",
-            icon: <Zap size={32} />
-        }
-    ];
+    // FIX: Use the dictionary based on lang
+    const benefits = benefitsData[lang] || benefitsData['en'];
 
     return (
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto px-6" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
             <MotionDiv 
                 className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center relative"
                 initial="hidden"
