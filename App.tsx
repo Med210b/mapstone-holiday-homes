@@ -7,7 +7,9 @@ import PageTransition from './components/PageTransition';
 import AvailabilityCalendar from './components/AvailabilityCalendar'; 
 import { CheckoutPage } from './components/CheckoutPage'; 
 import LandlordsPage from './components/LandlordsPage';
+import ContactPage from './components/ContactPage';
 import ThankYouPage from './components/ThankYouPage'; 
+import BookingModal from './components/BookingModal'; // New Modal
 import { WhatsAppIcon, LogoBayut, LogoDubizzle, LogoPropertyFinder, LogoBooking, LogoAirbnb } from './components/Icons';
 import { PrivacyPolicy, TermsConditions, FAQs } from './components/LegalPages';
 import PhilosophyPage from './components/PhilosophyPage'; 
@@ -95,19 +97,6 @@ const PartnerLogos = () => (
   </>
 );
 
-const BookingModal: React.FC<any> = ({ isOpen, onClose, lang }) => {
-   if(!isOpen) return null;
-   return (
-       <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4" onClick={onClose}>
-           <div className="bg-white p-8 rounded-lg max-w-md w-full" onClick={e => e.stopPropagation()}>
-               <h2 className="text-2xl font-serif text-mapstone-blue mb-4">{translations[lang]?.booking?.title}</h2>
-               <p className="text-sm text-stone-500 mb-6">{translations[lang]?.booking?.subtitle}</p>
-               <button onClick={onClose} className="w-full bg-stone-100 py-3 font-bold text-xs uppercase tracking-widest">Close</button>
-           </div>
-       </div>
-   )
-};
-
 const App = () => {
   const [lang, setLang] = useState<Lang>('en');
   const [currentView, setCurrentView] = useState<View>('home');
@@ -144,11 +133,8 @@ const App = () => {
   const handleNavClick = (id: string) => {
     setMenuOpen(false);
     if (id === 'contact') {
-        if (currentView !== 'home') setCurrentView('home');
-        setTimeout(() => {
-            const footer = document.getElementById('contact');
-            if (footer) footer.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
+        setCurrentView('contact'); // Direct to contact page
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
     }
     if (id === 'services') {
@@ -222,6 +208,12 @@ const App = () => {
                 <div className="pt-20">
                     <ThankYouPage onHome={() => setCurrentView('home')} lang={lang} />
                 </div>
+            </PageTransition>
+        )}
+
+        {currentView === 'contact' && (
+            <PageTransition key="contact">
+                <ContactPage lang={lang} />
             </PageTransition>
         )}
 
