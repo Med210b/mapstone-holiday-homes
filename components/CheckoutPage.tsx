@@ -8,7 +8,7 @@ const MotionDiv = motion.div as any;
 interface Props {
     lang: string;
     onBack: () => void;
-    onSuccess: () => void; // New prop to handle success transition
+    // We remove onSuccess because we are doing a native redirect to _next URL
     bookingData: {
         propertyName?: string;
         propertyId: number | null;
@@ -18,12 +18,12 @@ interface Props {
 }
 
 const translations = {
-    en: { back: "Back", yourBooking: "Your Booking", property: "Property", dates: "Dates", guests: "Guests", mainGuest: "Main Guest Details", fullName: "Full Name", passport: "Passport / Emirates ID No", phone: "Phone", email: "Email", eKey: "Important: Digital E-Keys will be sent to this email.", uploadMain: "Upload Main Guest Passport/ID", upload2: "Upload Guest 2 Passport/ID", clickUpload: "Click to Upload Document", secondGuest: "Second Guest Details", payment: "Payment Method", complete: "Complete Reservation", visa: "Visa / Mastercard", apple: "Apple Pay", google: "Google Pay", paypal: "PayPal", uploading: "Processing...", errorMsg: "Something went wrong. Please try again or use a smaller file." },
-    fr: { back: "Retour", yourBooking: "Votre Réservation", property: "Propriété", dates: "Dates", guests: "Voyageurs", mainGuest: "Détails de l'Invité Principal", fullName: "Nom Complet", passport: "Passeport / ID", phone: "Téléphone", email: "E-mail", eKey: "Important : Les clés numériques seront envoyées à cet e-mail.", uploadMain: "Télécharger Passeport/ID (Principal)", upload2: "Télécharger Passeport/ID (Invité 2)", clickUpload: "Cliquez pour Télécharger", secondGuest: "Détails du 2ème Invité", payment: "Méthode de Paiement", complete: "Terminer la Réservation", visa: "Visa / Mastercard", apple: "Apple Pay", google: "Google Pay", paypal: "PayPal", uploading: "Traitement...", errorMsg: "Une erreur s'est produite. Veuillez réessayer." },
-    ar: { back: "رجوع", yourBooking: "حجزك", property: "العقار", dates: "التواريخ", guests: "الضيوف", mainGuest: "تفاصيل الضيف الرئيسي", fullName: "الاسم الكامل", passport: "رقم الجواز / الهوية", phone: "الهاتف", email: "البريد الإلكتروني", eKey: "مهم: سيتم إرسال المفاتيح الرقمية إلى هذا البريد.", uploadMain: "تحميل جواز/هوية الضيف الرئيسي", upload2: "تحميل جواز/هوية الضيف الثاني", clickUpload: "اضغط لتحميل المستند", secondGuest: "تفاصيل الضيف الثاني", payment: "طريقة الدفع", complete: "إتمام الحجز", visa: "فيزا / ماستركارد", apple: "أبل باي", google: "جوجل باي", paypal: "باي بال", uploading: "جاري المعالجة...", errorMsg: "حدث خطأ ما. يرجى المحاولة مرة أخرى." }
+    en: { back: "Back", yourBooking: "Your Booking", property: "Property", dates: "Dates", guests: "Guests", mainGuest: "Main Guest Details", fullName: "Full Name", passport: "Passport / Emirates ID No", phone: "Phone", email: "Email", eKey: "Important: Digital E-Keys will be sent to this email.", uploadMain: "Upload Main Guest Passport/ID", upload2: "Upload Guest 2 Passport/ID", clickUpload: "Click to Upload Document", secondGuest: "Second Guest Details", payment: "Payment Method", complete: "Complete Reservation", visa: "Visa / Mastercard", apple: "Apple Pay", google: "Google Pay", paypal: "PayPal", uploading: "Uploading Documents... Please Wait", errorMsg: "Please upload all required documents." },
+    fr: { back: "Retour", yourBooking: "Votre Réservation", property: "Propriété", dates: "Dates", guests: "Voyageurs", mainGuest: "Détails de l'Invité Principal", fullName: "Nom Complet", passport: "Passeport / ID", phone: "Téléphone", email: "E-mail", eKey: "Important : Les clés numériques seront envoyées à cet e-mail.", uploadMain: "Télécharger Passeport/ID (Principal)", upload2: "Télécharger Passeport/ID (Invité 2)", clickUpload: "Cliquez pour Télécharger", secondGuest: "Détails du 2ème Invité", payment: "Méthode de Paiement", complete: "Terminer la Réservation", visa: "Visa / Mastercard", apple: "Apple Pay", google: "Google Pay", paypal: "PayPal", uploading: "Téléchargement en cours...", errorMsg: "Veuillez télécharger tous les documents requis." },
+    ar: { back: "رجوع", yourBooking: "حجزك", property: "العقار", dates: "التواريخ", guests: "الضيوف", mainGuest: "تفاصيل الضيف الرئيسي", fullName: "الاسم الكامل", passport: "رقم الجواز / الهوية", phone: "الهاتف", email: "البريد الإلكتروني", eKey: "مهم: سيتم إرسال المفاتيح الرقمية إلى هذا البريد.", uploadMain: "تحميل جواز/هوية الضيف الرئيسي", upload2: "تحميل جواز/هوية الضيف الثاني", clickUpload: "اضغط لتحميل المستند", secondGuest: "تفاصيل الضيف الثاني", payment: "طريقة الدفع", complete: "إتمام الحجز", visa: "فيزا / ماستركارد", apple: "أبل باي", google: "جوجل باي", paypal: "باي بال", uploading: "جاري تحميل المستندات...", errorMsg: "يرجى تحميل جميع المستندات المطلوبة." }
 };
 
-export const CheckoutPage: React.FC<Props> = ({ lang, onBack, onSuccess, bookingData }) => {
+export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => {
     const [file1, setFile1] = useState<File | null>(null);
     const [file2, setFile2] = useState<File | null>(null);
     const [formError, setFormError] = useState('');
@@ -37,6 +37,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, onSuccess, booking
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, isSecondGuest: boolean) => {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
+            // 5MB limit per file
             if (file.size > 5 * 1024 * 1024) { 
                 alert("File too large. Max 5MB.");
                 return;
@@ -47,50 +48,28 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, onSuccess, booking
         }
     };
 
-    const validateAndSubmit = async (e: React.FormEvent) => {
+    const validateAndSubmit = (e: React.FormEvent) => {
         e.preventDefault(); 
         setFormError('');
 
         if (!file1) {
-            setFormError("Please upload the Main Guest's Passport or ID.");
+            setFormError(t.errorMsg);
             window.scrollTo({ top: 0, behavior: 'smooth' });
             return;
         }
 
         if (requiresSecondGuest && !file2) {
-            setFormError("Please upload the Second Guest's Passport or ID.");
+            setFormError(t.errorMsg);
             window.scrollTo({ top: 0, behavior: 'smooth' });
             return;
         }
 
-        if (!formRef.current) return;
-
-        // AJAX Submission Logic
+        // Show loading state
         setIsSubmitting(true);
-        const formData = new FormData(formRef.current);
-        
-        // Append missing fields manually just in case
-        formData.append("Payment_Method", paymentMethod);
 
-        try {
-            const response = await fetch("https://formsubmit.co/ajax/contact@mapstonegroup.com", {
-                method: "POST",
-                body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
-
-            if (response.ok) {
-                onSuccess(); // Switch to Thank You page instantly
-            } else {
-                setFormError(t.errorMsg);
-                setIsSubmitting(false);
-            }
-        } catch (error) {
-            console.error("Submission error:", error);
-            setFormError(t.errorMsg);
-            setIsSubmitting(false);
+        // Native Submit - This guarantees files are attached
+        if (formRef.current) {
+            formRef.current.submit(); 
         }
     };
 
@@ -117,7 +96,15 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, onSuccess, booking
                         </div>
                     </div>
 
-                    <div className="md:col-span-2">
+                    <div className="md:col-span-2 relative">
+                        {/* LOADING OVERLAY */}
+                        {isSubmitting && (
+                            <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center rounded-xl">
+                                <Loader2 size={48} className="text-nobel-gold animate-spin mb-4" />
+                                <p className="text-mapstone-blue font-serif text-xl animate-pulse">{t.uploading}</p>
+                            </div>
+                        )}
+
                         {formError && (
                             <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-sm flex items-start gap-3 mb-6 animate-pulse">
                                 <AlertTriangle size={20} className="shrink-0 mt-0.5" />
@@ -127,13 +114,16 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, onSuccess, booking
 
                         <form 
                             ref={formRef}
-                            // No Action/Method here, handled by JS
+                            action="https://formsubmit.co/contact@mapstonegroup.com" 
+                            method="POST" 
                             encType="multipart/form-data" 
                             className="bg-white p-8 rounded-xl shadow-lg border border-stone-100 space-y-8"
                         >
                             <input type="hidden" name="_subject" value={`New Booking: ${bookingData.propertyName}`} />
                             <input type="hidden" name="_template" value="table" />
                             <input type="hidden" name="_captcha" value="false" />
+                            {/* Redirect on Success */}
+                            <input type="hidden" name="_next" value="https://www.mapstoneholidayhome.com/?success=true" />
                             
                             <input type="hidden" name="Property" value={bookingData.propertyName || "Unknown"} />
                             <input type="hidden" name="Check-in" value={checkIn} />
@@ -157,7 +147,8 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, onSuccess, booking
                                     <div className="pt-2">
                                         <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">{t.uploadMain} <span className="text-red-500">*</span></label>
                                         <div className={`border-2 border-dashed rounded-lg p-6 text-center bg-stone-50 relative ${!file1 ? 'border-red-300' : 'border-green-300 bg-green-50'}`}>
-                                            <input type="file" name="Main_Passport" accept=".pdf,.jpg,.jpeg,.png" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={(e) => handleFileChange(e, false)} />
+                                            {/* IMPORTANT: Unique Name for File Input */}
+                                            <input type="file" name="Main_Passport_Doc" accept=".pdf,.jpg,.jpeg,.png" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={(e) => handleFileChange(e, false)} />
                                             <div className="flex flex-col items-center">
                                                 {file1 ? <Check className="text-green-600 mb-2"/> : <UploadCloud className="text-stone-400 mb-2"/>}
                                                 <p className="text-xs font-bold text-stone-600">{file1 ? file1.name : t.clickUpload}</p>
@@ -179,7 +170,8 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, onSuccess, booking
                                         <div className="pt-2">
                                             <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">{t.upload2} <span className="text-red-500">*</span></label>
                                             <div className={`border-2 border-dashed rounded-lg p-6 text-center bg-white relative ${!file2 ? 'border-red-300' : 'border-green-300 bg-green-50'}`}>
-                                                <input type="file" name="Second_Passport" accept=".pdf,.jpg,.jpeg,.png" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={(e) => handleFileChange(e, true)} />
+                                                {/* IMPORTANT: Unique Name for File Input */}
+                                                <input type="file" name="Second_Passport_Doc" accept=".pdf,.jpg,.jpeg,.png" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={(e) => handleFileChange(e, true)} />
                                                 <div className="flex flex-col items-center">
                                                     {file2 ? <Check className="text-green-600 mb-2"/> : <UploadCloud className="text-stone-400 mb-2"/>}
                                                     <p className="text-xs font-bold text-stone-600">{file2 ? file2.name : t.clickUpload}</p>
