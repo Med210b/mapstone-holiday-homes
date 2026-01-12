@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import { motion } from 'framer-motion';

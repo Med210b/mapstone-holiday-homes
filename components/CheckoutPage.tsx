@@ -133,6 +133,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                         <Key size={14} className="shrink-0 mt-0.5"/><p><strong>Important:</strong> Digital E-Keys will be sent to this email.</p>
                                     </div>
 
+                                    {/* UPLOAD 1 - NAME MUST BE "attachment" */}
                                     <div className="pt-2">
                                         <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Upload Main Guest Passport/ID <span className="text-red-500">*</span></label>
                                         <div className={`border-2 border-dashed rounded-lg p-6 text-center bg-stone-50 relative ${!file1 ? 'border-red-300' : 'border-green-300 bg-green-50'}`}>
@@ -155,6 +156,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                         <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Passport / ID No <span className="text-red-500">*</span></label><input type="text" name="Guest2_Passport_No" required className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" /></div>
                                         <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Phone <span className="text-red-500">*</span></label><input type="tel" name="Guest2_Phone" required className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" /></div>
                                         
+                                        {/* UPLOAD 2 - NAME MUST BE "attachment" */}
                                         <div className="pt-2">
                                             <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Upload Guest 2 Passport/ID <span className="text-red-500">*</span></label>
                                             <div className={`border-2 border-dashed rounded-lg p-6 text-center bg-white relative ${!file2 ? 'border-red-300' : 'border-green-300 bg-green-50'}`}>
