@@ -11,7 +11,7 @@ import ThankYouPage from './components/ThankYouPage';
 import { WhatsAppIcon, LogoBayut, LogoDubizzle, LogoPropertyFinder, LogoBooking, LogoAirbnb } from './components/Icons';
 import { PrivacyPolicy, TermsConditions, FAQs } from './components/LegalPages';
 import PhilosophyPage from './components/PhilosophyPage'; 
-import { ArrowDown, Menu, X, Globe, MapPin, Phone, Mail, Instagram, Facebook, Star, Utensils, Car, Key } from 'lucide-react';
+import { ArrowDown, Menu, X, Globe, MapPin, Phone, Mail, Instagram, Facebook, Star, Utensils, Car } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Lang, View } from './types';
 
@@ -289,9 +289,9 @@ const App = () => {
             <section className="py-24 bg-white">
                <div className="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
                   <div className="order-2 md:order-1 h-[600px] grid grid-cols-2 gap-4">
-                      {/* Fixed Image Link */}
-                      <img src="https://images.unsplash.com/photo-1512453979798-5ea936a794de?auto=format&fit=crop&w=800&q=80" className="w-full h-full object-cover rounded-sm mt-12 shadow-lg" alt="Dubai City" />
-                      <img src="https://images.unsplash.com/photo-1518684079-3c830dcef6c5?auto=format&fit=crop&w=800&q=80" className="w-full h-full object-cover rounded-sm mb-12 shadow-lg" alt="Dubai Beach" />
+                      {/* UPDATED: Using the specific PostImage links you provided */}
+                      <img src="https://i.postimg.cc/8P2gPMMy/Dubai.jpg" className="w-full h-full object-cover rounded-sm mt-12 shadow-lg" alt="Dubai City" />
+                      <img src="https://i.postimg.cc/SNBbNCCV/download.jpg" className="w-full h-full object-cover rounded-sm mb-12 shadow-lg" alt="Dubai Beach" />
                   </div>
                   <div className="order-1 md:order-2">
                      <span className="text-nobel-gold font-bold tracking-widest text-xs uppercase mb-3 block">Destination</span>
