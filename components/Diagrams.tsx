@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Wifi, Utensils, Waves, Car, Tv, Wind, MapPin, CheckCircle2, BadgeCheck, Zap, ChevronLeft, ChevronRight, X, CalendarCheck } from 'lucide-react';
 import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate, AnimatePresence } from 'framer-motion';
-// Removing the import that was causing errors and defining Lang here
+
+// DEFINING LANG HERE TO FIX ERROR
 type Lang = 'en' | 'fr' | 'es' | 'de' | 'ar' | 'ru';
 
 // --- TYPES ---
@@ -142,7 +143,6 @@ export const getProperties = (lang: Lang): PropertyData[] => [
     }
 ];
 
-// Fix for TypeScript red lines
 const MotionDiv = motion.div as any;
 const MotionImg = motion.img as any;
 
