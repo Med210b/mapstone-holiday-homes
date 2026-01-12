@@ -1,8 +1,6 @@
 // @ts-nocheck
 import React, { useState } from "react";
 import { Wifi, UtensilsCrossed, Waves, Car, Tv, Wind, Shield, Zap } from 'lucide-react';
-// If "../types" does not exist in your project, you can remove this line
-import { Lang } from "../types"; 
 
 // --- TRANSLATIONS FOR AMENITIES ---
 const amenitiesData = {
@@ -69,7 +67,7 @@ const amenitiesData = {
 };
 
 // Fallback logic
-const getAmenities = (lang: Lang) => amenitiesData[lang as keyof typeof amenitiesData] || amenitiesData['en'];
+const getAmenities = (lang: string) => amenitiesData[lang as keyof typeof amenitiesData] || amenitiesData['en'];
 
 function AmenityCard({ amenity, index }: { amenity: any; index: number }) {
   const [rotateX, setRotateX] = useState(0);
@@ -150,7 +148,7 @@ function AmenityCard({ amenity, index }: { amenity: any; index: number }) {
 }
 
 interface PremiumAmenitiesProps {
-  lang: Lang;
+  lang: string;
   onBook: () => void;
 }
 

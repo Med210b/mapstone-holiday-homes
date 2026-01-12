@@ -113,13 +113,53 @@ const App = () => {
     { id: 'contact', label: t.nav.contact },
   ];
 
+  // --- FIXED NAVIGATION LOGIC ---
   const handleNavClick = (id: string) => {
     setMenuOpen(false);
+    
+    // 1. Contact (Footer Scroll)
     if (id === 'contact') {
-        const footer = document.getElementById('contact');
-        if (footer) footer.scrollIntoView({ behavior: 'smooth' });
+        // If we are not on home, go to home first
+        if (currentView !== 'home') {
+            setCurrentView('home');
+            setTimeout(() => {
+                const footer = document.getElementById('contact');
+                if (footer) footer.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        } else {
+            const footer = document.getElementById('contact');
+            if (footer) footer.scrollIntoView({ behavior: 'smooth' });
+        }
         return;
     }
+
+    // 2. Amenities / Services (Home Scroll)
+    if (id === 'services') {
+        if (currentView !== 'home') {
+            setCurrentView('home');
+            setTimeout(() => {
+                const servicesSection = document.getElementById('services');
+                if (servicesSection) {
+                    // Scroll to it
+                    const offset = 80;
+                    const elementPosition = servicesSection.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - offset;
+                    window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+                }
+            }, 100);
+        } else {
+            const servicesSection = document.getElementById('services');
+            if (servicesSection) {
+                const offset = 80;
+                const elementPosition = servicesSection.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
+                window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+            }
+        }
+        return;
+    }
+
+    // 3. Normal Page Switching
     setCurrentView(id as View);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
