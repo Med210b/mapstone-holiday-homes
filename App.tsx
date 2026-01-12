@@ -9,7 +9,7 @@ import { CheckoutPage } from './components/CheckoutPage';
 import LandlordsPage from './components/LandlordsPage';
 import ContactPage from './components/ContactPage';
 import ThankYouPage from './components/ThankYouPage'; 
-import BookingModal from './components/BookingModal'; // New Modal
+import BookingModal from './components/BookingModal'; 
 import { WhatsAppIcon, LogoBayut, LogoDubizzle, LogoPropertyFinder, LogoBooking, LogoAirbnb } from './components/Icons';
 import { PrivacyPolicy, TermsConditions, FAQs } from './components/LegalPages';
 import PhilosophyPage from './components/PhilosophyPage'; 
@@ -133,7 +133,7 @@ const App = () => {
   const handleNavClick = (id: string) => {
     setMenuOpen(false);
     if (id === 'contact') {
-        setCurrentView('contact'); // Direct to contact page
+        setCurrentView('contact');
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
     }
@@ -313,7 +313,19 @@ const App = () => {
         {currentView === 'about' && <PageTransition key="about"><PhilosophyPage lang={lang} /></PageTransition>}
         {currentView === 'landlords' && <PageTransition key="landlords"><LandlordsPage lang={lang} onBook={() => setBookingOpen(true)} /></PageTransition>}
         {currentView === 'calendar' && <PageTransition key="calendar"><div className="min-h-screen bg-stone-100 pt-32 pb-20 px-4"><div className="container mx-auto"><AvailabilityCalendar lang={lang} onClose={() => setCurrentView('properties')} selectedProperty={selectedProperty} onProceedToCheckout={handleProceedToCheckout} /></div></div></PageTransition>}
-        {currentView === 'checkout' && <PageTransition key="checkout"><CheckoutPage lang={lang} onBack={() => setCurrentView('calendar')} bookingData={{ propertyId: selectedProperty?.id, propertyName: selectedProperty?.title, dateRange: bookingDetails?.dateRange, guests: bookingDetails?.guests }} /></PageTransition>}
+        
+        {/* UPDATED: Pass onSuccess prop to switch view manually */}
+        {currentView === 'checkout' && (
+            <PageTransition key="checkout">
+                <CheckoutPage 
+                    lang={lang} 
+                    onBack={() => setCurrentView('calendar')} 
+                    bookingData={{ propertyId: selectedProperty?.id, propertyName: selectedProperty?.title, dateRange: bookingDetails?.dateRange, guests: bookingDetails?.guests }} 
+                    onSuccess={() => setCurrentView('thankyou')} 
+                />
+            </PageTransition>
+        )}
+        
         {currentView === 'privacy' && <PageTransition key="privacy"><PrivacyPolicy /></PageTransition>}
         {currentView === 'terms' && <PageTransition key="terms"><TermsConditions /></PageTransition>}
         {currentView === 'faq' && <PageTransition key="faq"><FAQs /></PageTransition>}

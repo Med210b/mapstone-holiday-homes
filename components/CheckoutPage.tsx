@@ -8,6 +8,7 @@ const MotionDiv = motion.div as any;
 interface Props {
     lang: string;
     onBack: () => void;
+    onSuccess: () => void; // New prop to handle success transition
     bookingData: {
         propertyName?: string;
         propertyId: number | null;
@@ -17,16 +18,17 @@ interface Props {
 }
 
 const translations = {
-    en: { back: "Back", yourBooking: "Your Booking", property: "Property", dates: "Dates", guests: "Guests", mainGuest: "Main Guest Details", fullName: "Full Name", passport: "Passport / Emirates ID No", phone: "Phone", email: "Email", eKey: "Important: Digital E-Keys will be sent to this email.", uploadMain: "Upload Main Guest Passport/ID", upload2: "Upload Guest 2 Passport/ID", clickUpload: "Click to Upload Document", secondGuest: "Second Guest Details", payment: "Payment Method", complete: "Complete Reservation", visa: "Visa / Mastercard", apple: "Apple Pay", google: "Google Pay", paypal: "PayPal" },
-    fr: { back: "Retour", yourBooking: "Votre Réservation", property: "Propriété", dates: "Dates", guests: "Voyageurs", mainGuest: "Détails de l'Invité Principal", fullName: "Nom Complet", passport: "Passeport / ID", phone: "Téléphone", email: "E-mail", eKey: "Important : Les clés numériques seront envoyées à cet e-mail.", uploadMain: "Télécharger Passeport/ID (Principal)", upload2: "Télécharger Passeport/ID (Invité 2)", clickUpload: "Cliquez pour Télécharger", secondGuest: "Détails du 2ème Invité", payment: "Méthode de Paiement", complete: "Terminer la Réservation", visa: "Visa / Mastercard", apple: "Apple Pay", google: "Google Pay", paypal: "PayPal" },
-    ar: { back: "رجوع", yourBooking: "حجزك", property: "العقار", dates: "التواريخ", guests: "الضيوف", mainGuest: "تفاصيل الضيف الرئيسي", fullName: "الاسم الكامل", passport: "رقم الجواز / الهوية", phone: "الهاتف", email: "البريد الإلكتروني", eKey: "مهم: سيتم إرسال المفاتيح الرقمية إلى هذا البريد.", uploadMain: "تحميل جواز/هوية الضيف الرئيسي", upload2: "تحميل جواز/هوية الضيف الثاني", clickUpload: "اضغط لتحميل المستند", secondGuest: "تفاصيل الضيف الثاني", payment: "طريقة الدفع", complete: "إتمام الحجز", visa: "فيزا / ماستركارد", apple: "أبل باي", google: "جوجل باي", paypal: "باي بال" }
+    en: { back: "Back", yourBooking: "Your Booking", property: "Property", dates: "Dates", guests: "Guests", mainGuest: "Main Guest Details", fullName: "Full Name", passport: "Passport / Emirates ID No", phone: "Phone", email: "Email", eKey: "Important: Digital E-Keys will be sent to this email.", uploadMain: "Upload Main Guest Passport/ID", upload2: "Upload Guest 2 Passport/ID", clickUpload: "Click to Upload Document", secondGuest: "Second Guest Details", payment: "Payment Method", complete: "Complete Reservation", visa: "Visa / Mastercard", apple: "Apple Pay", google: "Google Pay", paypal: "PayPal", uploading: "Processing...", errorMsg: "Something went wrong. Please try again or use a smaller file." },
+    fr: { back: "Retour", yourBooking: "Votre Réservation", property: "Propriété", dates: "Dates", guests: "Voyageurs", mainGuest: "Détails de l'Invité Principal", fullName: "Nom Complet", passport: "Passeport / ID", phone: "Téléphone", email: "E-mail", eKey: "Important : Les clés numériques seront envoyées à cet e-mail.", uploadMain: "Télécharger Passeport/ID (Principal)", upload2: "Télécharger Passeport/ID (Invité 2)", clickUpload: "Cliquez pour Télécharger", secondGuest: "Détails du 2ème Invité", payment: "Méthode de Paiement", complete: "Terminer la Réservation", visa: "Visa / Mastercard", apple: "Apple Pay", google: "Google Pay", paypal: "PayPal", uploading: "Traitement...", errorMsg: "Une erreur s'est produite. Veuillez réessayer." },
+    ar: { back: "رجوع", yourBooking: "حجزك", property: "العقار", dates: "التواريخ", guests: "الضيوف", mainGuest: "تفاصيل الضيف الرئيسي", fullName: "الاسم الكامل", passport: "رقم الجواز / الهوية", phone: "الهاتف", email: "البريد الإلكتروني", eKey: "مهم: سيتم إرسال المفاتيح الرقمية إلى هذا البريد.", uploadMain: "تحميل جواز/هوية الضيف الرئيسي", upload2: "تحميل جواز/هوية الضيف الثاني", clickUpload: "اضغط لتحميل المستند", secondGuest: "تفاصيل الضيف الثاني", payment: "طريقة الدفع", complete: "إتمام الحجز", visa: "فيزا / ماستركارد", apple: "أبل باي", google: "جوجل باي", paypal: "باي بال", uploading: "جاري المعالجة...", errorMsg: "حدث خطأ ما. يرجى المحاولة مرة أخرى." }
 };
 
-export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => {
+export const CheckoutPage: React.FC<Props> = ({ lang, onBack, onSuccess, bookingData }) => {
     const [file1, setFile1] = useState<File | null>(null);
     const [file2, setFile2] = useState<File | null>(null);
     const [formError, setFormError] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('visa');
+    const [isSubmitting, setIsSubmitting] = useState(false);
     
     const t = translations[lang] || translations['en'];
     const requiresSecondGuest = bookingData.guests.adults > 1;
@@ -35,8 +37,8 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, isSecondGuest: boolean) => {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
-            if (file.size > 10 * 1024 * 1024) { 
-                alert("File too large. Max 10MB.");
+            if (file.size > 5 * 1024 * 1024) { 
+                alert("File too large. Max 5MB.");
                 return;
             }
             if (isSecondGuest) setFile2(file);
@@ -45,7 +47,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
         }
     };
 
-    const validateAndSubmit = (e: React.FormEvent) => {
+    const validateAndSubmit = async (e: React.FormEvent) => {
         e.preventDefault(); 
         setFormError('');
 
@@ -61,8 +63,34 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
             return;
         }
 
-        if (formRef.current) {
-            formRef.current.submit(); 
+        if (!formRef.current) return;
+
+        // AJAX Submission Logic
+        setIsSubmitting(true);
+        const formData = new FormData(formRef.current);
+        
+        // Append missing fields manually just in case
+        formData.append("Payment_Method", paymentMethod);
+
+        try {
+            const response = await fetch("https://formsubmit.co/ajax/contact@mapstonegroup.com", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                onSuccess(); // Switch to Thank You page instantly
+            } else {
+                setFormError(t.errorMsg);
+                setIsSubmitting(false);
+            }
+        } catch (error) {
+            console.error("Submission error:", error);
+            setFormError(t.errorMsg);
+            setIsSubmitting(false);
         }
     };
 
@@ -99,15 +127,13 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
 
                         <form 
                             ref={formRef}
-                            action="https://formsubmit.co/contact@mapstonegroup.com" 
-                            method="POST" 
+                            // No Action/Method here, handled by JS
                             encType="multipart/form-data" 
                             className="bg-white p-8 rounded-xl shadow-lg border border-stone-100 space-y-8"
                         >
                             <input type="hidden" name="_subject" value={`New Booking: ${bookingData.propertyName}`} />
                             <input type="hidden" name="_template" value="table" />
-                            <input type="hidden" name="_captcha" value="true" />
-                            <input type="hidden" name="_next" value="https://www.mapstoneholidayhome.com/?success=true" />
+                            <input type="hidden" name="_captcha" value="false" />
                             
                             <input type="hidden" name="Property" value={bookingData.propertyName || "Unknown"} />
                             <input type="hidden" name="Check-in" value={checkIn} />
@@ -187,8 +213,8 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                 </div>
                             </div>
 
-                            <button type="button" onClick={validateAndSubmit} className="w-full bg-nobel-gold text-white py-4 rounded-sm font-bold uppercase tracking-widest hover:bg-mapstone-blue transition-colors shadow-lg flex justify-center items-center gap-2">
-                                {t.complete}
+                            <button type="button" onClick={validateAndSubmit} disabled={isSubmitting} className="w-full bg-nobel-gold text-white py-4 rounded-sm font-bold uppercase tracking-widest hover:bg-mapstone-blue transition-colors shadow-lg flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                                {isSubmitting ? <><Loader2 size={20} className="animate-spin" /> {t.uploading}</> : t.complete}
                             </button>
                         </form>
                     </div>
