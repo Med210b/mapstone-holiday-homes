@@ -42,7 +42,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
     };
 
     const validateAndSubmit = (e: React.FormEvent) => {
-        e.preventDefault(); // Stop default for a moment to validate
+        e.preventDefault(); 
         setFormError('');
 
         // 1. Check Main File
@@ -59,14 +59,12 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
             return;
         }
 
-        // 3. If Valid, Submit the REAL form
-        // This triggers the native browser POST which guarantees file attachments work
+        // 3. Trigger Native Submit
         if (formRef.current) {
             formRef.current.submit(); 
         }
     };
 
-    // Prepare Date Strings
     const checkIn = bookingData.dateRange?.[0]?.toDateString() || "N/A";
     const checkOut = bookingData.dateRange?.[1]?.toDateString() || "N/A";
     const totalGuests = `${bookingData.guests.adults} Adults, ${bookingData.guests.children} Children`;
@@ -104,23 +102,22 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                             ref={formRef}
                             action="https://formsubmit.co/contact@mapstonegroup.com" 
                             method="POST" 
-                            encType="multipart/form-data" // CRITICAL FOR FILES
+                            encType="multipart/form-data" 
                             className="bg-white p-8 rounded-xl shadow-lg border border-stone-100 space-y-8"
                         >
-                            {/* --- HIDDEN CONFIG FIELDS --- */}
+                            {/* --- CONFIG FIELDS --- */}
                             <input type="hidden" name="_subject" value={`New Booking: ${bookingData.propertyName}`} />
                             <input type="hidden" name="_template" value="table" />
                             <input type="hidden" name="_captcha" value="true" />
-                            {/* Redirect back to website after submission */}
-                            <input type="hidden" name="_next" value="https://www.mapstoneholidayhome.com" />
+                            {/* THIS IS THE MAGIC REDIRECT: ?success=true matches the logic in App.tsx */}
+                            <input type="hidden" name="_next" value="https://www.mapstoneholidayhome.com/?success=true" />
                             
-                            {/* Hidden Booking Data */}
                             <input type="hidden" name="Property" value={bookingData.propertyName || "Unknown"} />
                             <input type="hidden" name="Check-in" value={checkIn} />
                             <input type="hidden" name="Check-out" value={checkOut} />
                             <input type="hidden" name="Total_Guests" value={totalGuests} />
 
-                            {/* --- SECTION 1: MAIN GUEST --- */}
+                            {/* --- MAIN GUEST --- */}
                             <div>
                                 <h3 className="font-serif text-xl text-mapstone-blue border-b border-stone-100 pb-2 mb-6">Main Guest Details</h3>
                                 <div className="space-y-4">
@@ -136,7 +133,6 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                         <Key size={14} className="shrink-0 mt-0.5"/><p><strong>Important:</strong> Digital E-Keys will be sent to this email.</p>
                                     </div>
 
-                                    {/* UPLOAD 1 - NAME MUST BE "attachment" */}
                                     <div className="pt-2">
                                         <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Upload Main Guest Passport/ID <span className="text-red-500">*</span></label>
                                         <div className={`border-2 border-dashed rounded-lg p-6 text-center bg-stone-50 relative ${!file1 ? 'border-red-300' : 'border-green-300 bg-green-50'}`}>
@@ -150,7 +146,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                 </div>
                             </div>
 
-                            {/* --- SECTION 2: SECOND GUEST --- */}
+                            {/* --- SECOND GUEST --- */}
                             {requiresSecondGuest && (
                                 <MotionDiv initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="pt-8 border-t border-stone-100">
                                     <div className="flex items-center gap-2 mb-6"><div className="bg-nobel-gold/10 p-2 rounded-full text-nobel-gold"><Users size={20} /></div><h3 className="font-serif text-xl text-mapstone-blue">Second Guest Details</h3></div>
@@ -159,7 +155,6 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                         <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Passport / ID No <span className="text-red-500">*</span></label><input type="text" name="Guest2_Passport_No" required className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" /></div>
                                         <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Phone <span className="text-red-500">*</span></label><input type="tel" name="Guest2_Phone" required className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" /></div>
                                         
-                                        {/* UPLOAD 2 - NAME MUST BE "attachment" */}
                                         <div className="pt-2">
                                             <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Upload Guest 2 Passport/ID <span className="text-red-500">*</span></label>
                                             <div className={`border-2 border-dashed rounded-lg p-6 text-center bg-white relative ${!file2 ? 'border-red-300' : 'border-green-300 bg-green-50'}`}>
@@ -174,7 +169,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                 </MotionDiv>
                             )}
                             
-                            {/* --- SECTION 3: PAYMENT --- */}
+                            {/* --- PAYMENT --- */}
                             <div className="pt-8 border-t border-stone-100">
                                 <h3 className="font-serif text-xl text-mapstone-blue mb-6">Payment Method</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
