@@ -1,195 +1,224 @@
 // @ts-nocheck
-import React, { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowLeft, UploadCloud, FileText, X, Loader2, Check, UserPlus, AlertTriangle, Users, CreditCard, Wallet, Smartphone, Globe, Key } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { GeometricLuxuryScene } from './components/QuantumScene';
+import { PropertyShowcase, BookingBenefits, getProperties } from './components/Diagrams';
+import PremiumAmenities from './components/PremiumAmenities';
+import PageTransition from './components/PageTransition';
+import AvailabilityCalendar from './components/AvailabilityCalendar'; 
+import { CheckoutPage } from './components/CheckoutPage'; 
+import LandlordsPage from './components/LandlordsPage';
+import ThankYouPage from './components/ThankYouPage'; 
+import { WhatsAppIcon, LogoBayut, LogoDubizzle, LogoPropertyFinder, LogoBooking, LogoAirbnb } from './components/Icons';
+import { PrivacyPolicy, TermsConditions, FAQs } from './components/LegalPages';
+import PhilosophyPage from './components/PhilosophyPage'; 
+import { ArrowDown, Menu, X, Globe, MapPin, Phone, Mail, Instagram, Facebook } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Lang, View } from './types';
 
-const MotionDiv = motion.div as any;
-
-interface Props {
-    lang: string;
-    onBack: () => void;
-    bookingData: {
-        propertyName?: string;
-        propertyId: number | null;
-        dateRange: [Date, Date] | null;
-        guests: { adults: number; children: number };
-    };
-}
-
-export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => {
-    const [file1, setFile1] = useState<File | null>(null);
-    const [file2, setFile2] = useState<File | null>(null);
-    const [formError, setFormError] = useState('');
-    const [paymentMethod, setPaymentMethod] = useState('visa');
-    
-    const requiresSecondGuest = bookingData.guests.adults > 1;
-    const formRef = useRef<HTMLFormElement>(null);
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, isSecondGuest: boolean) => {
-        if (e.target.files && e.target.files.length > 0) {
-            const file = e.target.files[0];
-            if (file.size > 10 * 1024 * 1024) { // 10MB Limit
-                alert("File too large. Max 10MB.");
-                return;
-            }
-            if (isSecondGuest) setFile2(file);
-            else setFile1(file);
-            setFormError('');
-        }
-    };
-
-    const validateAndSubmit = (e: React.FormEvent) => {
-        e.preventDefault(); 
-        setFormError('');
-
-        if (!file1) {
-            setFormError("Please upload the Main Guest's Passport or ID.");
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            return;
-        }
-
-        if (requiresSecondGuest && !file2) {
-            setFormError("Please upload the Second Guest's Passport or ID.");
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            return;
-        }
-
-        if (formRef.current) {
-            formRef.current.submit(); 
-        }
-    };
-
-    const checkIn = bookingData.dateRange?.[0]?.toDateString() || "N/A";
-    const checkOut = bookingData.dateRange?.[1]?.toDateString() || "N/A";
-    const totalGuests = `${bookingData.guests.adults} Adults, ${bookingData.guests.children} Children`;
-
-    return (
-        <div className="min-h-screen bg-stone-50 pt-32 pb-20 px-4 md:px-0">
-            <div className="container mx-auto max-w-4xl">
-                <button onClick={onBack} className="flex items-center gap-2 text-stone-400 hover:text-mapstone-blue transition-colors mb-8 font-bold text-xs uppercase tracking-widest">
-                    <ArrowLeft size={16} /> Back
-                </button>
-
-                <div className="grid md:grid-cols-3 gap-8">
-                    <div className="md:col-span-1">
-                        <div className="bg-white p-6 rounded-xl shadow-sm border border-stone-100 sticky top-32">
-                            <h3 className="font-serif text-xl text-mapstone-blue mb-4">Your Booking</h3>
-                            <div className="space-y-4 text-sm">
-                                <div><p className="text-stone-400 text-xs font-bold uppercase">Property</p><p className="font-medium text-mapstone-blue">{bookingData.propertyName}</p></div>
-                                <div><p className="text-stone-400 text-xs font-bold uppercase">Dates</p><p className="font-medium text-stone-700">{bookingData.dateRange?.[0]?.toLocaleDateString()} — {bookingData.dateRange?.[1]?.toLocaleDateString()}</p></div>
-                                <div><p className="text-stone-400 text-xs font-bold uppercase">Guests</p><p className="font-medium text-stone-700">{totalGuests}</p></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="md:col-span-2">
-                        {formError && (
-                            <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-sm flex items-start gap-3 mb-6 animate-pulse">
-                                <AlertTriangle size={20} className="shrink-0 mt-0.5" />
-                                <p className="text-sm font-bold">{formError}</p>
-                            </div>
-                        )}
-
-                        <form 
-                            ref={formRef}
-                            action="https://formsubmit.co/contact@mapstonegroup.com" 
-                            method="POST" 
-                            encType="multipart/form-data" 
-                            className="bg-white p-8 rounded-xl shadow-lg border border-stone-100 space-y-8"
-                        >
-                            {/* CONFIGURATION */}
-                            <input type="hidden" name="_subject" value={`New Booking: ${bookingData.propertyName}`} />
-                            <input type="hidden" name="_template" value="table" />
-                            <input type="hidden" name="_captcha" value="true" />
-                            <input type="hidden" name="_next" value="https://www.mapstoneholidayhome.com/?success=true" />
-                            
-                            <input type="hidden" name="Property" value={bookingData.propertyName || "Unknown"} />
-                            <input type="hidden" name="Check-in" value={checkIn} />
-                            <input type="hidden" name="Check-out" value={checkOut} />
-                            <input type="hidden" name="Total_Guests" value={totalGuests} />
-
-                            {/* MAIN GUEST */}
-                            <div>
-                                <h3 className="font-serif text-xl text-mapstone-blue border-b border-stone-100 pb-2 mb-6">Main Guest Details</h3>
-                                <div className="space-y-4">
-                                    <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Full Name <span className="text-red-500">*</span></label><input type="text" name="Main_Name" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="As shown on ID" /></div>
-                                    <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Passport / Emirates ID No <span className="text-red-500">*</span></label><input type="text" name="Main_Passport_No" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="X0000000" /></div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Phone <span className="text-red-500">*</span></label><input type="tel" name="Main_Phone" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="+971..." /></div>
-                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Email <span className="text-red-500">*</span></label><input type="email" name="Main_Email" required className="w-full border p-3 rounded-sm bg-stone-50 focus:outline-none focus:border-nobel-gold" placeholder="email@example.com" /></div>
-                                    </div>
-                                    <div className="bg-amber-50 text-amber-700 text-xs p-3 rounded-sm border border-amber-100 flex items-start gap-2">
-                                        <Key size={14} className="shrink-0 mt-0.5"/><p><strong>Important:</strong> Digital E-Keys will be sent to this email.</p>
-                                    </div>
-
-                                    {/* UPLOAD 1 - Unique Name: Main_Passport */}
-                                    <div className="pt-2">
-                                        <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Upload Main Guest Passport/ID <span className="text-red-500">*</span></label>
-                                        <div className={`border-2 border-dashed rounded-lg p-6 text-center bg-stone-50 relative ${!file1 ? 'border-red-300' : 'border-green-300 bg-green-50'}`}>
-                                            <input type="file" name="Main_Passport" accept=".pdf,.jpg,.jpeg,.png" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={(e) => handleFileChange(e, false)} />
-                                            <div className="flex flex-col items-center">
-                                                {file1 ? <Check className="text-green-600 mb-2"/> : <UploadCloud className="text-stone-400 mb-2"/>}
-                                                <p className="text-xs font-bold text-stone-600">{file1 ? file1.name : "Click to Upload Document"}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* SECOND GUEST */}
-                            {requiresSecondGuest && (
-                                <MotionDiv initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="pt-8 border-t border-stone-100">
-                                    <div className="flex items-center gap-2 mb-6"><div className="bg-nobel-gold/10 p-2 rounded-full text-nobel-gold"><Users size={20} /></div><h3 className="font-serif text-xl text-mapstone-blue">Second Guest Details</h3></div>
-                                    <div className="bg-stone-50/50 p-6 rounded-lg border border-stone-200 space-y-4">
-                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Full Name <span className="text-red-500">*</span></label><input type="text" name="Guest2_Name" required className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" /></div>
-                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Passport / ID No <span className="text-red-500">*</span></label><input type="text" name="Guest2_Passport_No" required className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" /></div>
-                                        <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Phone <span className="text-red-500">*</span></label><input type="tel" name="Guest2_Phone" required className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" /></div>
-                                        
-                                        {/* UPLOAD 2 - Unique Name: Second_Passport */}
-                                        <div className="pt-2">
-                                            <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Upload Guest 2 Passport/ID <span className="text-red-500">*</span></label>
-                                            <div className={`border-2 border-dashed rounded-lg p-6 text-center bg-white relative ${!file2 ? 'border-red-300' : 'border-green-300 bg-green-50'}`}>
-                                                <input type="file" name="Second_Passport" accept=".pdf,.jpg,.jpeg,.png" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={(e) => handleFileChange(e, true)} />
-                                                <div className="flex flex-col items-center">
-                                                    {file2 ? <Check className="text-green-600 mb-2"/> : <UploadCloud className="text-stone-400 mb-2"/>}
-                                                    <p className="text-xs font-bold text-stone-600">{file2 ? file2.name : "Click to Upload Document"}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </MotionDiv>
-                            )}
-                            
-                            {/* PAYMENT */}
-                            <div className="pt-8 border-t border-stone-100">
-                                <h3 className="font-serif text-xl text-mapstone-blue mb-6">Payment Method</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <label className={`border p-4 rounded-lg flex items-center gap-4 cursor-pointer ${paymentMethod === 'Visa' ? 'border-nobel-gold bg-amber-50/20' : 'border-stone-200'}`}>
-                                        <input type="radio" name="Payment_Method" value="Visa" checked={paymentMethod === 'Visa'} onChange={() => setPaymentMethod('Visa')} className="accent-nobel-gold w-5 h-5" />
-                                        <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><CreditCard size={18}/> Visa / Mastercard</p></div>
-                                    </label>
-                                    <label className={`border p-4 rounded-lg flex items-center gap-4 cursor-pointer ${paymentMethod === 'Apple_Pay' ? 'border-nobel-gold bg-amber-50/20' : 'border-stone-200'}`}>
-                                        <input type="radio" name="Payment_Method" value="Apple_Pay" checked={paymentMethod === 'Apple_Pay'} onChange={() => setPaymentMethod('Apple_Pay')} className="accent-nobel-gold w-5 h-5" />
-                                        <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><Wallet size={18}/> Apple Pay</p></div>
-                                    </label>
-                                    <label className={`border p-4 rounded-lg flex items-center gap-4 cursor-pointer ${paymentMethod === 'Google_Pay' ? 'border-nobel-gold bg-amber-50/20' : 'border-stone-200'}`}>
-                                        <input type="radio" name="Payment_Method" value="Google_Pay" checked={paymentMethod === 'Google_Pay'} onChange={() => setPaymentMethod('Google_Pay')} className="accent-nobel-gold w-5 h-5" />
-                                        <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><Smartphone size={18}/> Google Pay</p></div>
-                                    </label>
-                                    <label className={`border p-4 rounded-lg flex items-center gap-4 cursor-pointer ${paymentMethod === 'PayPal' ? 'border-nobel-gold bg-amber-50/20' : 'border-stone-200'}`}>
-                                        <input type="radio" name="Payment_Method" value="PayPal" checked={paymentMethod === 'PayPal'} onChange={() => setPaymentMethod('PayPal')} className="accent-nobel-gold w-5 h-5" />
-                                        <div className="flex-1"><p className="font-bold text-mapstone-blue flex items-center gap-2"><Globe size={18}/> PayPal</p></div>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <button type="button" onClick={validateAndSubmit} className="w-full bg-nobel-gold text-white py-4 rounded-sm font-bold uppercase tracking-widest hover:bg-mapstone-blue transition-colors shadow-lg flex justify-center items-center gap-2">
-                                Complete Reservation
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+const translations = {
+  en: {
+    name: "English",
+    nav: { home: "Home", about: "About", properties: "Properties", landlords: "Landlords", contact: "Contact Us", book: "Book Now", services: "Amenities" },
+    hero: { location: "DUBAI • UNITED ARAB EMIRATES", title: "MAPSTONE", subtitle: "Holiday Homes", desc: "Experience the pinnacle of luxury living in Dubai. Premium short-term rentals in the city's most prestigious locations.", cta: "Find Your Stay" },
+    about: { label: "Our Philosophy", title: "Luxury Living, Redefined" },
+    properties: { label: "Locations", title: "Curated Residences", desc: "Discover our portfolio of exclusive apartments in Dubai's most sought-after neighborhoods." },
+    landlords: { label: "Property Management", title: "For Homeowners", desc: "Maximize your property's potential with our comprehensive management services." },
+    partners: { title: "Our Partners" },
+    amenities: { title: "Premium Amenities", desc: "Every stay includes access to world-class facilities designed for your comfort." },
+    footer: { desc: "Premium short-term rental management company in Dubai.", rights: "All rights reserved.", privacy: "Privacy Policy", terms: "Terms & Conditions", faqs: "FAQS" },
+    contactPage: { title: "Get in Touch", subtitle: "We are here to assist you.", phoneLabel: "Call Us", emailLabel: "Email Us", locationLabel: "Visit Us", socialLabel: "Follow Us" },
+    booking: { title: "Request a Consultation", subtitle: "Leave your details and our team will contact you shortly." },
+  },
+  ar: {
+    name: "العربية",
+    nav: { home: "الرئيسية", about: "من نحن", properties: "عقاراتنا", landlords: "الملاك", contact: "تواصل معنا", book: "احجز الآن", services: "المميزات" },
+    hero: { location: "دبي • الإمارات العربية المتحدة", title: "مابستون", subtitle: "بيوت العطلات", desc: "استمتع بقمة الرفاهية في دبي. إيجارات قصيرة الأجل فاخرة في أرقى المواقع.", cta: "ابحث عن إقامتك" },
+    about: { label: "فلسفتنا", title: "مفهوم جديد للرفاهية" },
+    properties: { label: "المواقع", title: "إقامات مميزة", desc: "اكتشف محفظتنا من الشقق الحصرية في أكثر الأحياء طلباً في دبي." },
+    landlords: { label: "إدارة العقارات", title: "لأصحاب المنازل", desc: "ضاعف إمكانات عقارك مع خدمات الإدارة الشاملة لدينا." },
+    partners: { title: "شركاؤنا" },
+    amenities: { title: "وسائل الراحة", desc: "تشمل كل إقامة الوصول إلى مرافق عالمية المستوى مصممة لراحتك." },
+    footer: { desc: "شركة إدارة تأجير قصير الأجل متميزة في دبي.", rights: "جميع الحقوق محفوظة.", privacy: "سياسة الخصوصية", terms: "الشروط والأحكام", faqs: "الأسئلة الشائعة" },
+    contactPage: { title: "تواصل معنا", subtitle: "نحن هنا لمساعدتك.", phoneLabel: "اتصل بنا", emailLabel: "راسلنا", locationLabel: "زورونا", socialLabel: "تابعونا" },
+    booking: { title: "طلب استشارة", subtitle: "اترك بياناتك وسيقوم فريقنا بالاتصال بك قريباً." },
+  }
 };
+
+const VideoPreloader: React.FC<{ onComplete: () => void }> = ({ onComplete }) => (
+    <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.5, ease: "easeOut" }} className="fixed inset-0 z-[9999] flex items-center justify-center bg-black">
+      <video src="/loader.mp4" autoPlay muted playsInline preload="auto" onEnded={onComplete} className="w-full h-full object-cover"/>
+    </motion.div>
+);
+
+const WhatsAppButton = () => (
+  <a href="https://api.whatsapp.com/send?phone=971585928787&text&context=Site" target="_blank" className="fixed bottom-8 right-8 z-[60] group">
+    <span className="absolute inset-0 rounded-full bg-[#25D366] opacity-75 animate-ping group-hover:opacity-100"></span>
+    <div className="relative bg-gradient-to-tr from-[#128C7E] to-[#25D366] p-4 rounded-full shadow-2xl hover:scale-110 transition-transform border-2 border-white/20"><WhatsAppIcon className="h-8 w-8 drop-shadow-md" /></div>
+  </a>
+);
+
+const PartnerLogos = () => (
+  <>
+    <LogoAirbnb className="h-10 md:h-14 w-auto text-[#FF5A5F] mx-8 md:mx-12" />
+    <LogoBooking className="h-8 md:h-10 w-auto text-[#006CE4] mx-8 md:mx-12" />
+    <LogoPropertyFinder className="h-10 md:h-14 w-auto text-[#EF5E62] mx-8 md:mx-12" />
+    <LogoBayut className="h-10 md:h-14 w-auto text-[#28B16D] mx-8 md:mx-12" />
+    <LogoDubizzle className="h-10 md:h-14 w-auto text-[#E50000] mx-8 md:mx-12" />
+  </>
+);
+
+const BookingModal: React.FC<any> = ({ isOpen, onClose, lang }) => {
+   if(!isOpen) return null;
+   return (
+       <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4" onClick={onClose}>
+           <div className="bg-white p-8 rounded-lg max-w-md w-full" onClick={e => e.stopPropagation()}>
+               <h2 className="text-2xl font-serif text-mapstone-blue mb-4">{translations[lang]?.booking?.title}</h2>
+               <p className="text-sm text-stone-500 mb-6">{translations[lang]?.booking?.subtitle}</p>
+               <button onClick={onClose} className="w-full bg-stone-100 py-3 font-bold text-xs uppercase tracking-widest">Close</button>
+           </div>
+       </div>
+   )
+};
+
+const App = () => {
+  const [lang, setLang] = useState<Lang>('en');
+  const [currentView, setCurrentView] = useState<View>('home');
+  const [loading, setLoading] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
+  const [selectedProperty, setSelectedProperty] = useState(null);
+  const [bookingDetails, setBookingDetails] = useState(null); 
+  const t = translations[lang] || translations['en'];
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('success') === 'true') {
+        setLoading(false); 
+        setCurrentView('thankyou'); 
+        window.history.replaceState({}, '', window.location.pathname);
+    }
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const navLinks = [
+    { id: 'home', label: t.nav.home },
+    { id: 'about', label: t.nav.about },
+    { id: 'properties', label: t.nav.properties },
+    { id: 'services', label: t.nav.services },
+    { id: 'landlords', label: t.nav.landlords },
+    { id: 'contact', label: t.nav.contact },
+  ];
+
+  const handleNavClick = (id: string) => {
+    setMenuOpen(false);
+    if (id === 'contact') {
+        const footer = document.getElementById('contact');
+        if (footer) footer.scrollIntoView({ behavior: 'smooth' });
+        return;
+    }
+    setCurrentView(id as View);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleFooterLinkClick = (view: View) => {
+    setCurrentView(view);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCheckAvailability = (id: number) => {
+      const allProps = getProperties(lang);
+      const prop = allProps.find(p => p.id === id);
+      if (prop) {
+        setSelectedProperty(prop);
+        setCurrentView('calendar');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+  };
+
+  const handleProceedToCheckout = (data: any) => {
+      setBookingDetails(data);
+      setCurrentView('checkout');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  return (
+    <div className={`font-sans text-stone-800 antialiased selection:bg-nobel-gold selection:text-white overflow-x-hidden ${lang === 'ar' ? 'font-arabic' : ''}`} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+      <AnimatePresence>{loading && <VideoPreloader onComplete={() => setLoading(false)} />}</AnimatePresence>
+
+      <nav className={`fixed w-full z-[100] transition-all duration-300 ${scrolled || currentView !== 'home' ? 'bg-white/95 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'}`}>
+        <div className="container mx-auto px-6 flex justify-between items-center">
+          <div className="flex items-center gap-2 z-50 cursor-pointer" onClick={() => handleNavClick('home')}>
+            <img src="https://i.postimg.cc/qBQmntz0/logo-holiday.png" alt="MAPSTONE" className="h-12 md:h-20 w-auto object-contain transition-all duration-300"/>
+          </div>
+          <div className="hidden lg:flex items-center gap-8">
+            {navLinks.map(link => <button key={link.id} onClick={() => handleNavClick(link.id)} className={`text-sm font-medium uppercase tracking-wider hover:text-nobel-gold transition-colors ${scrolled || currentView !== 'home' ? 'text-mapstone-blue' : 'text-white'}`}>{link.label}</button>)}
+          </div>
+          <div className="hidden lg:flex items-center gap-4">
+            <div className="relative lang-dropdown">
+              <button onClick={() => setLangDropdownOpen(!langDropdownOpen)} className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest ${scrolled || currentView !== 'home' ? 'text-mapstone-blue' : 'text-white'}`}><Globe size={16} /> {lang.toUpperCase()}</button>
+               {langDropdownOpen && <div className="absolute top-full right-0 mt-4 w-32 bg-white shadow-xl p-2 rounded-sm"><button onClick={() => {setLang('en'); setLangDropdownOpen(false)}} className="block w-full text-left p-2 hover:bg-stone-50 text-sm">English</button><button onClick={() => {setLang('fr'); setLangDropdownOpen(false)}} className="block w-full text-left p-2 hover:bg-stone-50 text-sm">Français</button><button onClick={() => {setLang('ar'); setLangDropdownOpen(false)}} className="block w-full text-left p-2 hover:bg-stone-50 text-sm">العربية</button></div>}
+            </div>
+            <button onClick={() => setBookingOpen(true)} className="bg-nobel-gold text-white px-6 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-mapstone-blue transition-colors shadow-lg">{t.nav.book}</button>
+          </div>
+          <button className={`lg:hidden z-[201] ${scrolled || menuOpen || currentView !== 'home' ? 'text-mapstone-blue' : 'text-white'}`} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X size={28} /> : <Menu size={28} />}</button>
+        </div>
+      </nav>
+
+      <AnimatePresence>
+        {menuOpen && <motion.div initial={{ opacity: 0, x: lang === 'ar' ? '-100%' : '100%' }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: lang === 'ar' ? '-100%' : '100%' }} transition={{ type: "tween", duration: 0.3 }} className="fixed inset-0 z-[200] bg-white flex flex-col justify-center items-center lg:hidden overflow-y-auto"><div className="flex flex-col gap-6 text-center w-full max-w-xs py-10">{navLinks.map(link => <button key={link.id} onClick={() => handleNavClick(link.id)} className="text-2xl font-serif text-mapstone-blue hover:text-nobel-gold transition-colors">{link.label}</button>)}<div className="w-12 h-px bg-stone-200 mx-auto my-4"></div><div className="flex justify-center gap-4 text-sm font-bold text-stone-500"><button onClick={() => { setLang('en'); setMenuOpen(false); }} className={lang === 'en' ? 'text-nobel-gold' : ''}>EN</button><button onClick={() => { setLang('fr'); setMenuOpen(false); }} className={lang === 'fr' ? 'text-nobel-gold' : ''}>FR</button><button onClick={() => { setLang('ar'); setMenuOpen(false); }} className={lang === 'ar' ? 'text-nobel-gold' : ''}>AR</button></div><button onClick={() => { setBookingOpen(true); setMenuOpen(false); }} className="mt-4 bg-nobel-gold text-white px-8 py-3 rounded-sm text-sm font-bold uppercase tracking-widest">{t.nav.book}</button></div></motion.div>}
+      </AnimatePresence>
+
+      <AnimatePresence mode="wait">
+        {currentView === 'thankyou' && (
+            <PageTransition key="thankyou">
+                <div className="pt-20">
+                    <ThankYouPage onHome={() => setCurrentView('home')} />
+                </div>
+            </PageTransition>
+        )}
+
+        {currentView === 'home' && (
+          <PageTransition key="home">
+            <header className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden bg-mapstone-dark border-b border-nobel-gold/20">
+              <div className="absolute inset-0 w-full h-full z-0"><div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('https://i.postimg.cc/Y9ZFqfLc/69d1fa33-9d37-440c-9d9e-2b73216809f6.png')" }}></div><div className="absolute inset-0 bg-black/30 z-10"></div></div>
+              <div className="absolute inset-0 z-0 opacity-60"><GeometricLuxuryScene /></div>
+              <div className="container mx-auto px-6 relative z-20 text-center mt-20"><span className="inline-block py-1 px-3 border border-white/30 rounded-full text-[10px] font-bold tracking-[0.2em] text-white mb-6 uppercase">{t.hero.location}</span><h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-2 tracking-tight">{t.hero.title}</h1><p className="text-xl md:text-3xl font-light text-nobel-gold uppercase tracking-[0.3em] mb-8">{t.hero.subtitle}</p><button onClick={() => handleNavClick('properties')} className="group relative overflow-hidden rounded-full bg-white text-mapstone-blue px-8 py-4 text-xs font-bold uppercase tracking-widest hover:bg-nobel-gold hover:text-white hover:shadow-xl transition-all duration-300"><span className="relative z-10 flex items-center gap-2">{t.hero.cta} <ArrowDown size={16} /></span></button></div>
+            </header>
+            <PremiumAmenities lang={lang} onBook={() => setBookingOpen(true)} />
+            <section className="py-16 bg-stone-50"><BookingBenefits lang={lang} /></section>
+            <section className="py-16 bg-white border-b border-nobel-gold/20 overflow-hidden"><div className="container mx-auto px-6 mb-20 text-center"><p className="text-3xl md:text-4xl font-serif text-mapstone-blue">{t.partners.title}</p></div><div className="flex overflow-hidden w-full relative"><div className="flex animate-marquee whitespace-nowrap"><PartnerLogos /><PartnerLogos /><PartnerLogos /><PartnerLogos /></div></div></section>
+          </PageTransition>
+        )}
+
+        {currentView === 'properties' && <PageTransition key="properties"><div className="pt-20"><PropertyShowcase lang={lang} onBook={handleCheckAvailability} /></div></PageTransition>}
+        {currentView === 'about' && <PageTransition key="about"><PhilosophyPage /></PageTransition>}
+        {currentView === 'landlords' && <PageTransition key="landlords"><LandlordsPage lang={lang} onBook={() => setBookingOpen(true)} /></PageTransition>}
+        {currentView === 'calendar' && <PageTransition key="calendar"><div className="min-h-screen bg-stone-100 pt-32 pb-20 px-4"><div className="container mx-auto"><AvailabilityCalendar lang={lang} onClose={() => setCurrentView('properties')} selectedProperty={selectedProperty} onProceedToCheckout={handleProceedToCheckout} /></div></div></PageTransition>}
+        {currentView === 'checkout' && <PageTransition key="checkout"><CheckoutPage lang={lang} onBack={() => setCurrentView('calendar')} bookingData={{ propertyId: selectedProperty?.id, propertyName: selectedProperty?.title, dateRange: bookingDetails?.dateRange, guests: bookingDetails?.guests }} /></PageTransition>}
+        {currentView === 'privacy' && <PageTransition key="privacy"><PrivacyPolicy /></PageTransition>}
+        {currentView === 'terms' && <PageTransition key="terms"><TermsConditions /></PageTransition>}
+        {currentView === 'faq' && <PageTransition key="faq"><FAQs /></PageTransition>}
+      </AnimatePresence>
+
+      <footer id="contact" className="bg-[#204c77] pt-20 pb-10">
+         <div className="container mx-auto px-6 text-white">
+            <div className="grid md:grid-cols-4 gap-12 mb-16">
+               <div className="col-span-1"><h3 className="font-serif text-lg mb-4">MAPSTONE</h3><p className="text-sm text-stone-300 mb-6">{t.footer.desc}</p><div className="flex gap-4"><a href="https://www.instagram.com/mapstone_holiday_homes/" target="_blank" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-mapstone-blue transition-colors"><Instagram size={18} className="text-white hover:text-mapstone-blue"/></a><a href="https://www.facebook.com/profile.php?id=61582980871159" target="_blank" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-mapstone-blue transition-colors"><Facebook size={18} className="text-white hover:text-mapstone-blue"/></a></div></div>
+               <div><h4 className="font-bold text-white uppercase tracking-widest text-xs mb-4">{t.contactPage.locationLabel}</h4><p className="text-stone-300 text-sm mb-2 flex items-start gap-2"><MapPin size={16} className="shrink-0 mt-0.5" /> <span>Al Barsha First<br/>Dubai, UAE</span></p></div>
+               <div><h4 className="font-bold text-white uppercase tracking-widest text-xs mb-4">{t.contactPage.phoneLabel}</h4><p className="text-stone-300 text-sm mb-2 flex items-center gap-2"><Phone size={16} /> +971 58 592 8787</p><p className="text-stone-300 text-sm mb-2 flex items-center gap-2"><Mail size={16} /> contact@mapstonegroup.com</p></div>
+               <div><h4 className="font-bold text-white uppercase tracking-widest text-xs mb-4">Links</h4><ul className="space-y-2 text-sm text-stone-300"><li><button onClick={() => handleFooterLinkClick('privacy')} className="hover:text-white transition-colors">{t.footer.privacy}</button></li><li><button onClick={() => handleFooterLinkClick('terms')} className="hover:text-white transition-colors">{t.footer.terms}</button></li><li><button onClick={() => handleFooterLinkClick('faq')} className="hover:text-white transition-colors">{t.footer.faqs}</button></li></ul></div>
+            </div>
+            <div className="border-t border-white/10 pt-8 flex justify-between items-center text-xs text-stone-400"><p>&copy; {new Date().getFullYear()} MAPSTONE HOLIDAY HOMES RENTAL L.L.C</p><p>{t.footer.rights}</p></div>
+         </div>
+      </footer>
+      <WhatsAppButton />
+      <BookingModal isOpen={bookingOpen} onClose={() => setBookingOpen(false)} lang={lang} />
+    </div>
+  );
+};
+
+export default App;

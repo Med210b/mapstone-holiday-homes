@@ -17,22 +17,18 @@ interface Props {
 }
 
 export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => {
-    // --- STATE ---
     const [file1, setFile1] = useState<File | null>(null);
     const [file2, setFile2] = useState<File | null>(null);
     const [formError, setFormError] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('visa');
     
-    // Logic
     const requiresSecondGuest = bookingData.guests.adults > 1;
     const formRef = useRef<HTMLFormElement>(null);
 
-    // --- HANDLERS ---
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, isSecondGuest: boolean) => {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
-            // 10MB limit
-            if (file.size > 10 * 1024 * 1024) {
+            if (file.size > 10 * 1024 * 1024) { 
                 alert("File too large. Max 10MB.");
                 return;
             }
@@ -46,21 +42,18 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
         e.preventDefault(); 
         setFormError('');
 
-        // 1. Check Main File
         if (!file1) {
             setFormError("Please upload the Main Guest's Passport or ID.");
             window.scrollTo({ top: 0, behavior: 'smooth' });
             return;
         }
 
-        // 2. Check Second Guest File (if required)
         if (requiresSecondGuest && !file2) {
             setFormError("Please upload the Second Guest's Passport or ID.");
             window.scrollTo({ top: 0, behavior: 'smooth' });
             return;
         }
 
-        // 3. Trigger Native Submit
         if (formRef.current) {
             formRef.current.submit(); 
         }
@@ -78,7 +71,6 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                 </button>
 
                 <div className="grid md:grid-cols-3 gap-8">
-                    {/* LEFT: SUMMARY */}
                     <div className="md:col-span-1">
                         <div className="bg-white p-6 rounded-xl shadow-sm border border-stone-100 sticky top-32">
                             <h3 className="font-serif text-xl text-mapstone-blue mb-4">Your Booking</h3>
@@ -90,7 +82,6 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                         </div>
                     </div>
 
-                    {/* RIGHT: NATIVE FORM */}
                     <div className="md:col-span-2">
                         {formError && (
                             <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-sm flex items-start gap-3 mb-6 animate-pulse">
@@ -131,7 +122,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                         <Key size={14} className="shrink-0 mt-0.5"/><p><strong>Important:</strong> Digital E-Keys will be sent to this email.</p>
                                     </div>
 
-                                    {/* UPLOAD 1 - Unique Name: Main_Passport */}
+                                    {/* UPLOAD 1 - Name: Main_Passport */}
                                     <div className="pt-2">
                                         <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Upload Main Guest Passport/ID <span className="text-red-500">*</span></label>
                                         <div className={`border-2 border-dashed rounded-lg p-6 text-center bg-stone-50 relative ${!file1 ? 'border-red-300' : 'border-green-300 bg-green-50'}`}>
@@ -154,7 +145,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                         <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Passport / ID No <span className="text-red-500">*</span></label><input type="text" name="Guest2_Passport_No" required className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" /></div>
                                         <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Phone <span className="text-red-500">*</span></label><input type="tel" name="Guest2_Phone" required className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" /></div>
                                         
-                                        {/* UPLOAD 2 - Unique Name: Second_Passport */}
+                                        {/* UPLOAD 2 - Name: Second_Passport */}
                                         <div className="pt-2">
                                             <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Upload Guest 2 Passport/ID <span className="text-red-500">*</span></label>
                                             <div className={`border-2 border-dashed rounded-lg p-6 text-center bg-white relative ${!file2 ? 'border-red-300' : 'border-green-300 bg-green-50'}`}>
