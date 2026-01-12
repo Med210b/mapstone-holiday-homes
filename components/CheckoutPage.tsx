@@ -31,8 +31,9 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, isSecondGuest: boolean) => {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
-            if (file.size > 5 * 1024 * 1024) {
-                alert("File too large. Max 5MB.");
+            // 10MB limit (relaxed slightly)
+            if (file.size > 10 * 1024 * 1024) {
+                alert("File too large. Max 10MB.");
                 return;
             }
             if (isSecondGuest) setFile2(file);
@@ -109,9 +110,9 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                             <input type="hidden" name="_subject" value={`New Booking: ${bookingData.propertyName}`} />
                             <input type="hidden" name="_template" value="table" />
                             <input type="hidden" name="_captcha" value="true" />
-                            {/* THIS IS THE MAGIC REDIRECT: ?success=true matches the logic in App.tsx */}
                             <input type="hidden" name="_next" value="https://www.mapstoneholidayhome.com/?success=true" />
                             
+                            {/* Hidden Data */}
                             <input type="hidden" name="Property" value={bookingData.propertyName || "Unknown"} />
                             <input type="hidden" name="Check-in" value={checkIn} />
                             <input type="hidden" name="Check-out" value={checkOut} />
@@ -133,11 +134,11 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                         <Key size={14} className="shrink-0 mt-0.5"/><p><strong>Important:</strong> Digital E-Keys will be sent to this email.</p>
                                     </div>
 
-                                    {/* UPLOAD 1 - NAME MUST BE "attachment" */}
+                                    {/* UPLOAD 1 - NAME CHANGED TO "attachment[]" */}
                                     <div className="pt-2">
                                         <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Upload Main Guest Passport/ID <span className="text-red-500">*</span></label>
                                         <div className={`border-2 border-dashed rounded-lg p-6 text-center bg-stone-50 relative ${!file1 ? 'border-red-300' : 'border-green-300 bg-green-50'}`}>
-                                            <input type="file" name="attachment" accept=".pdf,.jpg,.jpeg,.png" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={(e) => handleFileChange(e, false)} />
+                                            <input type="file" name="attachment[]" accept=".pdf,.jpg,.jpeg,.png" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={(e) => handleFileChange(e, false)} />
                                             <div className="flex flex-col items-center">
                                                 {file1 ? <Check className="text-green-600 mb-2"/> : <UploadCloud className="text-stone-400 mb-2"/>}
                                                 <p className="text-xs font-bold text-stone-600">{file1 ? file1.name : "Click to Upload Document"}</p>
@@ -156,11 +157,11 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                                         <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Passport / ID No <span className="text-red-500">*</span></label><input type="text" name="Guest2_Passport_No" required className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" /></div>
                                         <div><label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Phone <span className="text-red-500">*</span></label><input type="tel" name="Guest2_Phone" required className="w-full border p-3 rounded-sm bg-white focus:outline-none focus:border-nobel-gold" /></div>
                                         
-                                        {/* UPLOAD 2 - NAME MUST BE "attachment" */}
+                                        {/* UPLOAD 2 - NAME CHANGED TO "attachment[]" */}
                                         <div className="pt-2">
                                             <label className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">Upload Guest 2 Passport/ID <span className="text-red-500">*</span></label>
                                             <div className={`border-2 border-dashed rounded-lg p-6 text-center bg-white relative ${!file2 ? 'border-red-300' : 'border-green-300 bg-green-50'}`}>
-                                                <input type="file" name="attachment" accept=".pdf,.jpg,.jpeg,.png" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={(e) => handleFileChange(e, true)} />
+                                                <input type="file" name="attachment[]" accept=".pdf,.jpg,.jpeg,.png" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onChange={(e) => handleFileChange(e, true)} />
                                                 <div className="flex flex-col items-center">
                                                     {file2 ? <Check className="text-green-600 mb-2"/> : <UploadCloud className="text-stone-400 mb-2"/>}
                                                     <p className="text-xs font-bold text-stone-600">{file2 ? file2.name : "Click to Upload Document"}</p>
