@@ -8,21 +8,21 @@ const MotionDiv = motion.div as any;
 const translations = {
     en: {
         title: "The Art of Living",
-        p1: "Mapstone Holiday Homes was born from a desire to bridge the gap between luxury hospitality and the comfort of home. We believe that a stay in Dubai should be more than just a visit; it should be an experience.",
+        p1: "MAPSTONE Holiday Homes was born from a desire to bridge the gap between luxury hospitality and the comfort of home. We believe that a stay in Dubai should be more than just a visit; it should be an experience.",
         p2: "Our philosophy is rooted in detail. From the thread count of our linens to the curation of local art in our living spaces, every element is chosen to evoke a sense of belonging and exclusivity.",
-        p3: "We don't just manage properties; we steward lifestyles. Whether you are here for business or leisure, Mapstone ensures your environment reflects your standards."
+        p3: "We don't just manage properties; we steward lifestyles. Whether you are here for business or leisure, MAPSTONE ensures your environment reflects your standards."
     },
     fr: {
         title: "L'Art de Vivre",
-        p1: "Mapstone Holiday Homes est né du désir de combler le fossé entre l'hospitalité de luxe et le confort de la maison. Nous pensons qu'un séjour à Dubaï doit être plus qu'une simple visite.",
+        p1: "MAPSTONE Holiday Homes est né du désir de combler le fossé entre l'hospitalité de luxe et le confort de la maison. Nous pensons qu'un séjour à Dubaï doit être plus qu'une simple visite.",
         p2: "Notre philosophie est ancrée dans le détail. Du nombre de fils de nos draps à la sélection d'art local, chaque élément est choisi pour évoquer un sentiment d'appartenance et d'exclusivité.",
-        p3: "Nous ne gérons pas seulement des propriétés ; nous gérons des styles de vie. Que vous soyez ici pour affaires ou pour le plaisir, Mapstone veille à ce que votre environnement reflète vos standards."
+        p3: "Nous ne gérons pas seulement des propriétés ; nous gérons des styles de vie. Que vous soyez ici pour affaires ou pour le plaisir, MAPSTONE veille à ce que votre environnement reflète vos standards."
     },
     ar: {
         title: "فن الحياة",
-        p1: "تأسست مابستون بيوت العطلات من رغبة في سد الفجوة بين ضيافة الفنادق الفاخرة وراحة المنزل. نحن نؤمن بأن الإقامة في دبي يجب أن تكون أكثر من مجرد زيارة.",
+        p1: "تأسست MAPSTONE بيوت العطلات من رغبة في سد الفجوة بين ضيافة الفنادق الفاخرة وراحة المنزل. نحن نؤمن بأن الإقامة في دبي يجب أن تكون أكثر من مجرد زيارة.",
         p2: "فلسفتنا متجذرة في التفاصيل. من جودة بياضاتنا إلى اختيار الفن المحلي في مساحات المعيشة لدينا، يتم اختيار كل عنصر لإثارة شعور بالانتماء والتميز.",
-        p3: "نحن لا ندير العقارات فحسب؛ نحن نرعى أنماط الحياة. سواء كنت هنا للعمل أو الترفيه، تضمن مابستون أن بيئتك تعكس معاييرك."
+        p3: "نحن لا ندير العقارات فحسب؛ نحن نرعى أنماط الحياة. سواء كنت هنا للعمل أو الترفيه، تضمن MAPSTONE أن بيئتك تعكس معاييرك."
     }
 };
 
@@ -42,7 +42,12 @@ const PhilosophyPage = ({ lang = 'en' }: { lang?: Lang }) => {
                         <p>{t.p3}</p>
                     </div>
                     <div className="mt-16">
-                        <img src="https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1000&q=80" alt="Dubai Skyline" className="w-full h-96 object-cover rounded-sm shadow-2xl grayscale hover:grayscale-0 transition-all duration-1000" />
+                        {/* Updated Image */}
+                        <img 
+                            src="https://i.postimg.cc/VL4QXvSx/luxury-Dubai-inspire.png" 
+                            alt="Dubai Skyline" 
+                            className="w-full h-96 object-cover rounded-sm shadow-2xl transition-all duration-1000 hover:scale-[1.01]" 
+                        />
                     </div>
                 </MotionDiv>
             </div>
