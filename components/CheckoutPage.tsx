@@ -5,6 +5,18 @@ import { ArrowLeft, UploadCloud, FileText, X, Loader2, Check, UserPlus, AlertTri
 
 const MotionDiv = motion.div as any;
 
+const COUNTRY_CODES = [
+  { code: "+971", country: "United Arab Emirates", flag: "🇦🇪" },
+  { code: "+1", country: "United States", flag: "🇺🇸" },
+  { code: "+44", country: "United Kingdom", flag: "🇬🇧" },
+  { code: "+33", country: "France", flag: "🇫🇷" },
+  { code: "+7", country: "Russia", flag: "🇷🇺" },
+  { code: "+966", country: "Saudi Arabia", flag: "🇸🇦" },
+  { code: "+49", country: "Germany", flag: "🇩🇪" },
+  { code: "+91", country: "India", flag: "🇮🇳" },
+  { code: "+86", country: "China", flag: "🇨🇳" },
+];
+
 interface Props {
     lang: string;
     onBack: () => void;
