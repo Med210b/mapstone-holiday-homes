@@ -11,7 +11,7 @@ import ThankYouPage from './components/ThankYouPage';
 import { WhatsAppIcon, LogoBayut, LogoDubizzle, LogoPropertyFinder, LogoBooking, LogoAirbnb } from './components/Icons';
 import { PrivacyPolicy, TermsConditions, FAQs } from './components/LegalPages';
 import PhilosophyPage from './components/PhilosophyPage'; 
-import { ArrowDown, Menu, X, Globe, MapPin, Phone, Mail, Instagram, Facebook, Star, Utensils, Car, Key } from 'lucide-react';
+import { ArrowDown, Menu, X, Globe, MapPin, Phone, Mail, Instagram, Facebook, Star, Utensils, Car } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Lang, View } from './types';
 
@@ -115,6 +115,8 @@ const App = () => {
 
   const handleNavClick = (id: string) => {
     setMenuOpen(false);
+    
+    // 1. Contact Scroll
     if (id === 'contact') {
         if (currentView !== 'home') {
             setCurrentView('home');
@@ -128,6 +130,8 @@ const App = () => {
         }
         return;
     }
+
+    // 2. Services / Amenities Scroll
     if (id === 'services') {
         if (currentView !== 'home') {
             setCurrentView('home');
@@ -151,6 +155,8 @@ const App = () => {
         }
         return;
     }
+
+    // 3. Page Switch
     setCurrentView(id as View);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -220,7 +226,7 @@ const App = () => {
               <div className="container mx-auto px-6 relative z-20 text-center mt-20"><span className="inline-block py-1 px-3 border border-white/30 rounded-full text-[10px] font-bold tracking-[0.2em] text-white mb-6 uppercase">{t.hero.location}</span><h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-2 tracking-tight">{t.hero.title}</h1><p className="text-xl md:text-3xl font-light text-nobel-gold uppercase tracking-[0.3em] mb-8">{t.hero.subtitle}</p><button onClick={() => handleNavClick('properties')} className="group relative overflow-hidden rounded-full bg-white text-mapstone-blue px-8 py-4 text-xs font-bold uppercase tracking-widest hover:bg-nobel-gold hover:text-white hover:shadow-xl transition-all duration-300"><span className="relative z-10 flex items-center gap-2">{t.hero.cta} <ArrowDown size={16} /></span></button></div>
             </header>
             
-            {/* AMENITIES SECTION (Original) */}
+            {/* AMENITIES SECTION */}
             <PremiumAmenities lang={lang} onBook={() => setBookingOpen(true)} />
 
             {/* --- NEW SECTION 1: LUXURY STANDARD --- */}
@@ -273,7 +279,7 @@ const App = () => {
                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
                <div className="container mx-auto px-6 text-center relative z-10">
                   <div className="mb-8 text-nobel-gold opacity-50"><Star size={24} className="inline mx-1"/><Star size={24} className="inline mx-1"/><Star size={24} className="inline mx-1"/><Star size={24} className="inline mx-1"/><Star size={24} className="inline mx-1"/></div>
-                  <h2 className="text-3xl md:text-5xl font-serif mb-10 leading-tight max-w-4xl mx-auto">"An absolute masterpiece of hospitality. Mapstone defined our Dubai experience with elegance and precision."</h2>
+                  <h2 className="text-3xl md:text-5xl font-serif mb-10 leading-tight max-w-4xl mx-auto">"An absolute masterpiece of hospitality. MAPSTONE defined our Dubai experience with elegance and precision."</h2>
                   <div className="flex items-center justify-center gap-4">
                       <div className="w-12 h-12 bg-nobel-gold/20 rounded-full flex items-center justify-center text-nobel-gold font-serif font-bold text-lg">J</div>
                       <div className="text-left">
@@ -288,8 +294,9 @@ const App = () => {
             <section className="py-24 bg-white">
                <div className="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
                   <div className="order-2 md:order-1 h-[600px] grid grid-cols-2 gap-4">
-                      <img src="https://images.unsplash.com/photo-1518684079-3c830dcef6c5?auto=format&fit=crop&w=400&q=80" className="w-full h-full object-cover rounded-sm mt-12 shadow-lg" alt="Dubai City" />
-                      <img src="https://images.unsplash.com/photo-1528702748617-c64d49f918af?auto=format&fit=crop&w=400&q=80" className="w-full h-full object-cover rounded-sm mb-12 shadow-lg" alt="Dubai Beach" />
+                      {/* FIXED IMAGES: New reliable Unsplash URLs */}
+                      <img src="https://images.unsplash.com/photo-1512453979798-5ea936a794de?auto=format&fit=crop&w=800&q=80" className="w-full h-full object-cover rounded-sm mt-12 shadow-lg" alt="Dubai City" />
+                      <img src="https://images.unsplash.com/photo-1518684079-3c830dcef6c5?auto=format&fit=crop&w=800&q=80" className="w-full h-full object-cover rounded-sm mb-12 shadow-lg" alt="Dubai Beach" />
                   </div>
                   <div className="order-1 md:order-2">
                      <span className="text-nobel-gold font-bold tracking-widest text-xs uppercase mb-3 block">Destination</span>
