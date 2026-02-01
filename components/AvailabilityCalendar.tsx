@@ -201,7 +201,7 @@ const AvailabilityCalendar: React.FC<Props> = ({ lang, onClose, selectedProperty
                     {isStudio && <div className="bg-white/10 p-3 rounded-sm border border-white/20 mb-6 flex gap-3"><AlertCircle className="text-nobel-gold shrink-0" size={20} /><p className="text-xs text-stone-300 leading-relaxed"><strong>{t.studioPolicy}</strong></p></div>}
                 </div>
                 
-                {/* DEBUG STATUS AREA - Shows user exactly what is happening */}
+                {/* DEBUG STATUS AREA */}
                 <div className="mt-4 bg-black/20 p-3 rounded-sm">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 mb-2">Sync Status</p>
                     <div className="space-y-1">
