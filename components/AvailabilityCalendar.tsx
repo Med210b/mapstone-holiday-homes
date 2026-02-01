@@ -23,19 +23,27 @@ interface Props {
     onProceedToCheckout: (data: { dateRange: [Date, Date], guests: { adults: number, children: number } }) => void;
 }
 
-// --- GOOGLE CALENDAR LINKS ---
-const ICAL_URLS: { [key: number]: string } = {
+// --- CORRECT CONFIGURATION: ALL 3 LINKS PER PROPERTY ---
+const ICAL_URLS: { [key: number]: string[] } = {
     // ID 4: Westwood Al Furjan
-    4: "https://calendar.google.com/calendar/ical/c_a385fec5acc242c4193a269335b9bd98aedada50249e0e0ff69c580005acadc6%40group.calendar.google.com/private-4ac01705b0841a446493c76f8b9e11d7/basic.ics",
+    4: [
+        "https://ical.booking.com/v1/export?t=d5e025de-61d6-413f-8ad1-98f9d0b1ae81",
+        "https://www.airbnb.ae/calendar/ical/1580396287740208765.ics?t=9616eb9e5c8c4b0eb4375e07cfc50fb9",
+        "https://calendar.google.com/calendar/ical/c_a385fec5acc242c4193a269335b9bd98aedada50249e0e0ff69c580005acadc6%40group.calendar.google.com/private-4ac01705b0841a446493c76f8b9e11d7/basic.ics"
+    ],
     
     // ID 5: Cloud Tower JVT
-    5: "https://calendar.google.com/calendar/ical/c_21e8000cdae50de6703cf877bf4e5ec81a6ccbeca6edf3b9698cc035b4c492ed%40group.calendar.google.com/private-fb57bb3e640205ada4e28d33946b5904/basic.ics"
+    5: [
+        "https://ical.booking.com/v1/export?t=9eb975cf-0d03-442a-b801-fd8723208341",
+        "https://www.airbnb.ae/calendar/ical/1606912688736441590.ics?t=1e695148925c4d789e5397a3fdb3fb40",
+        "https://calendar.google.com/calendar/ical/c_21e8000cdae50de6703cf877bf4e5ec81a6ccbeca6edf3b9698cc035b4c492ed%40group.calendar.google.com/private-fb57bb3e640205ada4e28d33946b5904/basic.ics"
+    ]
 };
 
 const translations = {
-    en: { selectDates: "Select Dates", checkIn: "Check-in", checkOut: "Check-out", adults: "Adults", children: "Children", infant: "Infant", studioPolicy: "Studio Policy: Max 2 Adults & 1 Infant (Strictly Enforced).", selected: "Selected Property", totalStay: "Total Stay", nights: "Nights Selected", continue: "Continue to Details", alert: "Please select check-in & check-out", loading: "Syncing Calendar...", error: "Could not sync calendar" },
-    fr: { selectDates: "Sélectionnez les Dates", checkIn: "Arrivée", checkOut: "Départ", adults: "Adultes", children: "Enfants", infant: "Bébé", studioPolicy: "Politique Studio: Max 2 Adultes & 1 Bébé (Strictement Appliqué).", selected: "Propriété Sélectionnée", totalStay: "Séjour Total", nights: "Nuits Sélectionnées", continue: "Continuer vers les Détails", alert: "Veuillez sélectionner l'arrivée et le départ", loading: "Synchronisation...", error: "Erreur de synchronisation" },
-    ar: { selectDates: "اختر التواريخ", checkIn: "تاريخ الوصول", checkOut: "تاريخ المغادرة", adults: "البالغين", children: "الأطفال", infant: "رضيع", studioPolicy: "سياسة الاستوديو: بحد أقصى 2 بالغين و 1 رضيع (تطبق بصرامة).", selected: "العقار المختار", totalStay: "إجمالي الإقامة", nights: "ليالي محددة", continue: "المتابعة للتفاصيل", alert: "يرجى اختيار تاريخ الوصول والمغادرة", loading: "جاري التحديث...", error: "تعذر تحديث التقويم" }
+    en: { selectDates: "Select Dates", checkIn: "Check-in", checkOut: "Check-out", adults: "Adults", children: "Children", infant: "Infant", studioPolicy: "Studio Policy: Max 2 Adults & 1 Infant (Strictly Enforced).", selected: "Selected Property", totalStay: "Total Stay", nights: "Nights Selected", continue: "Continue to Details", alert: "Please select check-in & check-out", loading: "Checking all calendars...", error: "Sync incomplete, try refreshing." },
+    fr: { selectDates: "Sélectionnez les Dates", checkIn: "Arrivée", checkOut: "Départ", adults: "Adultes", children: "Enfants", infant: "Bébé", studioPolicy: "Politique Studio: Max 2 Adultes & 1 Bébé (Strictement Appliqué).", selected: "Propriété Sélectionnée", totalStay: "Séjour Total", nights: "Nuits Sélectionnées", continue: "Continuer vers les Détails", alert: "Veuillez sélectionner l'arrivée et le départ", loading: "Vérification...", error: "Erreur de synchronisation" },
+    ar: { selectDates: "اختر التواريخ", checkIn: "تاريخ الوصول", checkOut: "تاريخ المغادرة", adults: "البالغين", children: "الأطفال", infant: "رضيع", studioPolicy: "سياسة الاستوديو: بحد أقصى 2 بالغين و 1 رضيع (تطبق بصرامة).", selected: "العقار المختار", totalStay: "إجمالي الإقامة", nights: "ليالي محددة", continue: "المتابعة للتفاصيل", alert: "يرجى اختيار تاريخ الوصول والمغادرة", loading: "جاري التحقق...", error: "فشل التحديث" }
 };
 
 const AvailabilityCalendar: React.FC<Props> = ({ lang, onClose, selectedProperty, onProceedToCheckout }) => {
@@ -61,52 +69,70 @@ const AvailabilityCalendar: React.FC<Props> = ({ lang, onClose, selectedProperty
             
             setIsLoading(true);
             setSyncStatus('idle');
-            const targetUrl = ICAL_URLS[selectedProperty.id];
             
-            // ROBUST PROXY LIST (Plan A, Plan B, Plan C)
-            const proxies = [
-                `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`,
-                `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`,
-                `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`
+            const urls = ICAL_URLS[selectedProperty.id];
+            const blockedDates: Date[] = [];
+            const cacheBuster = `&nocache=${Date.now()}`;
+            
+            // PROXY LIST (Plan A, Plan B, Plan C)
+            const getProxies = (target: string) => [
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(target + "?" + cacheBuster)}`,
+                `https://corsproxy.io/?${encodeURIComponent(target + "?" + cacheBuster)}`,
+                `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(target + "?" + cacheBuster)}`
             ];
 
-            let success = false;
+            try {
+                // Fetch ALL calendars (Booking, Airbnb, Google) in parallel
+                await Promise.all(urls.map(async (originalUrl) => {
+                    const proxies = getProxies(originalUrl);
+                    let fetched = false;
 
-            for (const proxy of proxies) {
-                if (success) break;
-                try {
-                    const response = await fetch(proxy);
-                    if (!response.ok) throw new Error("Network error");
-                    
-                    const data = await response.text();
-                    
-                    // Parse iCal
-                    const jcalData = ICAL.parse(data);
-                    const comp = new ICAL.Component(jcalData);
-                    const vevents = comp.getAllSubcomponents('vevent');
-                    
-                    const blocked: Date[] = [];
-                    vevents.forEach((event) => {
-                        const start = event.getFirstPropertyValue('dtstart').toJSDate();
-                        const end = event.getFirstPropertyValue('dtend').toJSDate();
-                        
-                        let current = new Date(start);
-                        while (current < end) {
-                            blocked.push(new Date(current));
-                            current.setDate(current.getDate() + 1);
+                    // Try proxies until one works for this specific URL
+                    for (const proxy of proxies) {
+                        if (fetched) break;
+                        try {
+                            const response = await fetch(proxy);
+                            if (!response.ok) throw new Error("Network error");
+                            
+                            const data = await response.text();
+                            
+                            // Basic validation to ensure it's a calendar file
+                            if (!data.includes("BEGIN:VCALENDAR")) throw new Error("Invalid Data");
+
+                            const jcalData = ICAL.parse(data);
+                            const comp = new ICAL.Component(jcalData);
+                            const vevents = comp.getAllSubcomponents('vevent');
+
+                            vevents.forEach((event) => {
+                                const dtstart = event.getFirstPropertyValue('dtstart');
+                                const dtend = event.getFirstPropertyValue('dtend');
+                                
+                                if (dtstart && dtend) {
+                                    const start = dtstart.toJSDate();
+                                    const end = dtend.toJSDate();
+                                    
+                                    let current = new Date(start);
+                                    while (current < end) {
+                                        blockedDates.push(new Date(current));
+                                        current.setDate(current.getDate() + 1);
+                                    }
+                                }
+                            });
+                            fetched = true; // Success for this URL
+                        } catch (err) {
+                            // Silently fail to next proxy
                         }
-                    });
+                    }
+                }));
 
-                    setDisabledDates(blocked);
-                    setSyncStatus('success');
-                    success = true;
-                } catch (error) {
-                    console.warn(`Proxy failed, switching to backup...`);
-                }
+                setDisabledDates(blockedDates);
+                setSyncStatus('success');
+            } catch (error) {
+                console.error("Sync partial error", error);
+                setSyncStatus('error');
+            } finally {
+                setIsLoading(false);
             }
-
-            if (!success) setSyncStatus('error');
-            setIsLoading(false);
         };
 
         fetchAvailability();
