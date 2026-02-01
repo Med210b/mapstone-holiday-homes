@@ -4,6 +4,7 @@ import Calendar from 'react-calendar';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, X, AlertCircle, Calendar as CalendarIcon } from 'lucide-react';
 import 'react-calendar/dist/Calendar.css'; 
+import ICAL from 'ical.js'; // Ensure you ran: npm install ical.js
 import { Lang } from '../types';
 
 const MotionDiv = motion.div as any;
@@ -23,10 +24,27 @@ interface Props {
     onProceedToCheckout: (data: { dateRange: [Date, Date], guests: { adults: number, children: number } }) => void;
 }
 
+// --- AUTOMATIC SYNC CONFIGURATION ---
+const ICAL_URLS: { [key: number]: string[] } = {
+    // ID 4: Westwood Al Furjan (Brand New Luxury Studio)
+    4: [
+        "https://ical.booking.com/v1/export?t=d5e025de-61d6-413f-8ad1-98f9d0b1ae81",
+        "https://www.airbnb.ae/calendar/ical/1580396287740208765.ics?t=9616eb9e5c8c4b0eb4375e07cfc50fb9",
+        "https://calendar.google.com/calendar/ical/c_a385fec5acc242c4193a269335b9bd98aedada50249e0e0ff69c580005acadc6%40group.calendar.google.com/private-4ac01705b0841a446493c76f8b9e11d7/basic.ics"
+    ],
+    
+    // ID 5: Cloud Tower JVT (Spacious Executive 1BR)
+    5: [
+        "https://ical.booking.com/v1/export?t=9eb975cf-0d03-442a-b801-fd8723208341",
+        "https://www.airbnb.ae/calendar/ical/1606912688736441590.ics?t=1e695148925c4d789e5397a3fdb3fb40",
+        "https://calendar.google.com/calendar/ical/c_21e8000cdae50de6703cf877bf4e5ec81a6ccbeca6edf3b9698cc035b4c492ed%40group.calendar.google.com/private-fb57bb3e640205ada4e28d33946b5904/basic.ics"
+    ]
+};
+
 const translations = {
-    en: { selectDates: "Select Dates", checkIn: "Check-in", checkOut: "Check-out", adults: "Adults", children: "Children", infant: "Infant", studioPolicy: "Studio Policy: Max 2 Adults & 1 Infant (Strictly Enforced).", selected: "Selected Property", totalStay: "Total Stay", nights: "Nights Selected", continue: "Continue to Details", alert: "Please select check-in & check-out" },
-    fr: { selectDates: "Sélectionnez les Dates", checkIn: "Arrivée", checkOut: "Départ", adults: "Adultes", children: "Enfants", infant: "Bébé", studioPolicy: "Politique Studio: Max 2 Adultes & 1 Bébé (Strictement Appliqué).", selected: "Propriété Sélectionnée", totalStay: "Séjour Total", nights: "Nuits Sélectionnées", continue: "Continuer vers les Détails", alert: "Veuillez sélectionner l'arrivée et le départ" },
-    ar: { selectDates: "اختر التواريخ", checkIn: "تاريخ الوصول", checkOut: "تاريخ المغادرة", adults: "البالغين", children: "الأطفال", infant: "رضيع", studioPolicy: "سياسة الاستوديو: بحد أقصى 2 بالغين و 1 رضيع (تطبق بصرامة).", selected: "العقار المختار", totalStay: "إجمالي الإقامة", nights: "ليالي محددة", continue: "المتابعة للتفاصيل", alert: "يرجى اختيار تاريخ الوصول والمغادرة" }
+    en: { selectDates: "Select Dates", checkIn: "Check-in", checkOut: "Check-out", adults: "Adults", children: "Children", infant: "Infant", studioPolicy: "Studio Policy: Max 2 Adults & 1 Infant (Strictly Enforced).", selected: "Selected Property", totalStay: "Total Stay", nights: "Nights Selected", continue: "Continue to Details", alert: "Please select check-in & check-out", loading: "Syncing Availability..." },
+    fr: { selectDates: "Sélectionnez les Dates", checkIn: "Arrivée", checkOut: "Départ", adults: "Adultes", children: "Enfants", infant: "Bébé", studioPolicy: "Politique Studio: Max 2 Adultes & 1 Bébé (Strictement Appliqué).", selected: "Propriété Sélectionnée", totalStay: "Séjour Total", nights: "Nuits Sélectionnées", continue: "Continuer vers les Détails", alert: "Veuillez sélectionner l'arrivée et le départ", loading: "Synchronisation..." },
+    ar: { selectDates: "اختر التواريخ", checkIn: "تاريخ الوصول", checkOut: "تاريخ المغادرة", adults: "البالغين", children: "الأطفال", infant: "رضيع", studioPolicy: "سياسة الاستوديو: بحد أقصى 2 بالغين و 1 رضيع (تطبق بصرامة).", selected: "العقار المختار", totalStay: "إجمالي الإقامة", nights: "ليالي محددة", continue: "المتابعة للتفاصيل", alert: "يرجى اختيار تاريخ الوصول والمغادرة", loading: "جاري تحديث التوفر..." }
 };
 
 const AvailabilityCalendar: React.FC<Props> = ({ lang, onClose, selectedProperty, onProceedToCheckout }) => {
@@ -35,11 +53,86 @@ const AvailabilityCalendar: React.FC<Props> = ({ lang, onClose, selectedProperty
     const [endDateStr, setEndDateStr] = useState('');
     const [adults, setAdults] = useState(1);
     const [children, setChildren] = useState(0);
+    const [disabledDates, setDisabledDates] = useState<Date[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const t = translations[lang] || translations['en'];
-    const isStudio = selectedProperty?.specs?.toLowerCase().includes('studio') || selectedProperty?.title?.toLowerCase().includes('studio');
+    // Robust check for "Studio" in title or specs
+    const isStudio = (selectedProperty?.specs?.toLowerCase().includes('studio') || selectedProperty?.title?.toLowerCase().includes('studio') || selectedProperty?.title?.includes('استوديو'));
+    
     const MAX_ADULTS = isStudio ? 2 : 6;
     const MAX_CHILDREN = isStudio ? 1 : 4;
+
+    // --- FETCH ICAL DATA ---
+    useEffect(() => {
+        const fetchAvailability = async () => {
+            // Reset if no property selected or no links found
+            if (!selectedProperty || !ICAL_URLS[selectedProperty.id]) {
+                setDisabledDates([]);
+                return;
+            }
+            
+            setIsLoading(true);
+            const urls = ICAL_URLS[selectedProperty.id];
+            const blockedDates: Date[] = [];
+            
+            // Proxy to bypass CORS issues on static hosting
+            const proxyUrl = "https://api.allorigins.win/raw?url=";
+
+            try {
+                // Fetch all calendars for this property in parallel
+                const responses = await Promise.all(
+                    urls.map(url => fetch(proxyUrl + encodeURIComponent(url)).then(res => res.text()))
+                );
+
+                responses.forEach(data => {
+                    try {
+                        const jcalData = ICAL.parse(data);
+                        const comp = new ICAL.Component(jcalData);
+                        const vevents = comp.getAllSubcomponents('vevent');
+
+                        vevents.forEach((event) => {
+                            const start = event.getFirstPropertyValue('dtstart').toJSDate();
+                            const end = event.getFirstPropertyValue('dtend').toJSDate();
+                            
+                            // Loop through days between start and end to block them
+                            let current = new Date(start);
+                            while (current < end) {
+                                blockedDates.push(new Date(current));
+                                current.setDate(current.getDate() + 1);
+                            }
+                        });
+                    } catch (e) {
+                        console.warn("Error parsing one of the calendars", e);
+                    }
+                });
+
+                setDisabledDates(blockedDates);
+            } catch (error) {
+                console.error("Error fetching calendars:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchAvailability();
+    }, [selectedProperty]);
+
+    // Check if a specific date is disabled
+    const isTileDisabled = ({ date, view }: { date: Date, view: string }) => {
+        if (view === 'month') {
+            // 1. Disable dates in the past
+            if (date < new Date(new Date().setHours(0,0,0,0))) return true;
+
+            // 2. Disable dates found in iCal (Airbnb/Booking/Google)
+            return disabledDates.some(disabledDate => 
+                date.getFullYear() === disabledDate.getFullYear() &&
+                date.getMonth() === disabledDate.getMonth() &&
+                date.getDate() === disabledDate.getDate()
+            );
+        }
+        return false;
+    };
 
     const handleCalendarChange = (value: any) => {
         const [start, end] = value;
@@ -102,10 +195,25 @@ const AvailabilityCalendar: React.FC<Props> = ({ lang, onClose, selectedProperty
                 </div>
             </div>
             <div className="bg-white p-6 md:p-8 md:w-2/3 flex flex-col">
-                <div className="flex justify-between items-center mb-4"><h3 className="text-mapstone-blue font-serif text-xl">{t.selectDates}</h3><button onClick={onClose} className="text-stone-300 hover:text-mapstone-blue transition-colors hidden md:block"><X size={24} /></button></div>
+                <div className="flex justify-between items-center mb-4">
+                    <div className="flex items-center gap-3">
+                        <h3 className="text-mapstone-blue font-serif text-xl">{t.selectDates}</h3>
+                        {isLoading && <span className="text-[10px] text-nobel-gold animate-pulse tracking-widest uppercase border border-nobel-gold/30 px-2 py-0.5 rounded-full">{t.loading}</span>}
+                    </div>
+                    <button onClick={onClose} className="text-stone-300 hover:text-mapstone-blue transition-colors hidden md:block"><X size={24} /></button>
+                </div>
                 <div className="flex-1 calendar-wrapper overflow-y-auto">
-                    <style>{`.react-calendar { width: 100%; border: none; font-family: 'Lato', sans-serif; } .react-calendar__navigation button { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: #1B365D; } .react-calendar__tile { height: 42px; border-radius: 0.5rem; font-size: 0.9rem; } .react-calendar__tile--active { background: #1B365D !important; color: white !important; } .react-calendar__tile--now { background: transparent; color: #C5A059; border: 1px solid #C5A059; } .react-calendar__tile--range { background: #e0e6ed; color: #1B365D; } .react-calendar__tile--rangeStart, .react-calendar__tile--rangeEnd { background: #1B365D !important; color: white !important; }`}</style>
-                    <Calendar onChange={handleCalendarChange} value={dateRange} selectRange={true} minDate={new Date()} nextLabel={<ChevronRight size={16} />} prevLabel={<ChevronLeft size={16} />} className="w-full"/>
+                    <style>{`.react-calendar { width: 100%; border: none; font-family: 'Lato', sans-serif; } .react-calendar__navigation button { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: #1B365D; } .react-calendar__tile { height: 42px; border-radius: 0.5rem; font-size: 0.9rem; } .react-calendar__tile--active { background: #1B365D !important; color: white !important; } .react-calendar__tile--now { background: transparent; color: #C5A059; border: 1px solid #C5A059; } .react-calendar__tile--range { background: #e0e6ed; color: #1B365D; } .react-calendar__tile--rangeStart, .react-calendar__tile--rangeEnd { background: #1B365D !important; color: white !important; } .react-calendar__tile:disabled { background-color: #f3f3f3; color: #d1d1d1; cursor: not-allowed; text-decoration: line-through; opacity: 0.6; }`}</style>
+                    <Calendar 
+                        onChange={handleCalendarChange} 
+                        value={dateRange} 
+                        selectRange={true} 
+                        minDate={new Date()} 
+                        tileDisabled={isTileDisabled} 
+                        nextLabel={<ChevronRight size={16} />} 
+                        prevLabel={<ChevronLeft size={16} />} 
+                        className="w-full"
+                    />
                 </div>
                 <div className="mt-4 border-t border-stone-100 pt-4 flex flex-col md:flex-row items-center justify-between gap-4">
                     <div className="text-center md:text-left">{dateRange[0] && dateRange[1] ? (<div><p className="text-xs text-stone-400 font-bold uppercase tracking-wider">{t.totalStay}</p><p className="text-mapstone-blue font-serif text-lg">{nights} {t.nights}</p></div>) : (<p className="text-sm text-stone-400 italic text-red-400 flex items-center gap-1"><AlertCircle size={14}/> {t.alert}</p>)}</div>
