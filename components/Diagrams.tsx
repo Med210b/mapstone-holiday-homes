@@ -14,7 +14,7 @@ export interface PropertyData {
     specs: string;
 }
 
-// --- FULLY TRANSLATED PROPERTIES (FIXED FRENCH) ---
+// --- FULLY TRANSLATED PROPERTIES ---
 export const getProperties = (lang: Lang): PropertyData[] => {
     const isFr = lang === 'fr';
     const isAr = lang === 'ar';
@@ -25,49 +25,73 @@ export const getProperties = (lang: Lang): PropertyData[] => {
 
     return [
         {
-            id: 1,
-            title: isAr ? "العنوان وسط المدينة" : (isFr ? "The Address Centre-ville" : "The Address Downtown"),
-            location: isAr ? "وسط مدينة دبي" : (isFr ? "Centre-ville de Dubaï" : "Downtown Dubai"),
-            images: [
-                "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1555636222-cae831e670b3?auto=format&fit=crop&w=800&q=80"
-            ],
-            price: `1,200 ${aed}${perNight}`,
-            specs: isAr ? "غرفتين • 1400 قدم مربع" : (isFr ? "2 Lits • 130 m²" : "2 Beds • 1,400 sqft")
-        },
-        {
-            id: 2,
-            title: isAr ? "فيلا نخلة جميرا" : (isFr ? "Villa Palm Jumeirah" : "Palm Jumeirah Villa"),
-            location: isAr ? "نخلة جميرا" : "Palm Jumeirah",
-            images: [
-                "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1512918760532-3edbed72481b?auto=format&fit=crop&w=800&q=80"
-            ],
-            price: `3,500 ${aed}${perNight}`,
-            specs: isAr ? "5 غرف • دخول الشاطئ" : (isFr ? "5 Lits • Accès Plage" : "5 Beds • Beach Access")
-        },
-        {
-            id: 3,
-            title: isAr ? "بنتهاوس مارينا جيت" : (isFr ? "Penthouse Marina Gate" : "Marina Gate Penthouse"),
-            location: isAr ? "دبي مارينا" : (isFr ? "Dubaï Marina" : "Dubai Marina"),
-            images: ["https://i.postimg.cc/nchK2cxx/1_Untitled_design.png"],
-            price: `2,100 ${aed}${perNight}`,
-            specs: isAr ? "3 غرف • إطلالة مارينا" : (isFr ? "3 Lits • Vue Marina" : "3 Beds • Marina View")
-        },
-        {
             id: 4,
             title: isAr ? "استوديو فاخر جديد" : (isFr ? "Nouveau Studio de Luxe" : "Brand New Luxury Studio"),
             location: isAr ? "الفرجان" : "Al Furjan",
-            images: ["https://i.postimg.cc/5NG59J8F/w14.png"],
+            images: [
+                "https://i.postimg.cc/5NG59J8F/w14.png",
+                "https://i.postimg.cc/tCfdRbFW/w15.png",
+                "https://i.postimg.cc/tCfdRbF3/w16.png",
+                "https://i.postimg.cc/dtXRQFGR/w17.png",
+                "https://i.postimg.cc/NfV8GtRx/w18.png",
+                "https://i.postimg.cc/xT7GjQLg/w19.png",
+                "https://i.postimg.cc/GhNP3Rv7/w2.png",
+                "https://i.postimg.cc/yY5h6K0r/w20.png",
+                "https://i.postimg.cc/28JdjYnJ/w200.png",
+                "https://i.postimg.cc/dtXRQFGz/w21.png",
+                "https://i.postimg.cc/y8ZmkGTv/w22.png",
+                "https://i.postimg.cc/13qGfdKd/w23.png",
+                "https://i.postimg.cc/3xvXdqZs/w24.png",
+                "https://i.postimg.cc/sghYvLcR/w3.png",
+                "https://i.postimg.cc/HkywVN2d/w300.png",
+                "https://i.postimg.cc/K8MPRWNz/w4.png",
+                "https://i.postimg.cc/BvfxDCYs/w400.png",
+                "https://i.postimg.cc/cJGQYc9L/w5.png",
+                "https://i.postimg.cc/6QxdRhj3/w500.png",
+                "https://i.postimg.cc/k5Px8y1x/w6.png",
+                "https://i.postimg.cc/nLKq1Qg7/w600.png",
+                "https://i.postimg.cc/ZqP6Ly2H/w7.png",
+                "https://i.postimg.cc/TPjncWFc/w8.png",
+                "https://i.postimg.cc/LskjVZwy/w9.png"
+            ],
             price: `399 ${aed}${perNight}`,
             specs: isAr ? "استوديو • 460 قدم مربع" : (isFr ? "Studio • 42 m²" : "Studio • 460 sqft")
         },
         {
             id: 5,
             title: isAr ? "شقة تنفيذية غرفة وصالة" : (isFr ? "Appartement Exécutif 1 Chambre" : "Spacious Executive 1BR"),
-            location: isAr ? "مثلث قرية جميرا" : "Jumeirah Village Triangle(JVT)",
-            images: ["https://i.postimg.cc/zBC9J39c/1-cloud.png"],
+            location: isAr ? "مثلث قرية جميرا" : (isFr ? "Jumeirah Village Triangle (JVT)" : "Jumeirah Village Triangle(JVT)"),
+            images: [
+                "https://i.postimg.cc/zBC9J39c/1-cloud.png",
+                "https://i.postimg.cc/d1PbPGS3/CLOUD-10.jpg",
+                "https://i.postimg.cc/85Q2QLnF/cloud-11.jpg",
+                "https://i.postimg.cc/QtG2GcnF/cloud-12.jpg",
+                "https://i.postimg.cc/nzbybqwK/cloud-13.png",
+                "https://i.postimg.cc/V6QxQXH7/cloud-14.png",
+                "https://i.postimg.cc/LXKcKj0Q/cloud-15.png",
+                "https://i.postimg.cc/ZR81T011/cloud-18.png",
+                "https://i.postimg.cc/Ss6wyjw1/cloud-19.jpg",
+                "https://i.postimg.cc/HnTFjdmD/cloud-2.png",
+                "https://i.postimg.cc/4d6rJnDG/cloud-21.jpg",
+                "https://i.postimg.cc/mDY0bhvT/cloud-23.jpg",
+                "https://i.postimg.cc/0QYL8rT8/cloud-25.jpg",
+                "https://i.postimg.cc/vTGCDbyG/cloud-26.jpg",
+                "https://i.postimg.cc/HnTFjdm5/cloud-27.png",
+                "https://i.postimg.cc/zvq438NG/cloud-29.jpg",
+                "https://i.postimg.cc/vTXkVk86/cloud-3.png",
+                "https://i.postimg.cc/Kc5dwk7v/cloud-30.png",
+                "https://i.postimg.cc/GtzVyV3K/cloud-4.png",
+                "https://i.postimg.cc/XNgTmGKB/cloud-6.png",
+                "https://i.postimg.cc/3rZPV4jD/cloud-7.png",
+                "https://i.postimg.cc/bYRKWD0d/CLOUD-8.jpg",
+                "https://i.postimg.cc/7PNpdG1N/cloud17.png",
+                "https://i.postimg.cc/ry9v30GS/cloud20.jpg",
+                "https://i.postimg.cc/Kc5dwk7P/cloud22.jpg",
+                "https://i.postimg.cc/05CLFMGn/cloud23.jpg",
+                "https://i.postimg.cc/zXX9rzp7/cloud28.png",
+                "https://i.postimg.cc/Kvvd2GQ7/cloud31.jpg",
+                "https://i.postimg.cc/zXX9rzpF/CLOUD9.jpg"
+            ],
             price: `499 ${aed}${perNight}`,
             specs: isAr ? "غرفة وصالة • 549 قدم مربع" : (isFr ? "1 Chambre • 51 m²" : "1BHK • 549 sqft")
         }
