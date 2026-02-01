@@ -23,8 +23,7 @@ interface Props {
     onProceedToCheckout: (data: { dateRange: [Date, Date], guests: { adults: number, children: number } }) => void;
 }
 
-// --- GOOGLE CALENDAR LINKS ONLY ---
-// Since you are syncing Airbnb/Booking INTO Google, we only need these master links.
+// --- GOOGLE CALENDAR LINKS ---
 const ICAL_URLS: { [key: number]: string } = {
     // ID 4: Westwood Al Furjan
     4: "https://calendar.google.com/calendar/ical/c_a385fec5acc242c4193a269335b9bd98aedada50249e0e0ff69c580005acadc6%40group.calendar.google.com/private-4ac01705b0841a446493c76f8b9e11d7/basic.ics",
@@ -64,10 +63,11 @@ const AvailabilityCalendar: React.FC<Props> = ({ lang, onClose, selectedProperty
             setSyncStatus('idle');
             const targetUrl = ICAL_URLS[selectedProperty.id];
             
-            // STRATEGY: Try Proxy A, if fails, try Proxy B
+            // ROBUST PROXY LIST (Plan A, Plan B, Plan C)
             const proxies = [
                 `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`,
-                `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`
+                `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`,
+                `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`
             ];
 
             let success = false;
@@ -90,7 +90,6 @@ const AvailabilityCalendar: React.FC<Props> = ({ lang, onClose, selectedProperty
                         const start = event.getFirstPropertyValue('dtstart').toJSDate();
                         const end = event.getFirstPropertyValue('dtend').toJSDate();
                         
-                        // Loop and block days
                         let current = new Date(start);
                         while (current < end) {
                             blocked.push(new Date(current));
@@ -102,7 +101,7 @@ const AvailabilityCalendar: React.FC<Props> = ({ lang, onClose, selectedProperty
                     setSyncStatus('success');
                     success = true;
                 } catch (error) {
-                    console.warn(`Proxy failed, trying next...`);
+                    console.warn(`Proxy failed, switching to backup...`);
                 }
             }
 
@@ -116,9 +115,7 @@ const AvailabilityCalendar: React.FC<Props> = ({ lang, onClose, selectedProperty
     // Calendar Tile Logic
     const isTileDisabled = ({ date, view }: { date: Date, view: string }) => {
         if (view === 'month') {
-            // Block past dates
             if (date < new Date(new Date().setHours(0,0,0,0))) return true;
-            // Block fetched dates
             return disabledDates.some(d => 
                 date.getFullYear() === d.getFullYear() &&
                 date.getMonth() === d.getMonth() &&
@@ -192,12 +189,12 @@ const AvailabilityCalendar: React.FC<Props> = ({ lang, onClose, selectedProperty
                     <div className="flex items-center gap-2">
                         <h3 className="text-mapstone-blue font-serif text-xl">{t.selectDates}</h3>
                         {isLoading && <span className="text-[10px] text-nobel-gold animate-pulse flex items-center gap-1"><RefreshCw size={10} className="animate-spin"/> {t.loading}</span>}
-                        {!isLoading && syncStatus === 'error' && <span className="text-[10px] text-red-400">{t.error}</span>}
+                        {!isLoading && syncStatus === 'error' && <span className="text-[10px] text-red-400 font-bold">{t.error}</span>}
                     </div>
                     <button onClick={onClose} className="text-stone-300 hover:text-mapstone-blue transition-colors hidden md:block"><X size={24} /></button>
                 </div>
                 <div className="flex-1 calendar-wrapper overflow-y-auto">
-                    <style>{`.react-calendar { width: 100%; border: none; font-family: 'Lato', sans-serif; } .react-calendar__navigation button { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: #1B365D; } .react-calendar__tile { height: 42px; border-radius: 0.5rem; font-size: 0.9rem; } .react-calendar__tile--active { background: #1B365D !important; color: white !important; } .react-calendar__tile--now { background: transparent; color: #C5A059; border: 1px solid #C5A059; } .react-calendar__tile--range { background: #e0e6ed; color: #1B365D; } .react-calendar__tile:disabled { background-color: #f3f3f3; color: #d1d1d1; cursor: not-allowed; text-decoration: line-through; opacity: 0.6; }`}</style>
+                    <style>{`.react-calendar { width: 100%; border: none; font-family: 'Lato', sans-serif; } .react-calendar__navigation button { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: #1B365D; } .react-calendar__tile { height: 42px; border-radius: 0.5rem; font-size: 0.9rem; } .react-calendar__tile--active { background: #1B365D !important; color: white !important; } .react-calendar__tile--now { background: transparent; color: #C5A059; border: 1px solid #C5A059; } .react-calendar__tile--range { background: #e0e6ed; color: #1B365D; } .react-calendar__tile--rangeStart, .react-calendar__tile--rangeEnd { background: #1B365D !important; color: white !important; } .react-calendar__tile:disabled { background-color: #f3f3f3; color: #d1d1d1; cursor: not-allowed; text-decoration: line-through; opacity: 0.6; }`}</style>
                     <Calendar 
                         onChange={handleCalendarChange} 
                         value={dateRange} 
