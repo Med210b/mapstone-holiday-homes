@@ -114,7 +114,7 @@ export const CheckoutPage: React.FC<Props> = ({ lang, onBack, bookingData }) => 
                             <input type="hidden" name="_subject" value={`New Booking: ${bookingData.propertyName}`} />
                             <input type="hidden" name="_captcha" value="false" />
                             <input type="hidden" name="_next" value="https://www.mapstoneholidayhome.com/?success=true" />
-                            {/* REMOVED _template="table" to fix 500 error */}
+                            {/* NO _template="table" - This fixes the 500 Error */}
                             
                             <input type="hidden" name="Property" value={bookingData.propertyName || "Unknown"} />
                             <input type="hidden" name="Check-in" value={checkIn} />

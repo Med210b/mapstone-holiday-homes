@@ -72,18 +72,18 @@ const AvailabilityCalendar: React.FC<Props> = ({ lang, onClose, selectedProperty
             setStatuses(sources.map(s => ({ name: s.name, status: 'pending' })));
             
             const blockedDates: Date[] = [];
-            const cacheBuster = `nocache=${Date.now()}`;
             
-            // PROXY LIST
+            // PROXY LIST (Prioritizing allorigins for stability)
             const getProxies = (target: string) => [
-                `https://corsproxy.io/?${encodeURIComponent(target)}`,
-                `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`
+                `https://api.allorigins.win/get?url=${encodeURIComponent(target)}`,
+                `https://corsproxy.io/?${encodeURIComponent(target)}`
             ];
 
             await Promise.all(sources.map(async (source, index) => {
-                // FIX: Check if URL already has '?' to use '&' instead
+                // SMART URL BUILDER: Checks for '?' to avoid breaking the link
                 const separator = source.url.includes('?') ? '&' : '?';
-                const finalUrl = source.url + separator + cacheBuster;
+                const cacheBuster = `nocache=${Date.now()}`; // Unique timestamp
+                const finalUrl = `${source.url}${separator}${cacheBuster}`;
                 
                 const proxies = getProxies(finalUrl);
                 let fetched = false;
@@ -94,8 +94,16 @@ const AvailabilityCalendar: React.FC<Props> = ({ lang, onClose, selectedProperty
                         const response = await fetch(proxy);
                         if (!response.ok) throw new Error("Network error");
                         
-                        const data = await response.text();
-                        if (!data.includes("BEGIN:VCALENDAR")) throw new Error("Invalid Data");
+                        let data;
+                        // Handle different proxy response formats
+                        if (proxy.includes('allorigins')) {
+                            const json = await response.json();
+                            data = json.contents;
+                        } else {
+                            data = await response.text();
+                        }
+                        
+                        if (!data || !data.includes("BEGIN:VCALENDAR")) throw new Error("Invalid Data");
 
                         const jcalData = ICAL.parse(data);
                         const comp = new ICAL.Component(jcalData);
@@ -124,7 +132,7 @@ const AvailabilityCalendar: React.FC<Props> = ({ lang, onClose, selectedProperty
                             return newS;
                         });
                     } catch (err) {
-                        // Try next proxy
+                        // console.log(`Proxy failed for ${source.name}:`, err);
                     }
                 }
                 
