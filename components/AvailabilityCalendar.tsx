@@ -2,9 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight, X, AlertCircle, Calendar as CalendarIcon } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, AlertCircle, RefreshCw } from 'lucide-react';
 import 'react-calendar/dist/Calendar.css'; 
-import ICAL from 'ical.js'; // Ensure you ran: npm install ical.js
+import ICAL from 'ical.js'; 
 import { Lang } from '../types';
 
 const MotionDiv = motion.div as any;
@@ -12,7 +12,6 @@ const MotionDiv = motion.div as any;
 interface PropertyData {
     id: number;
     title: string;
-    location: string;
     price: string;
     specs: string; 
 }
@@ -24,27 +23,20 @@ interface Props {
     onProceedToCheckout: (data: { dateRange: [Date, Date], guests: { adults: number, children: number } }) => void;
 }
 
-// --- AUTOMATIC SYNC CONFIGURATION ---
-const ICAL_URLS: { [key: number]: string[] } = {
-    // ID 4: Westwood Al Furjan (Brand New Luxury Studio)
-    4: [
-        "https://ical.booking.com/v1/export?t=d5e025de-61d6-413f-8ad1-98f9d0b1ae81",
-        "https://www.airbnb.ae/calendar/ical/1580396287740208765.ics?t=9616eb9e5c8c4b0eb4375e07cfc50fb9",
-        "https://calendar.google.com/calendar/ical/c_a385fec5acc242c4193a269335b9bd98aedada50249e0e0ff69c580005acadc6%40group.calendar.google.com/private-4ac01705b0841a446493c76f8b9e11d7/basic.ics"
-    ],
+// --- GOOGLE CALENDAR LINKS ONLY ---
+// Since you are syncing Airbnb/Booking INTO Google, we only need these master links.
+const ICAL_URLS: { [key: number]: string } = {
+    // ID 4: Westwood Al Furjan
+    4: "https://calendar.google.com/calendar/ical/c_a385fec5acc242c4193a269335b9bd98aedada50249e0e0ff69c580005acadc6%40group.calendar.google.com/private-4ac01705b0841a446493c76f8b9e11d7/basic.ics",
     
-    // ID 5: Cloud Tower JVT (Spacious Executive 1BR)
-    5: [
-        "https://ical.booking.com/v1/export?t=9eb975cf-0d03-442a-b801-fd8723208341",
-        "https://www.airbnb.ae/calendar/ical/1606912688736441590.ics?t=1e695148925c4d789e5397a3fdb3fb40",
-        "https://calendar.google.com/calendar/ical/c_21e8000cdae50de6703cf877bf4e5ec81a6ccbeca6edf3b9698cc035b4c492ed%40group.calendar.google.com/private-fb57bb3e640205ada4e28d33946b5904/basic.ics"
-    ]
+    // ID 5: Cloud Tower JVT
+    5: "https://calendar.google.com/calendar/ical/c_21e8000cdae50de6703cf877bf4e5ec81a6ccbeca6edf3b9698cc035b4c492ed%40group.calendar.google.com/private-fb57bb3e640205ada4e28d33946b5904/basic.ics"
 };
 
 const translations = {
-    en: { selectDates: "Select Dates", checkIn: "Check-in", checkOut: "Check-out", adults: "Adults", children: "Children", infant: "Infant", studioPolicy: "Studio Policy: Max 2 Adults & 1 Infant (Strictly Enforced).", selected: "Selected Property", totalStay: "Total Stay", nights: "Nights Selected", continue: "Continue to Details", alert: "Please select check-in & check-out", loading: "Syncing Availability..." },
-    fr: { selectDates: "Sélectionnez les Dates", checkIn: "Arrivée", checkOut: "Départ", adults: "Adultes", children: "Enfants", infant: "Bébé", studioPolicy: "Politique Studio: Max 2 Adultes & 1 Bébé (Strictement Appliqué).", selected: "Propriété Sélectionnée", totalStay: "Séjour Total", nights: "Nuits Sélectionnées", continue: "Continuer vers les Détails", alert: "Veuillez sélectionner l'arrivée et le départ", loading: "Synchronisation..." },
-    ar: { selectDates: "اختر التواريخ", checkIn: "تاريخ الوصول", checkOut: "تاريخ المغادرة", adults: "البالغين", children: "الأطفال", infant: "رضيع", studioPolicy: "سياسة الاستوديو: بحد أقصى 2 بالغين و 1 رضيع (تطبق بصرامة).", selected: "العقار المختار", totalStay: "إجمالي الإقامة", nights: "ليالي محددة", continue: "المتابعة للتفاصيل", alert: "يرجى اختيار تاريخ الوصول والمغادرة", loading: "جاري تحديث التوفر..." }
+    en: { selectDates: "Select Dates", checkIn: "Check-in", checkOut: "Check-out", adults: "Adults", children: "Children", infant: "Infant", studioPolicy: "Studio Policy: Max 2 Adults & 1 Infant (Strictly Enforced).", selected: "Selected Property", totalStay: "Total Stay", nights: "Nights Selected", continue: "Continue to Details", alert: "Please select check-in & check-out", loading: "Syncing Calendar...", error: "Could not sync calendar" },
+    fr: { selectDates: "Sélectionnez les Dates", checkIn: "Arrivée", checkOut: "Départ", adults: "Adultes", children: "Enfants", infant: "Bébé", studioPolicy: "Politique Studio: Max 2 Adultes & 1 Bébé (Strictement Appliqué).", selected: "Propriété Sélectionnée", totalStay: "Séjour Total", nights: "Nuits Sélectionnées", continue: "Continuer vers les Détails", alert: "Veuillez sélectionner l'arrivée et le départ", loading: "Synchronisation...", error: "Erreur de synchronisation" },
+    ar: { selectDates: "اختر التواريخ", checkIn: "تاريخ الوصول", checkOut: "تاريخ المغادرة", adults: "البالغين", children: "الأطفال", infant: "رضيع", studioPolicy: "سياسة الاستوديو: بحد أقصى 2 بالغين و 1 رضيع (تطبق بصرامة).", selected: "العقار المختار", totalStay: "إجمالي الإقامة", nights: "ليالي محددة", continue: "المتابعة للتفاصيل", alert: "يرجى اختيار تاريخ الوصول والمغادرة", loading: "جاري التحديث...", error: "تعذر تحديث التقويم" }
 };
 
 const AvailabilityCalendar: React.FC<Props> = ({ lang, onClose, selectedProperty, onProceedToCheckout }) => {
@@ -53,85 +45,99 @@ const AvailabilityCalendar: React.FC<Props> = ({ lang, onClose, selectedProperty
     const [endDateStr, setEndDateStr] = useState('');
     const [adults, setAdults] = useState(1);
     const [children, setChildren] = useState(0);
+    
+    // Calendar State
     const [disabledDates, setDisabledDates] = useState<Date[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [syncStatus, setSyncStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
     const t = translations[lang] || translations['en'];
-    // Robust check for "Studio" in title or specs
     const isStudio = (selectedProperty?.specs?.toLowerCase().includes('studio') || selectedProperty?.title?.toLowerCase().includes('studio') || selectedProperty?.title?.includes('استوديو'));
-    
     const MAX_ADULTS = isStudio ? 2 : 6;
     const MAX_CHILDREN = isStudio ? 1 : 4;
 
-    // --- FETCH ICAL DATA ---
     useEffect(() => {
         const fetchAvailability = async () => {
-            // Reset if no property selected or no links found
-            if (!selectedProperty || !ICAL_URLS[selectedProperty.id]) {
-                setDisabledDates([]);
-                return;
-            }
+            if (!selectedProperty || !ICAL_URLS[selectedProperty.id]) return;
             
             setIsLoading(true);
-            const urls = ICAL_URLS[selectedProperty.id];
-            const blockedDates: Date[] = [];
+            setSyncStatus('idle');
+            const targetUrl = ICAL_URLS[selectedProperty.id];
             
-            // Proxy to bypass CORS issues on static hosting
-            const proxyUrl = "https://api.allorigins.win/raw?url=";
+            // STRATEGY: Try Proxy A, if fails, try Proxy B
+            const proxies = [
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`,
+                `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`
+            ];
 
-            try {
-                // Fetch all calendars for this property in parallel
-                const responses = await Promise.all(
-                    urls.map(url => fetch(proxyUrl + encodeURIComponent(url)).then(res => res.text()))
-                );
+            let success = false;
 
-                responses.forEach(data => {
-                    try {
-                        const jcalData = ICAL.parse(data);
-                        const comp = new ICAL.Component(jcalData);
-                        const vevents = comp.getAllSubcomponents('vevent');
+            for (const proxy of proxies) {
+                if (success) break;
+                try {
+                    const response = await fetch(proxy);
+                    if (!response.ok) throw new Error("Network error");
+                    
+                    const data = await response.text();
+                    
+                    // Parse iCal
+                    const jcalData = ICAL.parse(data);
+                    const comp = new ICAL.Component(jcalData);
+                    const vevents = comp.getAllSubcomponents('vevent');
+                    
+                    const blocked: Date[] = [];
+                    vevents.forEach((event) => {
+                        const start = event.getFirstPropertyValue('dtstart').toJSDate();
+                        const end = event.getFirstPropertyValue('dtend').toJSDate();
+                        
+                        // Loop and block days
+                        let current = new Date(start);
+                        while (current < end) {
+                            blocked.push(new Date(current));
+                            current.setDate(current.getDate() + 1);
+                        }
+                    });
 
-                        vevents.forEach((event) => {
-                            const start = event.getFirstPropertyValue('dtstart').toJSDate();
-                            const end = event.getFirstPropertyValue('dtend').toJSDate();
-                            
-                            // Loop through days between start and end to block them
-                            let current = new Date(start);
-                            while (current < end) {
-                                blockedDates.push(new Date(current));
-                                current.setDate(current.getDate() + 1);
-                            }
-                        });
-                    } catch (e) {
-                        console.warn("Error parsing one of the calendars", e);
-                    }
-                });
-
-                setDisabledDates(blockedDates);
-            } catch (error) {
-                console.error("Error fetching calendars:", error);
-            } finally {
-                setIsLoading(false);
+                    setDisabledDates(blocked);
+                    setSyncStatus('success');
+                    success = true;
+                } catch (error) {
+                    console.warn(`Proxy failed, trying next...`);
+                }
             }
+
+            if (!success) setSyncStatus('error');
+            setIsLoading(false);
         };
 
         fetchAvailability();
     }, [selectedProperty]);
 
-    // Check if a specific date is disabled
+    // Calendar Tile Logic
     const isTileDisabled = ({ date, view }: { date: Date, view: string }) => {
         if (view === 'month') {
-            // 1. Disable dates in the past
+            // Block past dates
             if (date < new Date(new Date().setHours(0,0,0,0))) return true;
-
-            // 2. Disable dates found in iCal (Airbnb/Booking/Google)
-            return disabledDates.some(disabledDate => 
-                date.getFullYear() === disabledDate.getFullYear() &&
-                date.getMonth() === disabledDate.getMonth() &&
-                date.getDate() === disabledDate.getDate()
+            // Block fetched dates
+            return disabledDates.some(d => 
+                date.getFullYear() === d.getFullYear() &&
+                date.getMonth() === d.getMonth() &&
+                date.getDate() === d.getDate()
             );
         }
         return false;
+    };
+
+    const handleManualChange = (type: 'start' | 'end', value: string) => {
+        if (type === 'start') {
+            setStartDateStr(value);
+            const newStart = value ? new Date(value) : null;
+            setDateRange([newStart, dateRange[1]]);
+        } else {
+            setEndDateStr(value);
+            const newEnd = value ? new Date(value) : null;
+            setDateRange([dateRange[0], newEnd]);
+        }
     };
 
     const handleCalendarChange = (value: any) => {
@@ -140,20 +146,6 @@ const AvailabilityCalendar: React.FC<Props> = ({ lang, onClose, selectedProperty
         if (start) setStartDateStr(start.toISOString().split('T')[0]);
         if (end) setEndDateStr(end.toISOString().split('T')[0]);
         else setEndDateStr('');
-    };
-
-    const handleManualChange = (type: 'start' | 'end', value: string) => {
-        if (type === 'start') {
-            setStartDateStr(value);
-            const newStart = value ? new Date(value) : null;
-            const currentEnd = dateRange[1];
-            setDateRange([newStart, currentEnd]);
-        } else {
-            setEndDateStr(value);
-            const currentStart = dateRange[0];
-            const newEnd = value ? new Date(value) : null;
-            setDateRange([currentStart, newEnd]);
-        }
     };
 
     const handleProceed = () => {
@@ -179,6 +171,7 @@ const AvailabilityCalendar: React.FC<Props> = ({ lang, onClose, selectedProperty
                     <div className="h-1 w-12 bg-nobel-gold mb-6"></div>
                     {isStudio && <div className="bg-white/10 p-3 rounded-sm border border-white/20 mb-6 flex gap-3"><AlertCircle className="text-nobel-gold shrink-0" size={20} /><p className="text-xs text-stone-300 leading-relaxed"><strong>{t.studioPolicy}</strong></p></div>}
                 </div>
+                
                 <div className="mt-auto space-y-6">
                      <div className="bg-white/5 p-4 rounded-sm border border-white/10">
                         <label className="block text-xs font-bold uppercase tracking-wider mb-1">{t.checkIn}</label>
@@ -196,14 +189,15 @@ const AvailabilityCalendar: React.FC<Props> = ({ lang, onClose, selectedProperty
             </div>
             <div className="bg-white p-6 md:p-8 md:w-2/3 flex flex-col">
                 <div className="flex justify-between items-center mb-4">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
                         <h3 className="text-mapstone-blue font-serif text-xl">{t.selectDates}</h3>
-                        {isLoading && <span className="text-[10px] text-nobel-gold animate-pulse tracking-widest uppercase border border-nobel-gold/30 px-2 py-0.5 rounded-full">{t.loading}</span>}
+                        {isLoading && <span className="text-[10px] text-nobel-gold animate-pulse flex items-center gap-1"><RefreshCw size={10} className="animate-spin"/> {t.loading}</span>}
+                        {!isLoading && syncStatus === 'error' && <span className="text-[10px] text-red-400">{t.error}</span>}
                     </div>
                     <button onClick={onClose} className="text-stone-300 hover:text-mapstone-blue transition-colors hidden md:block"><X size={24} /></button>
                 </div>
                 <div className="flex-1 calendar-wrapper overflow-y-auto">
-                    <style>{`.react-calendar { width: 100%; border: none; font-family: 'Lato', sans-serif; } .react-calendar__navigation button { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: #1B365D; } .react-calendar__tile { height: 42px; border-radius: 0.5rem; font-size: 0.9rem; } .react-calendar__tile--active { background: #1B365D !important; color: white !important; } .react-calendar__tile--now { background: transparent; color: #C5A059; border: 1px solid #C5A059; } .react-calendar__tile--range { background: #e0e6ed; color: #1B365D; } .react-calendar__tile--rangeStart, .react-calendar__tile--rangeEnd { background: #1B365D !important; color: white !important; } .react-calendar__tile:disabled { background-color: #f3f3f3; color: #d1d1d1; cursor: not-allowed; text-decoration: line-through; opacity: 0.6; }`}</style>
+                    <style>{`.react-calendar { width: 100%; border: none; font-family: 'Lato', sans-serif; } .react-calendar__navigation button { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: #1B365D; } .react-calendar__tile { height: 42px; border-radius: 0.5rem; font-size: 0.9rem; } .react-calendar__tile--active { background: #1B365D !important; color: white !important; } .react-calendar__tile--now { background: transparent; color: #C5A059; border: 1px solid #C5A059; } .react-calendar__tile--range { background: #e0e6ed; color: #1B365D; } .react-calendar__tile:disabled { background-color: #f3f3f3; color: #d1d1d1; cursor: not-allowed; text-decoration: line-through; opacity: 0.6; }`}</style>
                     <Calendar 
                         onChange={handleCalendarChange} 
                         value={dateRange} 
