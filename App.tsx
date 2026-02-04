@@ -77,6 +77,12 @@ const translations = {
 const VideoPreloader: React.FC<{ onComplete: () => void }> = ({ onComplete }) => (
     <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1.5, ease: "easeOut" }} className="fixed inset-0 z-[9999] flex items-center justify-center bg-black">
       <video src="/loader.mp4" autoPlay muted playsInline preload="auto" onEnded={onComplete} className="w-full h-full object-cover"/>
+      <button 
+        onClick={onComplete}
+        className="absolute bottom-10 right-6 md:bottom-12 md:right-12 z-50 px-6 py-2 border border-white/20 text-white text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] rounded-full hover:bg-white hover:text-black transition-all duration-300 backdrop-blur-sm"
+      >
+        Skip Intro
+      </button>
     </motion.div>
 );
 
